@@ -1,11 +1,14 @@
 # gitzen
+
 Stacked PR Manager for Git/Github
 
-Inspired by https://github.com/ejoffe/spr/ and https://github.com/getcord/spr
+![GitZen Logo](./logo/gitzen-logo-256.webp)
 
-I want to combine the power of ejoffe's `git spr status`, `update` and `merge` commands, with getcord's ability to add meaningful commits to existing PRs, rather then, by simply force pushing the change.
+> Inspired by <https://github.com/ejoffe/spr/> and <https://github.com/getcord/spr>.
 
-# Exploratory Notes
+I want to combine the power of ejoffe's `git spr status`, `update` and `merge` commands, with getcord's ability to add meaningful commits to existing PRs, rather than by simply force-pushing the change.
+
+## Exploratory Notes
 
 The first steps are to figure out the underlying git commands that are used to create and update the PRs.
 
@@ -21,7 +24,7 @@ Base executable is `git-zen`. It can be used a `git zen`. I recommend setting an
 - `gz push` - Push changes to GitHub, create and update PRs
 - `gz merge` - Merge any ready PRs and update/rebase depdendant PRs
 
-## Status
+### Status
 
 Fetch details of the user's pull requests from github.
 Display the status of each pull request.
