@@ -21,3 +21,11 @@ Base executable is `git-zen`. It can be used a `git zen`. I recommend setting an
 - `gz push` - Push changes to GitHub, create and update PRs
 - `gz merge` - Merge any ready PRs and update/rebase depdendant PRs
 
+## Status
+
+Fetch details of the user's pull requests from github.
+Display the status of each pull request.
+If there are no PRs display "Stack is empty - no PRs found".
+Doesn't make any remote changes.
+Doesn't make any local changes.
+
