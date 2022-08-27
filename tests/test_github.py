@@ -1,5 +1,6 @@
 import json
 from subprocess import CompletedProcess
+import subprocess
 from unittest import mock
 
 from gitzen import github
@@ -16,7 +17,7 @@ def test_pullRequests(mock_subproc_run):
     github.pullRequests()
     #then
     query = github.queryPullRequests
-    mock_subproc_run.assert_called_with(['gh', 'api', 'graphql', '-F', "repo_name={repo}", '-f', f"query={query}"])
+    mock_subproc_run.assert_called_with(['gh', 'api', 'graphql', '-F', "repo_name={repo}", '-f', f"query={query}"], stdout=subprocess.PIPE)
 
 def test_json_loads__escaped_newline():
     assert json.loads('{"a":"b"}') == {"a": "b"}

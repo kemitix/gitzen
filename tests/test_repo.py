@@ -1,4 +1,5 @@
 from subprocess import CompletedProcess
+import subprocess
 from unittest import mock
 
 from gitzen import repo
@@ -11,7 +12,7 @@ def test_localBranch_calls_git_branch(mock_subproc_run):
     #when
     repo.localBranch()
     #then
-    mock_subproc_run.assert_called_with(['git', 'branch', '--no-color'])
+    mock_subproc_run.assert_called_with(['git', 'branch', '--no-color'], stdout=subprocess.PIPE)
 
 @mock.patch('subprocess.run')
 def test_localBranch_returns_correct_branch(mock_subproc_run):
