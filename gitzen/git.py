@@ -15,3 +15,6 @@ class Git:
 
     def fetch() -> List[str]:
         return Git._git('fetch')
+
+    def branch() -> List[str]:
+        return Git._git('branch --no-color')
