@@ -32,3 +32,10 @@ If there are no PRs display "Stack is empty - no PRs found".
 Doesn't make any remote changes.
 Doesn't make any local changes.
 
+## Push
+
+Compare the local branch's unmerged commits with currently open pull requests in github.
+Create a new pull request for all new commits.
+Update the pull request if a commit has been amended.
+Where commits are reordered, pull requests will also be reordered to match.
+
