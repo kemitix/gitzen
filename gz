@@ -8,6 +8,5 @@ print("`git zen` - prototype")
 for i, arg in enumerate(sys.argv):
     if i != 1:
         continue
-    match arg:
-        case "status":
-            status.status()
+    if arg == "status":
+        status.status()
