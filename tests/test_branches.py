@@ -1,5 +1,3 @@
-from typing import List
-
 from gitzen.branches import getRemoteBranchName
 from gitzen.config import GitZenConfig
 

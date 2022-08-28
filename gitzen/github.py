@@ -1,7 +1,6 @@
 from shlex import shlex
 import subprocess
 import json
-import shlex
 from typing import Dict, List
 from jmespath import search as jq
 
