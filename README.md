@@ -41,5 +41,4 @@ Where commits are reordered, pull requests will also be reordered to match.
 
 ## Requirements
 
-- python 3.10  (developed against python 3.10.6, but may work on earlier versions)
-
+- python 3.10 (developed against python 3.10.6, but may work on earlier versions)
