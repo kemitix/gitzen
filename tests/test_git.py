@@ -28,3 +28,16 @@ def test_branch(mock_subproc_run):
     mock_subproc_run.assert_called_with(
         ["git", "branch", "--no-color"], stdout=subprocess.PIPE
     )
+
+
+@mock.patch("subprocess.run")
+def test_remote(mock_subproc_run):
+    """
+    Test that the correct command is invoked
+    """
+    # when
+    git.remote()
+    # then
+    mock_subproc_run.assert_called_with(
+        ["git", "remote", "--verbose"], stdout=subprocess.PIPE
+    )
