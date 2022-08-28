@@ -1,2 +1,3 @@
 jmespath==1.0.1
 pytest==7.1.2
+bios==0.1.2
