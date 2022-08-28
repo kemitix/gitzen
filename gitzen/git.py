@@ -21,3 +21,7 @@ def fetch() -> List[str]:
 
 def branch() -> List[str]:
     return _git("branch --no-color")
+
+
+def remote() -> List[str]:
+    return _git("remote --verbose")
