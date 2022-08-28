@@ -2,9 +2,11 @@
 
 import sys
 
-from gitzen import status
+from gitzen import repo, status
 
 print("`git zen` - prototype")
+
+repo.rootDir()  # verifies that we are in a git repo or exits the program
 
 for i, arg in enumerate(sys.argv):
     if i != 1:

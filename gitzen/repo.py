@@ -5,8 +5,12 @@ from typing import Tuple
 from gitzen import git
 
 
+# will exit the program if called from outside a git repo
 def rootDir() -> str:
-    return git.revParse("--show-toplevel")[0]
+    output = git.revParse("--show-toplevel")
+    if output == "":
+        exit(1)
+    return output[0]
 
 
 def getLocalBranchName() -> str:
