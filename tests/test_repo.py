@@ -1,8 +1,35 @@
 import subprocess
-from subprocess import CompletedProcess
+from subprocess import PIPE, CompletedProcess
 from unittest import mock
 
 from gitzen import repo
+
+
+@mock.patch("subprocess.run")
+def test_rootDir(mock_subproc_run):
+    """
+    Test that the correct command is invoked
+    """
+    # when
+    repo.rootDir()
+    # then
+    gitRevParse = ["git", "rev-parse", "--show-toplevel"]
+    mock_subproc_run.assert_called_with(gitRevParse, stdout=PIPE)
+
+
+@mock.patch("subprocess.run")
+def test_rootDir_returns_path(mock_subproc_run):
+    """
+    Test that rootDir returns the directory
+    """
+    # given
+    mock_subproc_run.return_value = CompletedProcess(
+        "", 0, stdout="test-root-dir".encode()
+    )
+    # when
+    result = repo.rootDir()
+    # then
+    assert result == "test-root-dir"
 
 
 @mock.patch("subprocess.run")

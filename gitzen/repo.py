@@ -5,6 +5,10 @@ from typing import Tuple
 from gitzen import git
 
 
+def rootDir() -> str:
+    return git.revParse("--show-toplevel")[0]
+
+
 def getLocalBranchName() -> str:
     branches = git.branch()
     for branch in branches:
