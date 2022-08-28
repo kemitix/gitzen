@@ -3,7 +3,6 @@ cli:
   version: 0.16.1-beta
 lint:
   enabled:
-    - actionlint@1.6.16
     - black@22.6.0
     - flake8@5.0.4
     - git-diff-check@SYSTEM

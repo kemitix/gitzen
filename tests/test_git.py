@@ -3,22 +3,28 @@ from unittest import mock
 
 from gitzen import git
 
-@mock.patch('subprocess.run')
+
+@mock.patch("subprocess.run")
 def test_fetch(mock_subproc_run):
     """
     Test that the correct command is invoked
     """
-    #when
+    # when
     git.fetch()
-    #then
-    mock_subproc_run.assert_called_with(['git', 'fetch'], stdout=subprocess.PIPE)
+    # then
+    gitFetch = ["git", "fetch"]
+    pipe = subprocess.PIPE
+    mock_subproc_run.assert_called_with(gitFetch, stdout=pipe)
 
-@mock.patch('subprocess.run')
+
+@mock.patch("subprocess.run")
 def test_branch(mock_subproc_run):
     """
     Test that the correct command is invoked
     """
-    #when
+    # when
     git.branch()
-    #then
-    mock_subproc_run.assert_called_with(['git', 'branch', '--no-color'], stdout=subprocess.PIPE)
+    # then
+    mock_subproc_run.assert_called_with(
+        ["git", "branch", "--no-color"], stdout=subprocess.PIPE
+    )
