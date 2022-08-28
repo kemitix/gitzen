@@ -15,6 +15,10 @@ def _git(args: str) -> List[str]:
         return ""
 
 
+def revParse(args: str = "") -> List[str]:
+    return _git(f"rev-parse {args}")
+
+
 def fetch() -> List[str]:
     return _git("fetch")
 
