@@ -5,7 +5,7 @@ from typing import Tuple
 from gitzen import git
 
 
-def localBranch() -> str:
+def getLocalBranchName() -> str:
     branches = git.branch()
     for branch in branches:
         if branch.startswith("* "):
