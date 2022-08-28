@@ -25,9 +25,11 @@ jobs:
           mkdir .github/bin/
           curl -fsSL https://trunk.io/releases/trunk -o .github/bin/trunk
           chmod u+x .github/bin/trunk
-      - name: Trunk Check
-        run: |
-          git fetch origin HEAD
-          ./.github/bin/trunk check --all
+      - name: Install Trunk linters
+        run: ./.github/bin/trunk install
+      - name: Fetch Git History
+        run: git fetch origin HEAD
+      - name: Trunk Check All
+        run: ./.github/bin/trunk check --all
       - name: Test with pytest
         run: pytest
