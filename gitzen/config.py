@@ -32,7 +32,7 @@ defaultConfig: GitZenConfig = GitZenConfig(
 )
 
 
-def load(dir: str):
+def load(dir: str) -> GitZenConfig:
     configFile = f"{dir}/.gitzen.yml"
     if exists(configFile):
         print(f"Reading config from {configFile}")
