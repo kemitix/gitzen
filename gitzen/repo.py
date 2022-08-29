@@ -6,15 +6,15 @@ from gitzen import git
 
 
 # will exit the program if called from outside a git repo
-def rootDir() -> str:
-    output = git.revParse("--show-toplevel")
+def rootDir(gitEnv: git.Env) -> str:
+    output = git.revParse(gitEnv, "--show-toplevel")
     if output == "":
         exit(1)
     return output[0]
 
 
-def getLocalBranchName() -> str:
-    branches = git.branch()
+def getLocalBranchName(gitEnv: git.Env) -> str:
+    branches = git.branch(gitEnv)
     for branch in branches:
         if branch.startswith("* "):
             return branch[2:]

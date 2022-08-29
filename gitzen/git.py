@@ -3,29 +3,35 @@ import subprocess
 from typing import List
 
 
-def _git(args: str) -> List[str]:
-    result: subprocess.CompletedProcess[bytes] = subprocess.run(
-        shlex.split(f"git {args}"), stdout=subprocess.PIPE
-    )
-    stdout = result.stdout
-    if stdout:
-        lines = stdout.decode().splitlines()
-        return lines
-    else:
-        return ""
+class Env:
+    def git(self, args: str) -> List[str]:
+        pass
 
 
-def revParse(args: str = "") -> List[str]:
-    return _git(f"rev-parse {args}")
+class RealEnv(Env):
+    def git(self, args: str) -> List[str]:
+        result: subprocess.CompletedProcess[bytes] = subprocess.run(
+            shlex.split(f"git {args}"), stdout=subprocess.PIPE
+        )
+        stdout = result.stdout
+        if stdout:
+            lines = stdout.decode().splitlines()
+            return lines
+        else:
+            return ""
 
 
-def fetch() -> List[str]:
-    return _git("fetch")
+def revParse(env: Env, args: str = "") -> List[str]:
+    return env.git(f"rev-parse {args}")
 
 
-def branch() -> List[str]:
-    return _git("branch --no-color")
+def fetch(env: Env) -> List[str]:
+    return env.git("fetch")
 
 
-def remote() -> List[str]:
-    return _git("remote --verbose")
+def branch(env: Env) -> List[str]:
+    return env.git("branch --no-color")
+
+
+def remote(env: Env) -> List[str]:
+    return env.git("remote --verbose")
