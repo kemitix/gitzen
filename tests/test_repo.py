@@ -3,7 +3,7 @@ from subprocess import PIPE, CompletedProcess
 from typing import List
 from unittest import mock
 
-from gitzen import repo
+from gitzen import git, repo
 
 
 @mock.patch("subprocess.run")
@@ -12,7 +12,7 @@ def test_rootDir(mock_subproc_run):
     Test that the correct command is invoked
     """
     # when
-    repo.rootDir()
+    repo.rootDir(git.RealEnv())
     # then
     gitRevParse = ["git", "rev-parse", "--show-toplevel"]
     mock_subproc_run.assert_called_with(gitRevParse, stdout=PIPE)
@@ -28,7 +28,7 @@ def test_rootDir_returns_path(mock_subproc_run):
         "", 0, stdout="test-root-dir".encode()
     )
     # when
-    result = repo.rootDir()
+    result = repo.rootDir(git.RealEnv())
     # then
     assert result == "test-root-dir"
 
@@ -39,7 +39,7 @@ def test_getLocalBranchName_calls_git_branch(mock_subproc_run):
     Test that the correct command is invoked
     """
     # when
-    repo.getLocalBranchName()
+    repo.getLocalBranchName(git.RealEnv())
     # then
     mock_subproc_run.assert_called_with(
         ["git", "branch", "--no-color"], stdout=subprocess.PIPE
@@ -57,7 +57,7 @@ def test_getLocalBranchName_returns_correct_branch(mock_subproc_run):
         "", 0, stdout="\n".join(["  not-me", "* me", "  not-me-2"]).encode()
     )
     # when
-    result = repo.getLocalBranchName()
+    result = repo.getLocalBranchName(git.RealEnv())
     # then
     assert result == "me"
 

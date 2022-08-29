@@ -10,7 +10,7 @@ def test_revParse(mock_subproc_run):
     Test that the correct command is invoked
     """
     # when
-    git.revParse("--verify HEAD")
+    git.revParse(git.RealEnv(), "--verify HEAD")
     # then
     gitRevParse = ["git", "rev-parse", "--verify", "HEAD"]
     mock_subproc_run.assert_called_with(gitRevParse, stdout=PIPE)
@@ -26,7 +26,7 @@ def test_revParse_returns_value(mock_subproc_run):
         "", 0, stdout="688881f74786d59ff397ef81efe1c137167f46b2".encode()
     )
     # when
-    result = git.revParse()
+    result = git.revParse(git.RealEnv())
     # then
     assert result == ["688881f74786d59ff397ef81efe1c137167f46b2"]
 
@@ -37,7 +37,7 @@ def test_fetch(mock_subproc_run):
     Test that the correct command is invoked
     """
     # when
-    git.fetch()
+    git.fetch(git.RealEnv())
     # then
     gitFetch = ["git", "fetch"]
     mock_subproc_run.assert_called_with(gitFetch, stdout=PIPE)
@@ -49,7 +49,7 @@ def test_branch(mock_subproc_run):
     Test that the correct command is invoked
     """
     # when
-    git.branch()
+    git.branch(git.RealEnv())
     # then
     mock_subproc_run.assert_called_with(
         [
@@ -67,7 +67,7 @@ def test_remote(mock_subproc_run):
     Test that the correct command is invoked
     """
     # when
-    git.remote()
+    git.remote(git.RealEnv())
     # then
     mock_subproc_run.assert_called_with(
         [
