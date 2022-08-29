@@ -17,7 +17,7 @@ def test_pullRequests(mock_subproc_run):
     ).encode()
     mock_subproc_run.return_value = CompletedProcess("", 0, stdout=expected)
     # when
-    github.pullRequests()
+    github.pullRequests(github.RealEnv())
     # then
     query = github.queryPullRequests
     ghApiQuery = [
@@ -88,7 +88,7 @@ def test_pullRequests_returns_list_of_prs(mock_subproc_run):
     )
     # trunk-ignore-end(flake8/E501)
     # when
-    result = github.pullRequests()
+    result = github.pullRequests(github.RealEnv())
     # then
     assert result == [
         github.PullRequest(

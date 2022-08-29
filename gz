@@ -2,11 +2,14 @@
 
 import sys
 
-from gitzen import config, repo, status
+from gitzen import config, git, github, repo, status
 
 print("`git zen` - prototype")
 
-rootDir = repo.rootDir()  # verifies that we are in a git repo or exits
+gitEnv = git.RealEnv()
+githubEnv = github.RealEnv()
+
+rootDir = repo.rootDir(gitEnv)  # verifies that we are in a git repo or exits
 config = config.load(rootDir)
 
 for i, arg in enumerate(sys.argv):
@@ -14,4 +17,4 @@ for i, arg in enumerate(sys.argv):
         continue
     match arg:
         case "status":
-            status.status()
+            status.status(githubEnv)

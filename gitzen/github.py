@@ -1,9 +1,42 @@
 import json
 import shlex
 import subprocess
-from typing import Dict, List
+from typing import Any, Dict, List
 
 from jmespath import search as jq
+
+
+class Env:
+    def graphql(
+        self,
+        params: Dict[str, str],
+        query,
+        path: str,
+    ) -> Dict[str, Any]:
+        pass
+
+
+class RealEnv:
+    def graphql(
+        self,
+        params: Dict[str, str],
+        query,
+        path: str,
+    ) -> Dict[str, Any]:
+        args = shlex.split("gh api graphql")
+        for pair in params:
+            args.append("-F")
+            args.append(f"{pair}=" + params[pair])
+        args.append("-f")
+        args.append(f"query={query}")
+        result: subprocess.CompletedProcess[bytes] = subprocess.run(
+            args, stdout=subprocess.PIPE
+        )
+        stdout = result.stdout
+        if stdout:
+            return jq(path, json.loads(stdout.decode()))
+        else:
+            return {}  # TODO return some error condition
 
 
 class Commit:
@@ -96,23 +129,6 @@ class PullRequest:
         )
 
 
-def _ghApiGraphql(params: Dict[str, str], query):
-    args = shlex.split("gh api graphql")
-    for pair in params:
-        args.append("-F")
-        args.append(f"{pair}=" + params[pair])
-    args.append("-f")
-    args.append(f"query={query}")
-    result: subprocess.CompletedProcess[bytes] = subprocess.run(
-        args, stdout=subprocess.PIPE
-    )
-    stdout = result.stdout
-    if stdout:
-        return json.loads(stdout.decode())
-    else:
-        return ""
-
-
 # trunk-ignore(flake8/E501)
 # GraphQL originally from https://github.com/ejoffe/spr/blob/9597afc52354db66d4b419f7ee7a9bd7eacdf70f/github/githubclient/gen/genclient/operations.go#L72
 queryPullRequests = """query($repo_name: String!){
@@ -150,10 +166,12 @@ queryPullRequests = """query($repo_name: String!){
 """
 
 
-def pullRequests() -> List[PullRequest]:
-    params: Dict[str, str] = {"repo_name": "{repo}"}
-    result = _ghApiGraphql(params, queryPullRequests)
-    prNodes = jq("data.viewer.repository.pullRequests.nodes", result)
+def pullRequests(env: Env) -> List[PullRequest]:
+    prNodes = env.graphql(
+        {"repo_name": "{repo}"},
+        queryPullRequests,
+        "data.viewer.repository.pullRequests.nodes",
+    )
     prs: List[PullRequest] = []
     for prNode in prNodes:
         commits = []
