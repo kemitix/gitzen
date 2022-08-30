@@ -2,7 +2,8 @@
 
 import sys
 
-from gitzen import config, git, github, repo, status
+from gitzen import config, git, github, repo
+from gitzen.commands import status
 
 print("`git zen` - prototype")
 
