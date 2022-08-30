@@ -3,14 +3,14 @@ import shlex
 import subprocess
 from typing import Any, Dict, List
 
-from jmespath import search as jq
+import jmespath
 
 
 class Env:
     def graphql(
         self,
         params: Dict[str, str],
-        query,
+        query: str,
         path: str,
     ) -> Dict[str, Any]:
         pass
@@ -20,7 +20,7 @@ class RealEnv:
     def graphql(
         self,
         params: Dict[str, str],
-        query,
+        query: str,
         path: str,
     ) -> Dict[str, Any]:
         args = shlex.split("gh api graphql")
@@ -34,7 +34,7 @@ class RealEnv:
         )
         stdout = result.stdout
         if stdout:
-            return jq(path, json.loads(stdout.decode()))
+            return jmespath.search(path, json.loads(stdout.decode()))
         else:
             return {}  # TODO return some error condition
 
@@ -177,25 +177,27 @@ def pullRequests(env: Env) -> List[PullRequest]:
         commits = []
         for commitNodeItem in prNode["commits"]["nodes"]:
             commitNode = commitNodeItem["commit"]
-            commit = Commit(
-                oid=commitNode["oid"],
-                headline=commitNode["messageHeadline"],
-                body=commitNode["messageBody"],
-                status=commitNode["statusCheckRollup"]["state"],
+            commits.append(
+                Commit(
+                    oid=commitNode["oid"],
+                    headline=commitNode["messageHeadline"],
+                    body=commitNode["messageBody"],
+                    status=commitNode["statusCheckRollup"]["state"],
+                )
             )
-            commits.append(commit)
         reviewNode = prNode["reviewDecision"]
         reviewDecision = reviewNode if reviewNode is not None else ""
-        pr = PullRequest(
-            id=prNode["id"],
-            number=prNode["number"],
-            title=prNode["title"],
-            baseRefName=prNode["baseRefName"],
-            headRefName=prNode["headRefName"],
-            mergeable=prNode["mergeable"],
-            reviewDecision=reviewDecision,
-            repoId=prNode["repository"]["id"],
-            commits=commits,
+        prs.append(
+            PullRequest(
+                id=prNode["id"],
+                number=prNode["number"],
+                title=prNode["title"],
+                baseRefName=prNode["baseRefName"],
+                headRefName=prNode["headRefName"],
+                mergeable=prNode["mergeable"],
+                reviewDecision=reviewDecision,
+                repoId=prNode["repository"]["id"],
+                commits=commits,
+            )
         )
-        prs.append(pr)
     return prs
