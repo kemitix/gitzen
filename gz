@@ -3,7 +3,7 @@
 import sys
 
 from gitzen import config, git, github, repo
-from gitzen.commands import status
+from gitzen.commands import push, status
 
 print("`git zen` - prototype")
 
@@ -19,3 +19,5 @@ for i, arg in enumerate(sys.argv):
     match arg:
         case "status":
             status.status(githubEnv)
+        case "push":
+            push.push(githubEnv)
