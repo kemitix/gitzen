@@ -5,6 +5,9 @@ from typing import Any, Dict, List
 
 import jmespath
 
+from gitzen.models.github_commit import Commit
+from gitzen.models.github_pull_request import PullRequest
+
 
 class Env:
     def graphql(
@@ -37,96 +40,6 @@ class RealEnv:
             return jmespath.search(path, json.loads(stdout.decode()))
         else:
             return {}  # TODO return some error condition
-
-
-class Commit:
-    oid: str
-    messageHeadline: str
-    messageBody: str
-    status: str  # enum
-
-    def __init__(self, oid: str, headline: str, body: str, status: str):
-        self.oid = oid
-        self.messageHeadline = headline
-        self.messageBody = body
-        self.status = status
-
-    def __eq__(self, __o: object) -> bool:
-        return (
-            self.oid == __o.oid
-            and self.messageHeadline == __o.messageHeadline
-            and self.messageBody == __o.messageBody
-            and self.status == __o.status
-        )
-
-    def __repr__(self) -> str:
-        return (
-            f"Commit(oid={repr(self.oid)}, "
-            f"messageHeadline={repr(self.messageHeadline)}, "
-            f"messageBody={repr(self.messageBody)}, "
-            f"status={repr(self.status)})"
-        )
-
-
-class PullRequest:
-    id: str
-    number: int
-    title: str
-    baseRefName: str
-    headRefName: str
-    mergeable: str  # enum
-    reviewDecision: str  # enum
-    repoId: str
-    commits: List[Commit]
-
-    def __init__(
-        self,
-        id: str,
-        number: str,
-        title: str,
-        baseRefName: str,
-        headRefName: str,
-        mergeable: str,
-        reviewDecision: str,
-        repoId: str,
-        commits: List[Commit],
-    ):
-        self.id = id
-        self.number = number
-        self.title = title
-        self.baseRefName = baseRefName
-        self.headRefName = headRefName
-        self.mergeable = mergeable
-        self.reviewDecision = reviewDecision
-        self.repoId = repoId
-        self.commits = commits
-
-    def __eq__(self, __o: object) -> bool:
-        return (
-            self.id == __o.id
-            and self.number == __o.number
-            and self.title == __o.title
-            and self.baseRefName == __o.baseRefName
-            and self.headRefName == __o.headRefName
-            and self.mergeable == __o.mergeable
-            and self.reviewDecision == __o.reviewDecision
-            and self.repoId == __o.repoId
-            and self.commits == __o.commits
-        )
-
-    def __repr__(self) -> str:
-        return (
-            "PullRequest("
-            f"id={repr(self.id)}, "
-            f"number={repr(self.number)}, "
-            f"title={repr(self.title)}, "
-            f"baseRefName={repr(self.baseRefName)}, "
-            f"headRefName={repr(self.baseRefName)}, "
-            f"mergeable={repr(self.mergeable)}, "
-            f"reviewDecision={repr(self.reviewDecision)}, "
-            f"repoId={repr(self.repoId)}, "
-            f"commit={repr(self.commits)})"
-        )
 
 
 # trunk-ignore(flake8/E501)
