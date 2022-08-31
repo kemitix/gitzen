@@ -1,3 +1,10 @@
+from gitzen import github
+
+
+def push(env: github.Env):
+    pass
+
+
 # # fetch and get github info
 #     # get remote branch name as targetBRanch
 #     # rebaseCommand =
