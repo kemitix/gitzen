@@ -12,7 +12,7 @@ def test_rootDir(mock_subproc_run):
     Test that the correct command is invoked
     """
     # when
-    repo.rootDir(git.RealEnv())
+    repo.rootDir(git.RealGitEnv())
     # then
     gitRevParse = ["git", "rev-parse", "--show-toplevel"]
     mock_subproc_run.assert_called_with(gitRevParse, stdout=PIPE)
@@ -28,7 +28,7 @@ def test_rootDir_returns_path(mock_subproc_run):
         "", 0, stdout="test-root-dir".encode()
     )
     # when
-    result = repo.rootDir(git.RealEnv())
+    result = repo.rootDir(git.RealGitEnv())
     # then
     assert result == "test-root-dir"
 
@@ -39,7 +39,7 @@ def test_getLocalBranchName_calls_git_branch(mock_subproc_run):
     Test that the correct command is invoked
     """
     # when
-    repo.getLocalBranchName(git.RealEnv())
+    repo.getLocalBranchName(git.RealGitEnv())
     # then
     mock_subproc_run.assert_called_with(
         ["git", "branch", "--no-color"], stdout=subprocess.PIPE
@@ -57,7 +57,7 @@ def test_getLocalBranchName_returns_correct_branch(mock_subproc_run):
         "", 0, stdout="\n".join(["  not-me", "* me", "  not-me-2"]).encode()
     )
     # when
-    result = repo.getLocalBranchName(git.RealEnv())
+    result = repo.getLocalBranchName(git.RealGitEnv())
     # then
     assert result == "me"
 

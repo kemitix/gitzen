@@ -1,7 +1,7 @@
 from gitzen import github
 
 
-def status(env: github.Env):
+def status(env: github.GithubEnv):
     print("Querying Github...")
     prs = github.pullRequests(env)
     numPRs = len(prs)
