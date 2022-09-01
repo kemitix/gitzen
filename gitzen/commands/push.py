@@ -1,7 +1,7 @@
 from gitzen import github
 
 
-def push(env: github.Env):
+def push(env: github.GithubEnv):
     pass
 
 

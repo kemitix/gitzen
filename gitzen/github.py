@@ -9,7 +9,7 @@ from gitzen.models.github_commit import Commit
 from gitzen.models.github_pull_request import PullRequest
 
 
-class Env:
+class GithubEnv:
     def graphql(
         self,
         params: Dict[str, str],
@@ -19,7 +19,7 @@ class Env:
         pass
 
 
-class RealEnv:
+class RealGithubEnv:
     def graphql(
         self,
         params: Dict[str, str],
@@ -79,7 +79,7 @@ queryPullRequests = """query($repo_name: String!){
 """
 
 
-def pullRequests(env: Env) -> List[PullRequest]:
+def pullRequests(env: GithubEnv) -> List[PullRequest]:
     prNodes = env.graphql(
         {"repo_name": "{repo}"},
         queryPullRequests,
