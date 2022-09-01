@@ -1,5 +1,5 @@
 from gitzen.branches import getRemoteBranchName
-from gitzen.config import GitZenConfig
+from gitzen.config import Config
 
 
 def test_getRemoteBranchName_returns_default_when_no_match():
@@ -11,8 +11,9 @@ def test_getRemoteBranchName_returns_default_when_no_match():
     # given
     defaultBranch = "foo"
     remoteBranches = ["baz"]
-    config = GitZenConfig(
-        defaultRemoteBranch=defaultBranch, remoteBranches=remoteBranches
+    config = Config(
+        defaultRemoteBranch=defaultBranch,
+        remoteBranches=remoteBranches,
     )
     # when
     result = getRemoteBranchName("other", config)
