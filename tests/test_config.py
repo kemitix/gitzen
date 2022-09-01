@@ -31,8 +31,9 @@ def test_load_returns_parsed_config_when_file_is_found(tmp_path: PosixPath):
     # when
     result = config.load(tmp_path)
     # then
-    assert result == config.GitZenConfig(
-        defaultRemoteBranch="drb", remoteBranches=["rbn"]
+    assert result == config.Config(
+        defaultRemoteBranch="drb",
+        remoteBranches=["rbn"],
     )
 
 

@@ -4,11 +4,11 @@ from typing import List
 import bios
 
 
-class GitZenConfig:
+class Config:
     defaultRemoteBranch: str
     remoteBranchNames: List[str]
 
-    def __init__(self, defaultRemoteBranch: str, remoteBranches: str) -> None:
+    def __init__(self, defaultRemoteBranch: str, remoteBranches: str):
         self.defaultRemoteBranch = defaultRemoteBranch
         self.remoteBranchNames = remoteBranches
 
@@ -20,24 +20,22 @@ class GitZenConfig:
 
     def __repr__(self) -> str:
         return (
-            "GitZenConfig("
+            "Config("
             f"defaultRemoteBranch={repr(self.defaultRemoteBranch)}, "
             f"remoteBranchNames={repr(self.remoteBranchNames)}, "
             ")"
         )
 
 
-defaultConfig: GitZenConfig = GitZenConfig(
-    defaultRemoteBranch="master", remoteBranches=[]
-)
+defaultConfig: Config = Config(defaultRemoteBranch="master", remoteBranches=[])
 
 
-def load(dir: str) -> GitZenConfig:
+def load(dir: str) -> Config:
     configFile = f"{dir}/.gitzen.yml"
     if exists(configFile):
         print(f"Reading config from {configFile}")
         gitzenYml = bios.read(configFile)
-        return GitZenConfig(
+        return Config(
             defaultRemoteBranch=gitzenYml["defaultRemoteBranch"],
             remoteBranches=gitzenYml["remoteBranches"],
         )
