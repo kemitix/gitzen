@@ -2,10 +2,7 @@ import shlex
 import subprocess
 from typing import List
 
-
-class GitEnv:
-    def git(self, args: str) -> List[str]:
-        pass
+from gitzen.envs import GitEnv
 
 
 class RealGitEnv(GitEnv):
