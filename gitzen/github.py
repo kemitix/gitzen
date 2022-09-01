@@ -5,18 +5,9 @@ from typing import Any, Dict, List
 
 import jmespath
 
+from gitzen.envs import GithubEnv
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_pull_request import PullRequest
-
-
-class GithubEnv:
-    def graphql(
-        self,
-        params: Dict[str, str],
-        query: str,
-        path: str,
-    ) -> Dict[str, Any]:
-        pass
 
 
 class RealGithubEnv:
