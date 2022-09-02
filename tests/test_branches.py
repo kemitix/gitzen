@@ -1,4 +1,4 @@
-from gitzen.branches import getRemoteBranchName
+from gitzen.branches import getRemoteBranch
 from gitzen.config import Config
 
 
@@ -16,6 +16,6 @@ def test_getRemoteBranchName_returns_default_when_no_match():
         remote="origin",
     )
     # when
-    result = getRemoteBranchName("other", config)
+    result = getRemoteBranch("other", config)
     # then
     assert result == defaultBranch
