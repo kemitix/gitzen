@@ -6,7 +6,7 @@ import bios
 
 class Config:
     defaultRemoteBranch: str
-    remoteBranchNames: List[str]
+    remoteBranch: List[str]
     remote: str
 
     def __init__(
@@ -16,13 +16,13 @@ class Config:
         remote: str,
     ):
         self.defaultRemoteBranch = defaultRemoteBranch
-        self.remoteBranchNames = remoteBranches
+        self.remoteBranch = remoteBranches
         self.remote = remote
 
     def __eq__(self, __o: object) -> bool:
         return (
             self.defaultRemoteBranch == __o.defaultRemoteBranch
-            and self.remoteBranchNames == __o.remoteBranchNames
+            and self.remoteBranch == __o.remoteBranch
             and self.remote == __o.remote
         )
 
@@ -30,7 +30,7 @@ class Config:
         return (
             "Config("
             f"defaultRemoteBranch={repr(self.defaultRemoteBranch)}, "
-            f"remoteBranchNames={repr(self.remoteBranchNames)}, "
+            f"remoteBranch={repr(self.remoteBranch)}, "
             f"remote={self.remote}, "
             ")"
         )
