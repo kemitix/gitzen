@@ -6,15 +6,15 @@ from gitzen import git
 
 
 # will exit the program if called from outside a git repo
-def rootDir(gitEnv: git.GitEnv) -> str:
-    output = git.revParse(gitEnv, "--show-toplevel")
+def root_dir(git_env: git.GitEnv) -> str:
+    output = git.rev_parse(git_env, "--show-toplevel")
     if output == "":
         exit(1)
     return output[0]
 
 
-def getLocalBranchName(gitEnv: git.GitEnv) -> str:
-    branches = git.branch(gitEnv)
+def get_local_branch_name(git_env: git.GitEnv) -> str:
+    branches = git.branch(git_env)
     for branch in branches:
         if branch.startswith("* "):
             return branch[2:]
@@ -22,31 +22,31 @@ def getLocalBranchName(gitEnv: git.GitEnv) -> str:
     exit
 
 
-def getRepoDetailsFromRemote(remote: str) -> Tuple[str, str, str, bool]:
+def get_repo_details_from_remote(remote: str) -> Tuple[str, str, str, bool]:
     # Allows "https://", "ssh://" or no protocol at all (this means ssh)
-    protocolFormat = "(?:(https://)|(ssh://))?"
+    protocol_format = "(?:(https://)|(ssh://))?"
     # This may or may not be present in the address
-    userFormat = "(git@)?"
+    user_format = "(git@)?"
     # "/" is expected in "http://" or "ssh://" protocol, when no protocol given
     # it should be ":"
-    repoFormat = (
+    repo_format = (
         r"(?P<githubHost>[a-z0-9._\-]+)(/|:)"
         r"(?P<repoOwner>\w+)/"
         r"(?P<repoName>[\w-]+)"
     )
     # This is neither required in https access nor in ssh one
-    suffixFormat = "(.git)?"
-    regexFormat = r"^origin\s+%s%s%s%s \(push\)" % (
-        protocolFormat,
-        userFormat,
-        repoFormat,
-        suffixFormat,
+    suffix_format = "(.git)?"
+    regex_format = r"^origin\s+%s%s%s%s \(push\)" % (
+        protocol_format,
+        user_format,
+        repo_format,
+        suffix_format,
     )
-    regex = re.compile(regexFormat)
+    regex = re.compile(regex_format)
     match = regex.search(remote)
     if match:
-        githubHost = match.group("githubHost")
-        repoOwner = match.group("repoOwner")
-        repoName = match.group("repoName")
-        return githubHost, repoOwner, repoName, True
+        github_host = match.group("githubHost")
+        repo_owner = match.group("repoOwner")
+        repo_name = match.group("repoName")
+        return github_host, repo_owner, repo_name, True
     return "", "", "", False

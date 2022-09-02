@@ -34,5 +34,5 @@ def remote(env: GitEnv) -> List[str]:
     return env.git("remote --verbose")
 
 
-def revParse(env: GitEnv, args: str = "") -> List[str]:
+def rev_parse(env: GitEnv, args: str = "") -> List[str]:
     return env.git(f"rev-parse {args}")
