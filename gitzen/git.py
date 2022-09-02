@@ -18,17 +18,17 @@ class RealGitEnv(GitEnv):
             return ""
 
 
-def revParse(env: GitEnv, args: str = "") -> List[str]:
-    return env.git(f"rev-parse {args}")
+def branch(env: GitEnv) -> List[str]:
+    return env.git("branch --no-color")
 
 
 def fetch(env: GitEnv) -> List[str]:
     return env.git("fetch")
 
 
-def branch(env: GitEnv) -> List[str]:
-    return env.git("branch --no-color")
-
-
 def remote(env: GitEnv) -> List[str]:
     return env.git("remote --verbose")
+
+
+def revParse(env: GitEnv, args: str = "") -> List[str]:
+    return env.git(f"rev-parse {args}")
