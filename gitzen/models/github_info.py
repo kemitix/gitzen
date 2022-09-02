@@ -31,10 +31,9 @@ class GithubInfo:
 
     def __repr__(self) -> str:
         return (
-            "GithubInfo(\n"
-            f" username={self.username},\n"
-            f" repo_id={self.repo_id},\n"
-            f" local_branch={self.local_branch},\n"
-            f" pull_requests={self.pull_requests}\n"
-            ")"
+            "GithubInfo("
+            f"username={self.username}, "
+            f"repo_id={self.repo_id}, "
+            f"local_branch={self.local_branch}, "
+            f"pull_requests={self.pull_requests})"
         )

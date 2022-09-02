@@ -1,9 +1,10 @@
 from gitzen import github
+from gitzen.envs import GitGithubEnv
 
 
-def status(env: github.GithubEnv):
+def status(gitGithubEnv: GitGithubEnv):
     print("Querying Github...")
-    prs = github.pullRequests(env)
+    prs = github.fetchInfo(gitGithubEnv).pull_requests
     numPRs = len(prs)
     if numPRs == 0:
         print("Stack is empty - no PRs found")

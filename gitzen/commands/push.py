@@ -1,8 +1,10 @@
-from gitzen import github
+from gitzen import branches, config, envs, github
 
 
-def push(env: github.GithubEnv):
-    pass
+def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
+    status = github.fetchInfo(gitGithubEnv)
+    remote_branch = branches.getRemoteBranchName(status.local_branch, config)
+    f"rebase {config.remote}/{remote_branch}"
 
 
 # # fetch and get github info

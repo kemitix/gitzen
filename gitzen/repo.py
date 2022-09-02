@@ -13,8 +13,8 @@ def rootDir(gitEnv: git.GitEnv) -> str:
     return output[0]
 
 
-def getLocalBranchName(env: git.GitEnv) -> str:
-    branches = git.branch(env)
+def getLocalBranchName(gitEnv: git.GitEnv) -> str:
+    branches = git.branch(gitEnv)
     for branch in branches:
         if branch.startswith("* "):
             return branch[2:]
