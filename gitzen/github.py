@@ -37,7 +37,7 @@ class RealGithubEnv:
 
 # trunk-ignore(flake8/E501)
 # GraphQL originally from https://github.com/ejoffe/spr/blob/9597afc52354db66d4b419f7ee7a9bd7eacdf70f/github/githubclient/gen/genclient/operations.go#L72
-queryStatus = """query($repo_owner: String!, $repo_name: String!){
+query_status = """query($repo_owner: String!, $repo_name: String!){
     viewer {
         login
         repository(name: $repo_name) {
@@ -76,26 +76,26 @@ queryStatus = """query($repo_owner: String!, $repo_name: String!){
 """
 
 
-def fetchInfo(gitGithubEnv: envs.GitGithubEnv) -> GithubInfo:
+def fetch_info(gitGithubEnv: envs.GitGithubEnv) -> GithubInfo:
     data = gitGithubEnv.githubEnv.graphql(
         {
             "repo_owner": "{owner}",
             "repo_name": "{repo}",
         },
-        queryStatus,
+        query_status,
         "data",
     )
     repo_id = data["repository"]["id"]
     viewer = data["viewer"]
-    prNodes = viewer["repository"]["pullRequests"]["nodes"]
+    pr_nodes = viewer["repository"]["pullRequests"]["nodes"]
     prs: List[PullRequest] = []
-    print(f"Found {len(prNodes)} prs")
-    for prNode in prNodes:
-        pr_repo_id = prNode["repository"]["id"]
+    print(f"Found {len(pr_nodes)} prs")
+    for pr_node in pr_nodes:
+        pr_repo_id = pr_node["repository"]["id"]
         if repo_id != pr_repo_id:
             continue
-        base_ref = prNode["baseRefName"]
-        head_ref = prNode["headRefName"]
+        base_ref = pr_node["baseRefName"]
+        head_ref = pr_node["headRefName"]
         print(f"{base_ref} <- {head_ref}")
         match = re.search(r"^gitzen/pr/(?P<localBranch>.*)$", head_ref)
         if match is None:
@@ -103,40 +103,40 @@ def fetchInfo(gitGithubEnv: envs.GitGithubEnv) -> GithubInfo:
         if match.group("localBranch") != base_ref:
             print("ignore prs that don't target expected base branch ???")
             continue
-        reviewNode = prNode["reviewDecision"]
-        reviewDecision = reviewNode if reviewNode is not None else ""
+        review_node = pr_node["reviewDecision"]
+        review_decision = review_node if review_node is not None else ""
         prs.append(
             PullRequest(
-                id=prNode["id"],
-                number=prNode["number"],
-                title=prNode["title"],
+                id=pr_node["id"],
+                number=pr_node["number"],
+                title=pr_node["title"],
                 baseRefName=base_ref,
                 headRefName=head_ref,
-                mergeable=prNode["mergeable"],
-                reviewDecision=reviewDecision,
+                mergeable=pr_node["mergeable"],
+                reviewDecision=review_decision,
                 repoId=pr_repo_id,
-                commits=getCommits(prNode),
+                commits=get_commits(pr_node),
             )
         )
     print(f"Kept {len(prs)} prs")
     return GithubInfo(
         username=viewer["login"],
         repo_id=repo_id,
-        local_branch=repo.getLocalBranchName(gitGithubEnv.gitEnv),
+        local_branch=repo.get_local_branch_name(gitGithubEnv.gitEnv),
         pull_requests=prs,
     )
 
 
-def getCommits(prNode):
+def get_commits(pr_node):
     commits = []
-    for commitNodeItem in prNode["commits"]["nodes"]:
-        commitNode = commitNodeItem["commit"]
+    for commit_node_item in pr_node["commits"]["nodes"]:
+        commit_node = commit_node_item["commit"]
         commits.append(
             Commit(
-                oid=commitNode["oid"],
-                headline=commitNode["messageHeadline"],
-                body=commitNode["messageBody"],
-                status=commitNode["statusCheckRollup"]["state"],
+                oid=commit_node["oid"],
+                headline=commit_node["messageHeadline"],
+                body=commit_node["messageBody"],
+                status=commit_node["statusCheckRollup"]["state"],
             )
         )
     return commits

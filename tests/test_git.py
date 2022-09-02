@@ -76,7 +76,7 @@ def test_revParse(mock_subproc_run):
     Test that the correct command is invoked
     """
     # when
-    git.revParse(git.RealGitEnv(), "--verify HEAD")
+    git.rev_parse(git.RealGitEnv(), "--verify HEAD")
     # then
     gitRevParse = ["git", "rev-parse", "--verify", "HEAD"]
     mock_subproc_run.assert_called_with(gitRevParse, stdout=PIPE)
@@ -92,6 +92,6 @@ def test_revParse_returns_value(mock_subproc_run):
         "", 0, stdout="688881f74786d59ff397ef81efe1c137167f46b2".encode()
     )
     # when
-    result = git.revParse(git.RealGitEnv())
+    result = git.rev_parse(git.RealGitEnv())
     # then
     assert result == ["688881f74786d59ff397ef81efe1c137167f46b2"]

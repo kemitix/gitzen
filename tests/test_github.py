@@ -26,14 +26,14 @@ def test_fetchInfo_invokes_command(mock_subproc_run):
     ).encode()
     mock_subproc_run.return_value = CompletedProcess("", 0, stdout=expected)
     # when
-    github.fetchInfo(
+    github.fetch_info(
         envs.GitGithubEnv(
             git.RealGitEnv(),
             github.RealGithubEnv(),
         )
     )
     # then
-    query = github.queryStatus
+    query = github.query_status
     ghApiQuery = mock.call(
         [
             "gh",
@@ -236,7 +236,7 @@ def test_fetchInfo_returns_githubInfo(mock_subproc_run):
         commits=[commit],
     )
     # when
-    result = github.fetchInfo(
+    result = github.fetch_info(
         envs.GitGithubEnv(git.RealGitEnv(), github.RealGithubEnv())
     )
     # then
