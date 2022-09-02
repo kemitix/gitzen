@@ -7,6 +7,4 @@ def get_remote_branch(local_branch: str, config: Config) -> str:
     for remote_branch in config.remote_branches:
         if remote_branch == local_branch:
             return remote_branch
-        else:
-            return config.default_remote_branch
-    return ""
+    return config.default_remote_branch
