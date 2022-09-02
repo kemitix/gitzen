@@ -20,3 +20,21 @@ class GithubInfo:
         self.repo_id = repo_id
         self.local_branch = local_branch
         self.pull_requests = pull_requests
+
+    def __eq__(self, __o: object) -> bool:
+        return (
+            self.username == __o.username
+            and self.repo_id == __o.repo_id
+            and self.local_branch == __o.local_branch
+            and self.pull_requests == __o.pull_requests
+        )
+
+    def __repr__(self) -> str:
+        return (
+            "GithubInfo(\n"
+            f" username={self.username},\n"
+            f" repo_id={self.repo_id},\n"
+            f" local_branch={self.local_branch},\n"
+            f" pull_requests={self.pull_requests}\n"
+            ")"
+        )
