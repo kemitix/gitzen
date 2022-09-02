@@ -3,10 +3,10 @@ from gitzen.config import Config
 
 # look for the local branch name in the remote branches from config
 # if found use that, otherwise, use the default branch from Config
-def getRemoteBranch(localBranch: str, config: Config) -> str:
-    for remoteBranch in config.remoteBranch:
-        if remoteBranch == localBranch:
-            return remoteBranch
+def get_remote_branch(local_branch: str, config: Config) -> str:
+    for remote_branch in config.remote_branch:
+        if remote_branch == local_branch:
+            return remote_branch
         else:
-            return config.defaultRemoteBranch
+            return config.default_remote_branch
     return ""

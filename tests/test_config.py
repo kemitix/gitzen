@@ -9,17 +9,17 @@ from gitzen import config
 def test_load_returns_default_config_when_file_not_found(tmp_path):
     # given
     # a repo with no config file
-    givenRepo(tmp_path)
+    given_repo(tmp_path)
     # when
     result = config.load(tmp_path)
     # then
-    assert result == config.defaultConfig
+    assert result == config.default_config
 
 
 def test_load_returns_parsed_config_when_file_is_found(tmp_path: PosixPath):
     # given
     # a repo with a config file
-    givenRepo(tmp_path)
+    given_repo(tmp_path)
     configFile = f"{tmp_path}/.gitzen.yml"
     givenFile(
         configFile,
@@ -33,7 +33,7 @@ def test_load_returns_parsed_config_when_file_is_found(tmp_path: PosixPath):
     result = config.load(tmp_path)
     # then
     assert result == config.Config(
-        defaultRemoteBranch="drb", remoteBranches=["rbn"], remote="other"
+        default_remote_branch="drb", remote_branches=["rbn"], remote="other"
     )
 
 
@@ -41,7 +41,7 @@ def test_load_aborts_when_file_is_invalid():
     pass
 
 
-def givenRepo(dir: PosixPath):
+def given_repo(dir: PosixPath):
     cmd = shlex.split("git init")
     run(cmd, cwd=dir, stdout=DEVNULL, stderr=DEVNULL)
 
