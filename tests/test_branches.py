@@ -10,10 +10,10 @@ def test_getRemoteBranchName_returns_default_when_no_match():
     """
     # given
     defaultBranch = "foo"
-    remoteBranches = ["baz"]
     config = Config(
         defaultRemoteBranch=defaultBranch,
-        remoteBranches=remoteBranches,
+        remoteBranches=["baz"],
+        remote="origin",
     )
     # when
     result = getRemoteBranchName("other", config)
