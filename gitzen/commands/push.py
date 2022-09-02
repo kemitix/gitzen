@@ -3,7 +3,7 @@ from gitzen import branches, config, envs, github
 
 def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
     status = github.fetchInfo(gitGithubEnv)
-    remote_branch = branches.getRemoteBranch(status.local_branch, config)
+    remote_branch = branches.get_remote_branch(status.local_branch, config)
     f"rebase {config.remote}/{remote_branch}"
 
 
