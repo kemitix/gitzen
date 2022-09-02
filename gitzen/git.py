@@ -26,6 +26,10 @@ def fetch(env: GitEnv) -> List[str]:
     return env.git("fetch")
 
 
+def rebase(env: GitEnv, target: str) -> List[str]:
+    return env.git(f"rebase {target}")
+
+
 def remote(env: GitEnv) -> List[str]:
     return env.git("remote --verbose")
 
