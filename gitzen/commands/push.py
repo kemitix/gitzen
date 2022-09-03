@@ -10,7 +10,7 @@ def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
         print("remote branch not found")
         exit(exit_code.REMOTE_BRANCH_NOT_FOUND)
     git.rebase(gitGithubEnv.gitEnv, f"{config.remote}/{remote_branch}")
-    branches.exit_if_current_branch_is_remote_pr(local_branch)
+    branches.validate_not_remote_pr(local_branch)
 
 
 # # get local commit stack: HEAD...@{upstream}
