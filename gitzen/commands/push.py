@@ -10,15 +10,9 @@ def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
         print("remote branch not found")
         exit(exit_code.REMOTE_BRANCH_NOT_FOUND)
     git.rebase(gitGithubEnv.gitEnv, f"{config.remote}/{remote_branch}")
+    branches.exit_if_current_branch_is_remote_pr(local_branch)
 
 
-# # fetch and get github info
-#     # get remote branch name as targetBRanch
-#     # rebaseCommand =
-#  fmt.Sprintf("rebase %s/%s --autostash", sd.config.Repo.GitHubRemote,
-#  targetBranch)
-#     # do rebaseCommand
-#     # Error if current branch is a remote pr branch
 # # get local commit stack: HEAD...@{upstream}
 #     # get remote branch name as targetBRanch
 #     # logCommand =
