@@ -129,7 +129,7 @@ def get_commits(pr_node):
         commit_node = commit_node_item["commit"]
         commits.append(
             Commit(
-                oid=commit_node["oid"],
+                hash_id=commit_node["oid"],
                 headline=commit_node["messageHeadline"],
                 body=commit_node["messageBody"],
                 status=commit_node["statusCheckRollup"]["state"],
