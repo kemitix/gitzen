@@ -35,6 +35,18 @@ def test_fetch(mock_subproc_run):
 
 
 @mock.patch("subprocess.run")
+def test_log(mock_subproc_run):
+    """
+    Test that the correct command is invoked
+    """
+    # when
+    git.log(git.RealGitEnv(), "master..HEAD")
+    # then
+    gitFetch = ["git", "log", "--no-color", "master..HEAD"]
+    mock_subproc_run.assert_called_with(gitFetch, stdout=PIPE)
+
+
+@mock.patch("subprocess.run")
 def test_remote(mock_subproc_run):
     """
     Test that the correct command is invoked
