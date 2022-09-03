@@ -29,7 +29,7 @@ def fetch(env: GitEnv) -> List[str]:
 
 
 def rebase(env: GitEnv, target: str) -> List[str]:
-    return env.git(f"rebase {target}")
+    return env.git(f"rebase {target} --autostash")
 
 
 def remote(env: GitEnv) -> List[str]:
