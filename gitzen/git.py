@@ -7,8 +7,10 @@ from gitzen.envs import GitEnv
 
 class RealGitEnv(GitEnv):
     def git(self, args: str) -> List[str]:
+        git_command = f"git {args}"
+        print(f"> {git_command}")
         result: subprocess.CompletedProcess[bytes] = subprocess.run(
-            shlex.split(f"git {args}"), stdout=subprocess.PIPE
+            shlex.split(git_command), stdout=subprocess.PIPE
         )
         stdout = result.stdout
         if stdout:
