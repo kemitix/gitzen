@@ -11,7 +11,6 @@ class GithubEnv:
         self,
         params: Dict[str, str],
         query: str,
-        path: str,
     ) -> Dict[str, Any]:
         pass
 

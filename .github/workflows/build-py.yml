@@ -33,3 +33,5 @@ jobs:
         run: ./.github/bin/trunk check --all
       - name: Test with pytest
         run: pytest
+      - name: Pyre Check
+        run: pyre --sequential check

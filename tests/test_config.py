@@ -21,7 +21,7 @@ def test_load_returns_parsed_config_when_file_is_found(tmp_path: PosixPath):
     # a repo with a config file
     given_repo(tmp_path)
     configFile = f"{tmp_path}/.gitzen.yml"
-    givenFile(
+    given_file(
         configFile,
         [
             "defaultRemoteBranch: drb",
@@ -30,7 +30,7 @@ def test_load_returns_parsed_config_when_file_is_found(tmp_path: PosixPath):
         ],
     )
     # when
-    result = config.load(tmp_path)
+    result = config.load(f"{tmp_path}")
     # then
     assert result == config.Config(
         default_remote_branch="drb", remote_branches=["rbn"], remote="other"
@@ -46,7 +46,7 @@ def given_repo(dir: PosixPath):
     run(cmd, cwd=dir, stdout=DEVNULL, stderr=DEVNULL)
 
 
-def givenFile(file: PosixPath, lines: List[str]):
+def given_file(file: str, lines: List[str]):
     with open(file, "w") as fp:
         contents = "\n".join(lines)
         fp.write(contents)

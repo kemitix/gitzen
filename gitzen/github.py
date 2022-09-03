@@ -4,8 +4,6 @@ import shlex
 import subprocess
 from typing import Any, Dict, List
 
-import jmespath
-
 from gitzen import envs, repo
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
@@ -17,7 +15,6 @@ class RealGithubEnv:
         self,
         params: Dict[str, str],
         query: str,
-        path: str,
     ) -> Dict[str, Any]:
         args = shlex.split("gh api graphql")
         for pair in params:
@@ -30,7 +27,7 @@ class RealGithubEnv:
         )
         stdout = result.stdout
         if stdout:
-            return jmespath.search(path, json.loads(stdout.decode()))
+            return json.loads(stdout.decode())
         else:
             return {}  # TODO return some error condition
 
@@ -83,8 +80,7 @@ def fetch_info(gitGithubEnv: envs.GitGithubEnv) -> GithubInfo:
             "repo_name": "{repo}",
         },
         query_status,
-        "data",
-    )
+    )["data"]
     repo_id = data["repository"]["id"]
     viewer = data["viewer"]
     pr_nodes = viewer["repository"]["pullRequests"]["nodes"]
