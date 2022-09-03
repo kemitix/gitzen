@@ -2,7 +2,7 @@ import json
 import re
 import shlex
 import subprocess
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from gitzen import envs, repo
 from gitzen.models.github_commit import Commit
@@ -127,12 +127,23 @@ def get_commits(pr_node):
     commits = []
     for commit_node_item in pr_node["commits"]["nodes"]:
         commit_node = commit_node_item["commit"]
+        body = commit_node["messageBody"]
+        zentoken = get_zentoken(body)
         commits.append(
             Commit(
-                hash_id=commit_node["oid"],
+                zen_token=zentoken,
+                hash=commit_node["oid"],
                 headline=commit_node["messageHeadline"],
-                body=commit_node["messageBody"],
-                status=commit_node["statusCheckRollup"]["state"],
+                body=body,
             )
         )
     return commits
+
+
+def get_zentoken(body: str) -> Optional[str]:
+    for line in body.splitlines():
+        match = re.search(r"^zen-token: (?P<token>[a-f0-9]{8})$", line)
+        if match:
+            token = match.group("token")
+            return token
+    return None

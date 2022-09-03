@@ -73,7 +73,7 @@ def test_json_loads__escaped_newline():
 
 
 @mock.patch("subprocess.run")
-def test_fetch_info_returns_githubInfo(mock_subproc_run):
+def test_fetch_info_returns_github_info(mock_subproc_run):
     """
     Test that fetchStatus parses the gh query output
     """
@@ -96,7 +96,33 @@ def test_fetch_info_returns_githubInfo(mock_subproc_run):
             {
               "id": "PR_kwDOEVHCd84vkAyI",
               "number": 248,
-              "title": "build(deps): bump microprofile from 4.1 to 5.0",
+              "title": "build(deps): bump microprofile from 4.1 to 5.0 with zentoken",
+              "baseRefName": "master",
+              "headRefName": "gitzen/pr/master",
+              "mergeable": "CONFLICTING",
+              "reviewDecision": null,
+              "repository": {
+                "id": "MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE="
+              },
+              "commits": {
+                "nodes": [
+                  {
+                    "commit": {
+                      "oid": "715fbc4220806fe283e39ee74c6fca3dac52c041",
+                      "messageHeadline": "build(deps): bump microprofile from 4.1 to 5.0",
+                      "messageBody": "Bumps [microprofile](https://github.com/eclipse/microprofile) from 4.1 to 5.0.\\n- [Release notes](https://github.com/eclipse/microprofile/releases)\\n- [Commits](https://github.com/eclipse/microprofile/compare/4.1...5.0)\\n\\n---\\nupdated-dependencies:\\n- dependency-name: org.eclipse.microprofile:microprofile\\n  dependency-type: direct:production\\n  update-type: version-update:semver-major\\n...\\n\\nSigned-off-by: dependabot[bot] <support@github.com>\\n\\nzen-token: 234ad5c1",
+                      "statusCheckRollup": {
+                        "state": "FAILURE"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "PR_other",
+              "number": 348,
+              "title": "build(deps): bump microprofile from 4.1 to 5.0 no zentoken",
               "baseRefName": "master",
               "headRefName": "gitzen/pr/master",
               "mergeable": "CONFLICTING",
@@ -221,32 +247,50 @@ def test_fetch_info_returns_githubInfo(mock_subproc_run):
         "...\n\n"
         "Signed-off-by: dependabot[bot] <support@github.com>"
     )
-    commit = github.Commit(
-        hash_id="715fbc4220806fe283e39ee74c6fca3dac52c041",
+    commit_a = github.Commit(
+        zen_token="234ad5c1",
+        hash="715fbc4220806fe283e39ee74c6fca3dac52c041",
+        headline="build(deps): bump microprofile from 4.1 to 5.0",
+        body=commit_body + "\n\nzen-token: 234ad5c1",
+    )
+    commit_b = github.Commit(
+        zen_token=None,
+        hash="715fbc4220806fe283e39ee74c6fca3dac52c041",
         headline="build(deps): bump microprofile from 4.1 to 5.0",
         body=commit_body,
-        status="FAILURE",
     )
-    pull_request = github.PullRequest(
+    pull_request_a = github.PullRequest(
         id="PR_kwDOEVHCd84vkAyI",
         number=248,
-        title="build(deps): bump microprofile from 4.1 to 5.0",
+        title="build(deps): bump microprofile from 4.1 to 5.0 with zentoken",
         baseRefName="master",
         headRefName="gitzen/pr/master",
         mergeable="CONFLICTING",
         reviewDecision="",
         repoId="MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE=",
-        commits=[commit],
+        commits=[commit_a],
+    )
+    pull_request_b = github.PullRequest(
+        id="PR_other",
+        number=348,
+        title="build(deps): bump microprofile from 4.1 to 5.0 no zentoken",
+        baseRefName="master",
+        headRefName="gitzen/pr/master",
+        mergeable="CONFLICTING",
+        reviewDecision="",
+        repoId="MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE=",
+        commits=[commit_b],
     )
     # when
     result = github.fetch_info(
         envs.GitGithubEnv(git.RealGitEnv(), github.RealGithubEnv())
     )
     # then
-    assert len(result.pull_requests) == 1
-    assert result == GithubInfo(
+    assert len(result.pull_requests) == 2
+    expected = GithubInfo(
         username="kemitix",
         repo_id="MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE=",
         local_branch="baz",
-        pull_requests=[pull_request],
+        pull_requests=[pull_request_a, pull_request_b],
     )
+    assert result == expected
