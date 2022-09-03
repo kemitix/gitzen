@@ -1,5 +1,6 @@
-from gitzen.branches import get_remote_branch
-from gitzen.config import Config
+import pytest
+
+from gitzen import branches, config, exit_code
 
 
 def test_get_remote_branch_name_returns_default_when_no_match():
@@ -10,13 +11,13 @@ def test_get_remote_branch_name_returns_default_when_no_match():
     """
     # given
     defaultBranch = "foo"
-    config = Config(
+    cfg = config.Config(
         default_remote_branch=defaultBranch,
         remote_branches=["baz"],
         remote="origin",
     )
     # when
-    result = get_remote_branch("other", config)
+    result = branches.get_remote_branch("other", cfg)
     # then
     assert result == defaultBranch
 
@@ -29,12 +30,30 @@ def test_get_remote_branch_name_returns_default_when_second_remote_matches():
     """
     # given
     defaultBranch = "foo"
-    config = Config(
+    cfg = config.Config(
         default_remote_branch=defaultBranch,
         remote_branches=["baz", "other"],
         remote="origin",
     )
     # when
-    result = get_remote_branch("other", config)
+    result = branches.get_remote_branch("other", cfg)
     # then
     assert result == "other"
+
+
+def test_exit_if_current_branch_is_remote_pr_when_not_remote_pr():
+    # when
+    branches.exit_if_current_branch_is_remote_pr("foo")
+    # then
+    assert True  # did not exit
+
+
+def test_exit_if_current_branch_is_remote_pr_when_is_remote_pr():
+    # when
+    with pytest.raises(SystemExit) as system_exit:
+        branches.exit_if_current_branch_is_remote_pr(
+            "gitzen/pr/kemitix/master/efd33424"
+        )
+    # then
+    assert system_exit.type == SystemExit
+    assert system_exit.value.code == exit_code.REMOTE_PR_CHECKED_OUT
