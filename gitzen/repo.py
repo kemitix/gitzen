@@ -1,7 +1,8 @@
 import re
-from typing import Tuple
+from typing import List, Tuple
 
-from gitzen import exit_code, git
+from gitzen import envs, exit_code, git
+from gitzen.models.github_commit import Commit
 
 
 # will exit the program if called from outside a git repo
@@ -50,3 +51,44 @@ def get_repo_details_from_remote(remote: str) -> Tuple[str, str, str, bool]:
         repo_name = match.group("repoName")
         return github_host, repo_owner, repo_name, True
     return "", "", "", False
+
+
+def get_local_commit_stack(
+    git_env: envs.GitEnv,
+    remote_branch: str,
+) -> List[Commit]:
+    pass
+# # get local commit stack: HEAD...@{upstream}
+#     # get remote branch name as targetBRanch
+#     # logCommand =
+#  fmt.Sprintf("log --no-color %s/%s..HEAD", sd.config.Repo.GitHubRemote,
+#  targetBranch)
+#     # do logComment give logStack
+#     # parse logStack to get commits and check if valid
+#         # while parsing log stack add details to new list in reverse
+#           order to that they are then read oldest first
+#         # scan the git log output
+#         # collect commit hash and a custom tag that we will add to
+#           each commit
+#         # if custom tag is missing - abort - not valid - caller should
+#           rebase and add custom tags
+#         # note where commit message start with 'WIP'
+#         # populate fields of commit:
+#         	// CommitID is a long lasting id describing the commit.
+# 	        //  The CommitID is generated and added to the end of the
+#               commit message on the initial commit.
+#             //  The CommitID remains the same when a commit is amended.
+#             CommitID string
+#             // CommitHash is the git commit hash, this gets updated
+#                everytime the commit is amended.
+#             CommitHash string
+#             // Subject is the subject of the commit message.
+#             Subject string
+#             // Body is the body of the commit message.
+#             Body string
+#             // WIP is true if the commit is still work in progress.
+#             WIP bool
+#     # if not valid then
+#         # rebase and add custom tags
+#         # do logCommand again and parse logStack
+#         # if still not valid - abort - panic!
