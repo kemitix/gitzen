@@ -12,7 +12,10 @@ def get_remote_branch(local_branch: str, config: config.Config) -> str:
     return config.default_remote_branch
 
 
-def get_required_remote_branch(local_branch: str, config: config.Config) -> str:
+def get_required_remote_branch(
+    local_branch: str,
+    config: config.Config,
+) -> str:
     remote_branch = get_remote_branch(local_branch, config)
     if len(remote_branch) == 0:
         print("remote branch not found")

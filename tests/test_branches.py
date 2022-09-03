@@ -62,9 +62,7 @@ def test_get_required_remote_branch_when_present_in_default_branch():
     # given
     local_branch = Faker().word()
     cfg = config.Config(
-        default_remote_branch=local_branch,
-        remote="origin",
-        remote_branches=[]
+        default_remote_branch=local_branch, remote="origin", remote_branches=[]
     )
     # when
     result = branches.get_required_remote_branch(local_branch, cfg)
@@ -78,7 +76,7 @@ def test_get_required_remote_branch_when_present_in_remote_branches():
     cfg = config.Config(
         default_remote_branch="master",
         remote="origin",
-        remote_branches=[local_branch]
+        remote_branches=[local_branch],
     )
     # when
     result = branches.get_required_remote_branch(local_branch, cfg)
@@ -92,7 +90,7 @@ def test_get_required_remote_branch_when_not_present():
     cfg = config.Config(
         default_remote_branch="",
         remote="origin",
-        remote_branches=[]
+        remote_branches=[],
     )
     # when
     with pytest.raises(SystemExit) as system_exit:
