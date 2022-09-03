@@ -222,7 +222,7 @@ def test_fetch_info_returns_githubInfo(mock_subproc_run):
         "Signed-off-by: dependabot[bot] <support@github.com>"
     )
     commit = github.Commit(
-        oid="715fbc4220806fe283e39ee74c6fca3dac52c041",
+        hash_id="715fbc4220806fe283e39ee74c6fca3dac52c041",
         headline="build(deps): bump microprofile from 4.1 to 5.0",
         body=commit_body,
         status="FAILURE",
