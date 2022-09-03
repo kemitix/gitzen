@@ -28,6 +28,10 @@ def fetch(env: GitEnv) -> List[str]:
     return env.git("fetch")
 
 
+def log(env: GitEnv, args: str = "") -> List[str]:
+    return env.git(f"log --no-color {args}")
+
+
 def rebase(env: GitEnv, target: str) -> List[str]:
     return env.git(f"rebase {target} --autostash")
 
