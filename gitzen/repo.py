@@ -1,24 +1,25 @@
 import re
 from typing import Tuple
 
-from gitzen import git
+from gitzen import exit_code, git
 
 
 # will exit the program if called from outside a git repo
 def root_dir(git_env: git.GitEnv) -> str:
     output = git.rev_parse(git_env, "--show-toplevel")
     if output == "":
-        exit(1)
+        exit(exit_code.NOT_IN_GIT_REPO)
     return output[0]
 
 
 def get_local_branch_name(git_env: git.GitEnv) -> str:
     branches = git.branch(git_env)
     for branch in branches:
+        # TODO detected detached HEAD
         if branch.startswith("* "):
             return branch[2:]
     print("ERROR: Can't find local branch name")
-    exit()
+    exit(exit_code.NO_LOCAL_BRANCH_FOUND)
 
 
 def get_repo_details_from_remote(remote: str) -> Tuple[str, str, str, bool]:

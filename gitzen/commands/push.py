@@ -1,4 +1,4 @@
-from gitzen import branches, config, envs, git, github
+from gitzen import branches, config, envs, exit_code, git, github
 
 
 def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
@@ -8,7 +8,7 @@ def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
     remote_branch = branches.get_remote_branch(local_branch, config)
     if len(remote_branch) == 0:
         print("remote branch not found")
-        exit()
+        exit(exit_code.REMOTE_BRANCH_NOT_FOUND)
     git.rebase(gitGithubEnv.gitEnv, f"{config.remote}/{remote_branch}")
 
 
