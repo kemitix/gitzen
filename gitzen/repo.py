@@ -1,5 +1,4 @@
 import re
-from os import error
 from typing import Tuple
 
 from gitzen import git
@@ -18,8 +17,8 @@ def get_local_branch_name(git_env: git.GitEnv) -> str:
     for branch in branches:
         if branch.startswith("* "):
             return branch[2:]
-    error("Can't find local branch name")
-    exit
+    print("ERROR: Can't find local branch name")
+    exit()
 
 
 def get_repo_details_from_remote(remote: str) -> Tuple[str, str, str, bool]:

@@ -10,7 +10,7 @@ from gitzen.models.github_info import GithubInfo
 
 
 @mock.patch("subprocess.run")
-def test_fetchInfo_invokes_command(mock_subproc_run):
+def test_fetch_info_invokes_command(mock_subproc_run):
     """
     Test that the correct command is invoked
     """
@@ -24,7 +24,10 @@ def test_fetchInfo_invokes_command(mock_subproc_run):
         "}"
         "}}"
     ).encode()
-    mock_subproc_run.return_value = CompletedProcess("", 0, stdout=expected)
+    mock_subproc_run.side_effect = [
+        CompletedProcess("", 0, stdout=expected),
+        CompletedProcess("", 0, stdout="* branch-name".encode()),
+    ]
     # when
     github.fetch_info(
         envs.GitGithubEnv(
@@ -70,7 +73,7 @@ def test_json_loads__escaped_newline():
 
 
 @mock.patch("subprocess.run")
-def test_fetchInfo_returns_githubInfo(mock_subproc_run):
+def test_fetch_info_returns_githubInfo(mock_subproc_run):
     """
     Test that fetchStatus parses the gh query output
     """

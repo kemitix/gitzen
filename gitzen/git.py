@@ -15,7 +15,7 @@ class RealGitEnv(GitEnv):
             lines = stdout.decode().splitlines()
             return lines
         else:
-            return ""
+            return []
 
 
 def branch(env: GitEnv) -> List[str]:

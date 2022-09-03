@@ -38,6 +38,10 @@ def test_getLocalBranchName_calls_git_branch(mock_subproc_run):
     """
     Test that the correct command is invoked
     """
+    # given
+    mock_subproc_run.return_value = CompletedProcess(
+        "", 0, stdout="* branch-name".encode()
+    )
     # when
     repo.get_local_branch_name(git.RealGitEnv())
     # then

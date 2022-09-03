@@ -9,7 +9,7 @@ def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
     if len(remote_branch) == 0:
         print("remote branch not found")
         exit()
-    git.rebase(f"{config.remote}/{remote_branch}")
+    git.rebase(gitGithubEnv.gitEnv, f"{config.remote}/{remote_branch}")
 
 
 # # fetch and get github info

@@ -17,7 +17,7 @@ class PullRequest:
     def __init__(
         self,
         id: str,
-        number: str,
+        number: int,
         title: str,
         baseRefName: str,
         headRefName: str,
