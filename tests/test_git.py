@@ -65,6 +65,7 @@ def test_rebase(mock_subproc_run):
             "git",
             "rebase",
             "target/branch",
+            "--autostash",
         ],
         stdout=PIPE,
     )
