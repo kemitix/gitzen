@@ -12,7 +12,7 @@ def get_remote_branch(local_branch: str, config: config.Config) -> str:
     return config.default_remote_branch
 
 
-def exit_if_current_branch_is_remote_pr(local_branch: str):
+def validate_not_remote_pr(local_branch: str):
     matches = re.search(
         # gitzen/pr/{user}/{target-branch}/{zentoken}
         r"gitzen/pr/[a-zA-Z0-9_\-]+/([a-zA-Z0-9_\-/\.]+)/([a-f0-9]{8})$",
