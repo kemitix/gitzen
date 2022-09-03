@@ -1,14 +1,11 @@
-from gitzen import branches, config, envs, exit_code, git, github
+from gitzen import branches, config, envs, git, github
 
 
 def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
     status = github.fetch_info(gitGithubEnv)
     local_branch = status.local_branch
     print(f"local branch: {local_branch}")
-    remote_branch = branches.get_remote_branch(local_branch, config)
-    if len(remote_branch) == 0:
-        print("remote branch not found")
-        exit(exit_code.REMOTE_BRANCH_NOT_FOUND)
+    remote_branch = branches.get_required_remote_branch(local_branch, config)
     git.rebase(gitGithubEnv.gitEnv, f"{config.remote}/{remote_branch}")
     branches.validate_not_remote_pr(local_branch)
 

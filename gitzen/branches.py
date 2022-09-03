@@ -12,6 +12,14 @@ def get_remote_branch(local_branch: str, config: config.Config) -> str:
     return config.default_remote_branch
 
 
+def get_required_remote_branch(local_branch: str, config: config.Config) -> str:
+    remote_branch = get_remote_branch(local_branch, config)
+    if len(remote_branch) == 0:
+        print("remote branch not found")
+        exit(exit_code.REMOTE_BRANCH_NOT_FOUND)
+    return remote_branch
+
+
 def validate_not_remote_pr(local_branch: str):
     matches = re.search(
         # gitzen/pr/{user}/{target-branch}/{zentoken}

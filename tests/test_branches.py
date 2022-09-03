@@ -1,4 +1,5 @@
 import pytest
+from faker import Faker
 
 from gitzen import branches, config, exit_code
 
@@ -55,3 +56,47 @@ def test_validate_not_remote_pr_when_is_remote_pr():
     # then
     assert system_exit.type == SystemExit
     assert system_exit.value.code == exit_code.REMOTE_PR_CHECKED_OUT
+
+
+def test_get_required_remote_branch_when_present_in_default_branch():
+    # given
+    local_branch = Faker().word()
+    cfg = config.Config(
+        default_remote_branch=local_branch,
+        remote="origin",
+        remote_branches=[]
+    )
+    # when
+    result = branches.get_required_remote_branch(local_branch, cfg)
+    # then
+    assert result == local_branch
+
+
+def test_get_required_remote_branch_when_present_in_remote_branches():
+    # given
+    local_branch = Faker().word()
+    cfg = config.Config(
+        default_remote_branch="master",
+        remote="origin",
+        remote_branches=[local_branch]
+    )
+    # when
+    result = branches.get_required_remote_branch(local_branch, cfg)
+    # then
+    assert result == local_branch
+
+
+def test_get_required_remote_branch_when_not_present():
+    # given
+    local_branch = Faker().word()
+    cfg = config.Config(
+        default_remote_branch="",
+        remote="origin",
+        remote_branches=[]
+    )
+    # when
+    with pytest.raises(SystemExit) as system_exit:
+        branches.get_required_remote_branch(local_branch, cfg)
+    # then
+    assert system_exit.type == SystemExit
+    assert system_exit.value.code == exit_code.REMOTE_BRANCH_NOT_FOUND
