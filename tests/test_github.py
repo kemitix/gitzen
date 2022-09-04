@@ -6,7 +6,9 @@ from unittest import mock
 from faker import Faker
 
 from gitzen import envs, git, github
+from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
+from gitzen.models.github_pull_request import PullRequest
 
 
 @mock.patch("subprocess.run")
@@ -110,7 +112,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run):
                     "commit": {
                       "oid": "715fbc4220806fe283e39ee74c6fca3dac52c041",
                       "messageHeadline": "build(deps): bump microprofile from 4.1 to 5.0",
-                      "messageBody": "Bumps [microprofile](https://github.com/eclipse/microprofile) from 4.1 to 5.0.\\n- [Release notes](https://github.com/eclipse/microprofile/releases)\\n- [Commits](https://github.com/eclipse/microprofile/compare/4.1...5.0)\\n\\n---\\nupdated-dependencies:\\n- dependency-name: org.eclipse.microprofile:microprofile\\n  dependency-type: direct:production\\n  update-type: version-update:semver-major\\n...\\n\\nSigned-off-by: dependabot[bot] <support@github.com>\\n\\nzen-token: 234ad5c1",
+                      "messageBody": "Bumps [microprofile](https://github.com/eclipse/microprofile) from 4.1 to 5.0.\\n- [Release notes](https://github.com/eclipse/microprofile/releases)\\n- [Commits](https://github.com/eclipse/microprofile/compare/4.1...5.0)\\n\\n---\\nupdated-dependencies:\\n- dependency-name: org.eclipse.microprofile:microprofile\\n  dependency-type: direct:production\\n  update-type: version-update:semver-major\\n...\\n\\nSigned-off-by: dependabot[bot] <support@github.com>\\n\\nzen-token:234ad5c1",
                       "statusCheckRollup": {
                         "state": "FAILURE"
                       }
@@ -247,19 +249,19 @@ def test_fetch_info_returns_github_info(mock_subproc_run):
         "...\n\n"
         "Signed-off-by: dependabot[bot] <support@github.com>"
     )
-    commit_a = github.Commit(
+    commit_a = Commit(
         zen_token="234ad5c1",
         hash="715fbc4220806fe283e39ee74c6fca3dac52c041",
         headline="build(deps): bump microprofile from 4.1 to 5.0",
-        body=commit_body + "\n\nzen-token: 234ad5c1",
+        body=commit_body + "\n\nzen-token:234ad5c1",
     )
-    commit_b = github.Commit(
+    commit_b = Commit(
         zen_token=None,
         hash="715fbc4220806fe283e39ee74c6fca3dac52c041",
         headline="build(deps): bump microprofile from 4.1 to 5.0",
         body=commit_body,
     )
-    pull_request_a = github.PullRequest(
+    pull_request_a = PullRequest(
         id="PR_kwDOEVHCd84vkAyI",
         number=248,
         title="build(deps): bump microprofile from 4.1 to 5.0 with zentoken",

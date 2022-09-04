@@ -142,7 +142,7 @@ def get_commits(pr_node):
 
 def get_zentoken(body: str) -> Optional[str]:
     for line in body.splitlines():
-        match = re.search(r"^zen-token: (?P<token>[a-f0-9]{8})$", line)
+        match = re.search(r"^zen-token:(?P<token>[a-f0-9]{8})$", line)
         if match:
             token = match.group("token")
             return token
