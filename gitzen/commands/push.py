@@ -11,6 +11,7 @@ def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
     branches.validate_not_remote_pr(local_branch)
     commit_stack = repo.get_local_commit_stack(
         gitGithubEnv.gitEnv,
+        config.remote,
         remote_branch,
     )
     commit_stack

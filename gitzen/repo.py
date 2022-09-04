@@ -55,9 +55,12 @@ def get_repo_details_from_remote(remote: str) -> Tuple[str, str, str, bool]:
 
 def get_local_commit_stack(
     git_env: envs.GitEnv,
+    remote: str,
     remote_branch: str,
 ) -> List[Commit]:
-    pass
+    commit_log = get_commit_stack(git_env, remote, remote_branch)
+    # TODO
+    return commit_log
 
 
 # # get local commit stack: HEAD...@{upstream}
@@ -94,3 +97,51 @@ def get_local_commit_stack(
 #         # rebase and add custom tags
 #         # do logCommand again and parse logStack
 #         # if still not valid - abort - panic!
+
+
+def get_commit_stack(
+    git_env: envs.GitEnv,
+    remote: str,
+    remote_branch: str,
+) -> List[Commit]:
+    log = git.log(git_env, f"{remote}/{remote_branch}..HEAD")
+    have_hash = False
+    commits: List[Commit] = []
+    hash = ""
+    headline = ""
+    body = ""
+    line_number = 0
+    subject_index = 0
+    for line in log:
+        line_number += 1
+        commit_matches = re.search("^commit ([a-f0-9]{40})", line)
+        if commit_matches:
+            if have_hash:
+                print("No zen-token found - is pre-commit hook installed?")
+                exit(exit_code.ZEN_TOKENS_MISSING)
+            hash = commit_matches.group(1)
+            have_hash = True
+            subject_index = line_number + 4
+            continue
+        zen_token_matches = re.search("zen-token:([a-f0-9]{8})", line)
+        if zen_token_matches:
+            commits.append(
+                Commit(
+                    zen_token=zen_token_matches.group(1),
+                    hash=hash,
+                    headline=headline,
+                    body=body.strip(),
+                )
+            )
+            body = ""
+            have_hash = False
+            continue
+        if have_hash:
+            if line_number == subject_index:
+                headline = line.strip()
+            elif line_number == (subject_index + 1) and line != "\n":
+                body += line.strip() + "\n"
+            elif line_number > (subject_index + 1):
+                body += line.strip() + "\n"
+    commits.reverse()
+    return commits

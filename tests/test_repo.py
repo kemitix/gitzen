@@ -4,6 +4,9 @@ from typing import List
 from unittest import mock
 
 from gitzen import git, repo
+from gitzen.models.github_commit import Commit
+
+from .fakes.git_env import FakeGitEnv
 
 
 @mock.patch("subprocess.run")
@@ -203,3 +206,107 @@ def test_getRepoDetailsFromRemoteV():
         assert (
             match == testCase.match
         ), f"match match failed for {testCase.remote}, got '{match}'"
+
+
+def test_git_commit_stack():
+    # given
+    git_env = FakeGitEnv(
+        responses={
+            "log --no-color origin/remote-branch..HEAD": [
+                """
+commit d9c3765ee8c6a1dee34d623b78c50a38bc57201c (HEAD -> master)
+Author: Paul Campbell <pcampbell@kemitix.net>
+Date:   Sat Sep 3 19:12:34 2022 +0100
+
+    models.Commit: rename field oid as hash_id
+
+    oid is used by Github.
+
+    zen-token:97123f3a
+
+commit b7bcf5ebdb8b277e267e47ee87fb568e53a8df06
+Author: Paul Campbell <pcampbell@kemitix.net>
+Date:   Sat Sep 3 19:10:18 2022 +0100
+
+    gitzen.branches: whitespace cleanup
+
+    zen-token:db8b277e
+
+commit 55b1cc72019cad0d9c392eef10b817d86378ea61
+Author: Paul Campbell <pcampbell@kemitix.net>
+Date:   Sat Sep 3 19:07:26 2022 +0100
+
+    Add git.log()
+
+    zen-token:d0d9c392
+
+commit 6a42e3c56e657e0b93f99e570fbab10ec35a81f8
+Author: Paul Campbell <pcampbell@kemitix.net>
+Date:   Sat Sep 3 15:27:40 2022 +0100
+
+    Create stub repo.get_local_commit_stack()
+
+    zen-token:e0b93f99
+
+commit 47d8ed21feb4164499828a920e8d8df280392a51
+Author: Paul Campbell <pcampbell@kemitix.net>
+Date:   Sat Sep 3 15:22:11 2022 +0100
+
+    Extract barnches.get_required_remote_branch()
+
+    zen-token:d21feb41
+
+commit 1f293d6cdc6ed3b1100aa21c9528e4fc5c608fa9
+Author: Paul Campbell <pcampbell@kemitix.net>
+Date:   Sat Sep 3 15:11:46 2022 +0100
+
+    Rename as branches.validate_not_remote_pr()
+
+    zen-token:d6cdc6ed
+""".splitlines()
+            ]
+        }
+    )
+    remote = "origin"
+    remote_branch = "remote-branch"
+    # when
+    result = repo.get_commit_stack(git_env, remote, remote_branch)
+    # then
+    assert result == [
+        Commit(  # 1
+            zen_token="d6cdc6ed",
+            hash="1f293d6cdc6ed3b1100aa21c9528e4fc5c608fa9",
+            headline="Rename as branches.validate_not_remote_pr()",
+            body="",
+        ),
+        Commit(  # 2
+            zen_token="d21feb41",
+            hash="47d8ed21feb4164499828a920e8d8df280392a51",
+            headline="Extract barnches.get_required_remote_branch()",
+            body="",
+        ),
+        Commit(  # 3
+            zen_token="e0b93f99",
+            hash="6a42e3c56e657e0b93f99e570fbab10ec35a81f8",
+            headline="Create stub repo.get_local_commit_stack()",
+            body="",
+        ),
+        Commit(  # 4
+            zen_token="d0d9c392",
+            hash="55b1cc72019cad0d9c392eef10b817d86378ea61",
+            headline="Add git.log()",
+            body="",
+        ),
+        Commit(  # 5
+            zen_token="db8b277e",
+            hash="b7bcf5ebdb8b277e267e47ee87fb568e53a8df06",
+            headline="gitzen.branches: whitespace cleanup",
+            body="",
+        ),
+        Commit(  # 6
+            zen_token="97123f3a",
+            hash="d9c3765ee8c6a1dee34d623b78c50a38bc57201c",
+            headline="models.Commit: rename field oid as hash_id",
+            body="oid is used by Github.",
+        ),
+    ]
