@@ -1,7 +1,7 @@
 import re
 from typing import List, Tuple
 
-from gitzen import envs, exit_code, git
+from gitzen import envs, exit_code, git, zen_token
 from gitzen.models.github_commit import Commit
 
 
@@ -68,6 +68,7 @@ def get_commit_stack(
     subject_index = 0
     for line in log:
         line_number += 1
+        print(f"{line_number}: {line}")
         commit_matches = re.search("^commit ([a-f0-9]{40})", line)
         if commit_matches:
             if have_hash:
@@ -77,11 +78,11 @@ def get_commit_stack(
             have_hash = True
             subject_index = line_number + 4
             continue
-        zen_token_matches = re.search("zen-token:([a-f0-9]{8})", line)
-        if zen_token_matches:
+        token = zen_token.find_in_line(line[4:])
+        if token is not None:
             commits.append(
                 Commit(
-                    zen_token=zen_token_matches.group(1),
+                    zen_token=token,
                     hash=hash,
                     headline=headline,
                     body=body.strip(),
