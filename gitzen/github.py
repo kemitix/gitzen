@@ -2,9 +2,9 @@ import json
 import re
 import shlex
 import subprocess
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
-from gitzen import envs, repo
+from gitzen import envs, repo, zen_token
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
@@ -43,6 +43,7 @@ query_status = """query($repo_owner: String!, $repo_name: String!){
                     id
                     number
                     title
+                    body
                     baseRefName
                     headRefName
                     mergeable
@@ -101,11 +102,17 @@ def fetch_info(gitGithubEnv: envs.GitGithubEnv) -> GithubInfo:
             continue
         review_node = pr_node["reviewDecision"]
         review_decision = review_node if review_node is not None else ""
+        body = pr_node["body"]
+        token = zen_token.find_in_body(body)
+        if token is None:
+            continue
         prs.append(
             PullRequest(
                 id=pr_node["id"],
+                zen_token=token,
                 number=pr_node["number"],
                 title=pr_node["title"],
+                body=body,
                 baseRefName=base_ref,
                 headRefName=head_ref,
                 mergeable=pr_node["mergeable"],
@@ -129,10 +136,10 @@ def get_commits(pr_node) -> List[Commit]:
         commit_node = commit_node_item["commit"]
         title = commit_node["messageHeadline"]
         body = commit_node["messageBody"]
-        zentoken = get_zentoken(body)
+        token = zen_token.find_in_body(body)
         commits.append(
             Commit(
-                zen_token=zentoken,
+                zen_token=token,
                 hash=commit_node["oid"],
                 headline=title,
                 body=body,
@@ -140,12 +147,3 @@ def get_commits(pr_node) -> List[Commit]:
             )
         )
     return commits
-
-
-def get_zentoken(body: str) -> Optional[str]:
-    for line in body.splitlines():
-        match = re.search(r"^zen-token:(?P<token>[a-f0-9]{8})$", line)
-        if match:
-            token = match.group("token")
-            return token
-    return None

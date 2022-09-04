@@ -99,6 +99,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
               "id": "PR_kwDOEVHCd84vkAyI",
               "number": 248,
               "title": "build(deps): bump microprofile from 4.1 to 5.0 with zentoken",
+              "body": "zen-token:234ad5c1",
               "baseRefName": "master",
               "headRefName": "gitzen/pr/master",
               "mergeable": "CONFLICTING",
@@ -125,6 +126,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
               "id": "PR_other",
               "number": 348,
               "title": "build(deps): bump microprofile from 4.1 to 5.0 no zentoken",
+              "body": "",
               "baseRefName": "master",
               "headRefName": "gitzen/pr/master",
               "mergeable": "CONFLICTING",
@@ -151,6 +153,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
               "id": "PR_kwDOEVHCd84vkAyI",
               "number": 248,
               "title": "build(deps): bump microprofile from 4.1 to 5.0",
+              "body": "",
               "baseRefName": "master",
               "headRefName": "gitzen/pr/other",
               "mergeable": "CONFLICTING",
@@ -177,6 +180,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
               "id": "PR_kwDOEVHCd84vkAyI",
               "number": 248,
               "title": "build(deps): bump microprofile from 4.1 to 5.0",
+              "body": "",
               "baseRefName": "master",
               "headRefName": "gitzen/pr/other",
               "mergeable": "CONFLICTING",
@@ -203,6 +207,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
               "id": "PR_kwDOEVHCd84vkAyI",
               "number": 248,
               "title": "build(deps): bump microprofile from 4.1 to 5.0",
+              "body": "",
               "baseRefName": "master",
               "headRefName": "dependabot/maven/org.eclipse.microprofile-5.0",
               "mergeable": "CONFLICTING",
@@ -256,17 +261,12 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         body=commit_body + "\n\nzen-token:234ad5c1",
         wip=False,
     )
-    commit_b = Commit(
-        zen_token=None,
-        hash="715fbc4220806fe283e39ee74c6fca3dac52c041",
-        headline="WIP build(deps): bump microprofile from 4.1 to 5.0",
-        body=commit_body,
-        wip=True,
-    )
     pull_request_a = PullRequest(
         id="PR_kwDOEVHCd84vkAyI",
+        zen_token="234ad5c1",
         number=248,
         title="build(deps): bump microprofile from 4.1 to 5.0 with zentoken",
+        body="zen-token:234ad5c1",
         baseRefName="master",
         headRefName="gitzen/pr/master",
         mergeable="CONFLICTING",
@@ -274,27 +274,16 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         repoId="MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE=",
         commits=[commit_a],
     )
-    pull_request_b = github.PullRequest(
-        id="PR_other",
-        number=348,
-        title="build(deps): bump microprofile from 4.1 to 5.0 no zentoken",
-        baseRefName="master",
-        headRefName="gitzen/pr/master",
-        mergeable="CONFLICTING",
-        reviewDecision="",
-        repoId="MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE=",
-        commits=[commit_b],
-    )
     # when
     result = github.fetch_info(
         envs.GitGithubEnv(git.RealGitEnv(), github.RealGithubEnv())
     )
     # then
-    assert len(result.pull_requests) == 2
+    assert len(result.pull_requests) == 1
     expected = GithubInfo(
         username="kemitix",
         repo_id="MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE=",
         local_branch="baz",
-        pull_requests=[pull_request_a, pull_request_b],
+        pull_requests=[pull_request_a],
     )
     assert result == expected

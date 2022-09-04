@@ -5,8 +5,10 @@ from gitzen.models.github_commit import Commit
 
 class PullRequest:
     id: str
+    zen_token: str
     number: int
     title: str
+    body: str
     baseRefName: str
     headRefName: str
     mergeable: str  # enum
@@ -17,8 +19,10 @@ class PullRequest:
     def __init__(
         self,
         id: str,
+        zen_token: str,
         number: int,
         title: str,
+        body: str,
         baseRefName: str,
         headRefName: str,
         mergeable: str,
@@ -27,8 +31,10 @@ class PullRequest:
         commits: List[Commit],
     ) -> None:
         self.id = id
+        self.zen_token = zen_token
         self.number = number
         self.title = title
+        self.body = body
         self.baseRefName = baseRefName
         self.headRefName = headRefName
         self.mergeable = mergeable
@@ -39,8 +45,10 @@ class PullRequest:
     def __eq__(self, __o: object) -> bool:
         return (
             self.id == __o.id
+            and self.zen_token == __o.zen_token
             and self.number == __o.number
             and self.title == __o.title
+            and self.body == __o.body
             and self.baseRefName == __o.baseRefName
             and self.headRefName == __o.headRefName
             and self.mergeable == __o.mergeable
@@ -52,13 +60,15 @@ class PullRequest:
     def __repr__(self) -> str:
         return (
             "PullRequest("
-            f"id={repr(self.id)}, "
-            f"number={repr(self.number)}, "
-            f"title={repr(self.title)}, "
-            f"baseRefName={repr(self.baseRefName)}, "
-            f"headRefName={repr(self.baseRefName)}, "
-            f"mergeable={repr(self.mergeable)}, "
-            f"reviewDecision={repr(self.reviewDecision)}, "
-            f"repoId={repr(self.repoId)}, "
+            f"id={self.id}, "
+            f"zen_token={self.zen_token}, "
+            f"number={self.number}, "
+            f"title={self.title}, "
+            f"body={self.body}, "
+            f"baseRefName={self.baseRefName}, "
+            f"headRefName={self.baseRefName}, "
+            f"mergeable={self.mergeable}, "
+            f"reviewDecision={self.reviewDecision}, "
+            f"repoId={self.repoId}, "
             f"commit={repr(self.commits)})"
         )
