@@ -53,23 +53,6 @@ def get_repo_details_from_remote(remote: str) -> Tuple[str, str, str, bool]:
     return "", "", "", False
 
 
-def get_local_commit_stack(
-    git_env: envs.GitEnv,
-    remote: str,
-    remote_branch: str,
-) -> List[Commit]:
-    commit_log = get_commit_stack(git_env, remote, remote_branch)
-    # TODO
-    return commit_log
-
-
-#     # parse logStack to get commits and check if valid
-#     # if not valid then
-#         # rebase and add custom tags
-#         # do logCommand again and parse logStack
-#         # if still not valid - abort - panic!
-
-
 def get_commit_stack(
     git_env: envs.GitEnv,
     remote: str,

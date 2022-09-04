@@ -9,7 +9,7 @@ def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
     print(f"remote branch: {config.remote}/{remote_branch}")
     git.rebase(gitGithubEnv.gitEnv, f"{config.remote}/{remote_branch}")
     branches.validate_not_remote_pr(local_branch)
-    commit_stack = repo.get_local_commit_stack(
+    commit_stack = repo.get_commit_stack(
         gitGithubEnv.gitEnv,
         config.remote,
         remote_branch,
