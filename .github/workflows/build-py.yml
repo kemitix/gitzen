@@ -32,6 +32,6 @@ jobs:
       - name: Trunk Check All
         run: ./.github/bin/trunk check --all
       - name: Test with pytest
-        run: pytest
+        run: pytest -vv
       - name: Pyre Check
         run: pyre --sequential check
