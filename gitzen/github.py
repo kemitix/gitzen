@@ -127,14 +127,16 @@ def get_commits(pr_node):
     commits = []
     for commit_node_item in pr_node["commits"]["nodes"]:
         commit_node = commit_node_item["commit"]
+        title = commit_node["messageHeadline"]
         body = commit_node["messageBody"]
         zentoken = get_zentoken(body)
         commits.append(
             Commit(
                 zen_token=zentoken,
                 hash=commit_node["oid"],
-                headline=commit_node["messageHeadline"],
+                headline=title,
                 body=body,
+                wip=title.startswith("WIP "),
             )
         )
     return commits
