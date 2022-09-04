@@ -7,11 +7,11 @@ from gitzen.commands import push, status
 
 print("`git zen` - prototype")
 
-gitEnv: envs.GitEnv = git.RealGitEnv()
-githubEnv: envs.GithubEnv = github.RealGithubEnv()
-gitGithubEnv: envs.GitGithubEnv = envs.GitGithubEnv(gitEnv, githubEnv)
+git_env: envs.GitEnv = git.RealGitEnv()
+github_env: envs.GithubEnv = github.RealGithubEnv()
+git_github_env: envs.GitGithubEnv = envs.GitGithubEnv(git_env, github_env)
 
-rootDir = repo.root_dir(gitEnv)  # verifies that we are in a git repo or exits
+rootDir = repo.root_dir(git_env)  # verifies that we are in a git repo or exits
 config = config.load(rootDir)
 
 for i, arg in enumerate(sys.argv):
@@ -19,6 +19,6 @@ for i, arg in enumerate(sys.argv):
         continue
     match arg:
         case "status":
-            status.status(gitGithubEnv)
+            status.status(git_github_env)
         case "push":
-            push.push(gitGithubEnv, config)
+            push.push(git_github_env, config)

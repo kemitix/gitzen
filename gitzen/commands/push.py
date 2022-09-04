@@ -1,16 +1,16 @@
 from gitzen import branches, config, envs, git, github, repo
 
 
-def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config) -> None:
-    status = github.fetch_info(gitGithubEnv)
+def push(git_github_env: envs.GitGithubEnv, config: config.Config) -> None:
+    status = github.fetch_info(git_github_env)
     local_branch = status.local_branch
     print(f"local branch: {local_branch}")
     remote_branch = branches.get_required_remote_branch(local_branch, config)
     print(f"remote branch: {config.remote}/{remote_branch}")
-    git.rebase(gitGithubEnv.gitEnv, f"{config.remote}/{remote_branch}")
+    git.rebase(git_github_env.git_env, f"{config.remote}/{remote_branch}")
     branches.validate_not_remote_pr(local_branch)
     commit_stack = repo.get_commit_stack(
-        gitGithubEnv.gitEnv,
+        git_github_env.git_env,
         config.remote,
         remote_branch,
     )
