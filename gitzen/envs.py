@@ -14,6 +14,9 @@ class GithubEnv:
     ) -> Dict[str, Any]:
         pass
 
+    def gh(self, args: str) -> List[str]:
+        pass
+
 
 class GitGithubEnv:
 

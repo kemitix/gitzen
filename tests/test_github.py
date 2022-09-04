@@ -1,6 +1,6 @@
 import json
 import subprocess
-from subprocess import CompletedProcess
+from subprocess import PIPE, CompletedProcess
 from unittest import mock
 
 from faker import Faker
@@ -287,3 +287,41 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         pull_requests=[pull_request_a],
     )
     assert result == expected
+
+
+@mock.patch("subprocess.run")
+def test_add_comment(mock_subproc_run) -> None:
+    """
+    Test that the correct command is invoked
+    """
+    # given
+    fake = Faker()
+    pr_number = fake.random_int(min=1, max=1000)
+    comment = fake.text()
+    pull_request = PullRequest(
+        id="",
+        zen_token="",
+        number=pr_number,
+        title="",
+        body="",
+        baseRefName="",
+        headRefName="",
+        mergeable="",
+        reviewDecision="",
+        repoId="",
+        commits=[],
+    )
+    # when
+    github.add_comment(github.RealGithubEnv(), pull_request, comment)
+    # then
+    mock_subproc_run.assert_called_with(
+        [
+            "gh",
+            "pr",
+            "comment",
+            f"{pr_number}",
+            "--body",
+            comment,
+        ],
+        stdout=PIPE,
+    )

@@ -31,6 +31,19 @@ class RealGithubEnv(envs.GithubEnv):
         else:
             return {}  # TODO return some error condition
 
+    def gh(self, args: str) -> List[str]:
+        gh_command = f"gh {args}"
+        print(f"> {gh_command}")
+        result: subprocess.CompletedProcess[bytes] = subprocess.run(
+            shlex.split(gh_command), stdout=subprocess.PIPE
+        )
+        stdout = result.stdout
+        if stdout:
+            lines = stdout.decode().splitlines()
+            return lines
+        else:
+            return []
+
 
 # trunk-ignore(flake8/E501)
 # GraphQL originally from https://github.com/ejoffe/spr/blob/9597afc52354db66d4b419f7ee7a9bd7eacdf70f/github/githubclient/gen/genclient/operations.go#L72
@@ -147,3 +160,11 @@ def get_commits(pr_node) -> List[Commit]:
             )
         )
     return commits
+
+
+def add_comment(
+    github_env: envs.GithubEnv,
+    pull_request: PullRequest,
+    comment: str,
+) -> None:
+    github_env.gh(f"pr comment {pull_request.number} --body '{comment}'")
