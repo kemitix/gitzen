@@ -168,3 +168,10 @@ def add_comment(
     comment: str,
 ) -> None:
     github_env.gh(f"pr comment {pull_request.number} --body '{comment}'")
+
+
+def close_pull_request(
+    github_env: envs.GithubEnv,
+    pull_request: PullRequest,
+) -> None:
+    github_env.gh(f"pr close {pull_request.number}")
