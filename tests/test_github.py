@@ -360,3 +360,43 @@ def test_close_pull_request(mock_subproc_run) -> None:
         ],
         stdout=PIPE,
     )
+
+
+@mock.patch("subprocess.run")
+def test_close_pull_request_with_comment(mock_subproc_run) -> None:
+    """
+    Test that the correct command is invoked
+    """
+    # given
+    fake = Faker()
+    pr_number = fake.random_int(min=1, max=1000)
+    comment = fake.text()
+    pull_request = PullRequest(
+        id="",
+        zen_token="",
+        number=pr_number,
+        title="",
+        body="",
+        baseRefName="",
+        headRefName="",
+        mergeable="",
+        reviewDecision="",
+        repoId="",
+        commits=[],
+    )
+    # when
+    github.close_pull_request_with_comment(
+        github.RealGithubEnv(), pull_request, comment
+    )
+    # then
+    mock_subproc_run.assert_called_with(
+        [
+            "gh",
+            "pr",
+            "close",
+            f"{pr_number}",
+            "--comment",
+            comment,
+        ],
+        stdout=PIPE,
+    )
