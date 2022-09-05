@@ -12,7 +12,7 @@ class Commit:
         headline: str,
         body: str,
         wip: bool,
-    ):
+    ) -> None:
         self.zen_token = zen_token
         self.hash = hash
         self.messageHeadline = headline

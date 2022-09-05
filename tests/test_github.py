@@ -12,7 +12,7 @@ from gitzen.models.github_pull_request import PullRequest
 
 
 @mock.patch("subprocess.run")
-def test_fetch_info_invokes_command(mock_subproc_run):
+def test_fetch_info_invokes_command(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
@@ -69,13 +69,13 @@ def test_fetch_info_invokes_command(mock_subproc_run):
     )
 
 
-def test_json_loads__escaped_newline():
+def test_json_loads__escaped_newline() -> None:
     assert json.loads('{"a":"b"}') == {"a": "b"}
     assert json.loads('{"a":"b\\nc"}') == {"a": "b\nc"}
 
 
 @mock.patch("subprocess.run")
-def test_fetch_info_returns_github_info(mock_subproc_run):
+def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     """
     Test that fetchStatus parses the gh query output
     """

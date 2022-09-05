@@ -123,7 +123,7 @@ def fetch_info(gitGithubEnv: envs.GitGithubEnv) -> GithubInfo:
     )
 
 
-def get_commits(pr_node):
+def get_commits(pr_node) -> List[Commit]:
     commits = []
     for commit_node_item in pr_node["commits"]["nodes"]:
         commit_node = commit_node_item["commit"]

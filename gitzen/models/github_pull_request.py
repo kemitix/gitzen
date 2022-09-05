@@ -25,7 +25,7 @@ class PullRequest:
         reviewDecision: str,
         repoId: str,
         commits: List[Commit],
-    ):
+    ) -> None:
         self.id = id
         self.number = number
         self.title = title

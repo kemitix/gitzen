@@ -6,7 +6,7 @@ from typing import List
 from gitzen import config
 
 
-def test_load_returns_default_config_when_file_not_found(tmp_path):
+def test_load_when_file_not_found(tmp_path) -> None:
     # given
     # a repo with no config file
     given_repo(tmp_path)
@@ -16,7 +16,7 @@ def test_load_returns_default_config_when_file_not_found(tmp_path):
     assert result == config.default_config
 
 
-def test_load_returns_parsed_config_when_file_is_found(tmp_path: PosixPath):
+def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
     # given
     # a repo with a config file
     given_repo(tmp_path)
@@ -37,16 +37,16 @@ def test_load_returns_parsed_config_when_file_is_found(tmp_path: PosixPath):
     )
 
 
-def test_load_aborts_when_file_is_invalid():
+def test_load_aborts_when_file_is_invalid() -> None:
     pass
 
 
-def given_repo(dir: PosixPath):
+def given_repo(dir: PosixPath) -> None:
     cmd = shlex.split("git init")
     run(cmd, cwd=dir, stdout=DEVNULL, stderr=DEVNULL)
 
 
-def given_file(file: str, lines: List[str]):
+def given_file(file: str, lines: List[str]) -> None:
     with open(file, "w") as fp:
         contents = "\n".join(lines)
         fp.write(contents)
