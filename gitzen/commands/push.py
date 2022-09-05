@@ -1,7 +1,7 @@
 from gitzen import branches, config, envs, git, github, repo
 
 
-def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config):
+def push(gitGithubEnv: envs.GitGithubEnv, config: config.Config) -> None:
     status = github.fetch_info(gitGithubEnv)
     local_branch = status.local_branch
     print(f"local branch: {local_branch}")

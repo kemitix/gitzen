@@ -5,7 +5,7 @@ from gitzen import git
 
 
 @mock.patch("subprocess.run")
-def test_branch(mock_subproc_run):
+def test_branch(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
@@ -23,7 +23,7 @@ def test_branch(mock_subproc_run):
 
 
 @mock.patch("subprocess.run")
-def test_fetch(mock_subproc_run):
+def test_fetch(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
@@ -35,7 +35,7 @@ def test_fetch(mock_subproc_run):
 
 
 @mock.patch("subprocess.run")
-def test_log(mock_subproc_run):
+def test_log(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
@@ -47,7 +47,7 @@ def test_log(mock_subproc_run):
 
 
 @mock.patch("subprocess.run")
-def test_remote(mock_subproc_run):
+def test_remote(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
@@ -65,7 +65,7 @@ def test_remote(mock_subproc_run):
 
 
 @mock.patch("subprocess.run")
-def test_rebase(mock_subproc_run):
+def test_rebase(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
@@ -84,7 +84,7 @@ def test_rebase(mock_subproc_run):
 
 
 @mock.patch("subprocess.run")
-def test_revParse(mock_subproc_run):
+def test_revParse(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
@@ -96,7 +96,7 @@ def test_revParse(mock_subproc_run):
 
 
 @mock.patch("subprocess.run")
-def test_revParse_returns_value(mock_subproc_run):
+def test_revParse_returns_value(mock_subproc_run) -> None:
     """
     Test that revParse returns the value
     """

@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
 
-trunk check --all
+set -e
+
+trunk fmt --ci
+trunk check --ci
+pyre infer --in-place --annotate-attributes
+pyre check
 pytest
