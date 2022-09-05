@@ -175,3 +175,11 @@ def close_pull_request(
     pull_request: PullRequest,
 ) -> None:
     github_env.gh(f"pr close {pull_request.number}")
+
+
+def close_pull_request_with_comment(
+    github_env: envs.GithubEnv,
+    pull_request: PullRequest,
+    comment: str,
+) -> None:
+    github_env.gh(f"pr close {pull_request.number} --comment '{comment}'")
