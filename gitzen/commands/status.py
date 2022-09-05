@@ -2,7 +2,7 @@ from gitzen import github
 from gitzen.envs import GitGithubEnv
 
 
-def status(gitGithubEnv: GitGithubEnv):
+def status(gitGithubEnv: GitGithubEnv) -> None:
     print("Querying Github...")
     prs = github.fetch_info(gitGithubEnv).pull_requests
     numPRs = len(prs)

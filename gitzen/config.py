@@ -14,7 +14,7 @@ class Config:
         default_remote_branch: str,
         remote_branches: List[str],
         remote: str,
-    ):
+    ) -> None:
         self.default_remote_branch = default_remote_branch
         self.remote_branches = remote_branches
         self.remote = remote

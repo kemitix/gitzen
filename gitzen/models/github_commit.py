@@ -1,5 +1,8 @@
+from typing import Optional
+
+
 class Commit:
-    zen_token: str
+    zen_token: Optional[str]
     hash: str
     messageHeadline: str
     messageBody: str
@@ -7,12 +10,12 @@ class Commit:
 
     def __init__(
         self,
-        zen_token: str,
+        zen_token: Optional[str],
         hash: str,
         headline: str,
         body: str,
         wip: bool,
-    ):
+    ) -> None:
         self.zen_token = zen_token
         self.hash = hash
         self.messageHeadline = headline
@@ -30,7 +33,7 @@ class Commit:
 
     def __repr__(self) -> str:
         return (
-            f"Commit(zen_token={self.zen_token}, "
+            f"Commit(zen_token={repr(self.zen_token)}, "
             f"hash={self.hash}, "
             f"messageHeadline={self.messageHeadline}, "
             f"messageBody={self.messageBody}, "

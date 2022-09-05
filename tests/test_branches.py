@@ -4,7 +4,7 @@ from faker import Faker
 from gitzen import branches, config, exit_code
 
 
-def test_get_remote_branch_name_returns_default_when_no_match():
+def test_get_remote_branch_name_when_no_match() -> None:
     """
     Tests that getRemoteBranchName returns the default remote branch from
     config if it fails to match the local branch name in the list of mapped
@@ -23,7 +23,7 @@ def test_get_remote_branch_name_returns_default_when_no_match():
     assert result == defaultBranch
 
 
-def test_get_remote_branch_name_returns_default_when_second_remote_matches():
+def test_get_remote_branch_name_when_second_remote_matches() -> None:
     """
     Tests that getRemoteBranchName returns the default remote branch from
     config if it fails to match the local branch name in the list of mapped
@@ -42,14 +42,14 @@ def test_get_remote_branch_name_returns_default_when_second_remote_matches():
     assert result == "other"
 
 
-def test_validate_not_remote_pr_when_not_remote_pr():
+def test_validate_not_remote_pr_when_not_remote_pr() -> None:
     # when
     branches.validate_not_remote_pr("foo")
     # then
     assert True  # did not exit
 
 
-def test_validate_not_remote_pr_when_is_remote_pr():
+def test_validate_not_remote_pr_when_is_remote_pr() -> None:
     # when
     with pytest.raises(SystemExit) as system_exit:
         branches.validate_not_remote_pr("gitzen/pr/kemitix/master/efd33424")
@@ -58,7 +58,7 @@ def test_validate_not_remote_pr_when_is_remote_pr():
     assert system_exit.value.code == exit_code.REMOTE_PR_CHECKED_OUT
 
 
-def test_get_required_remote_branch_when_present_in_default_branch():
+def test_get_required_remote_branch_when_present_in_default_branch() -> None:
     # given
     local_branch = Faker().word()
     cfg = config.Config(
@@ -70,7 +70,7 @@ def test_get_required_remote_branch_when_present_in_default_branch():
     assert result == local_branch
 
 
-def test_get_required_remote_branch_when_present_in_remote_branches():
+def test_get_required_remote_branch_when_present_in_remote_branches() -> None:
     # given
     local_branch = Faker().word()
     cfg = config.Config(
@@ -84,7 +84,7 @@ def test_get_required_remote_branch_when_present_in_remote_branches():
     assert result == local_branch
 
 
-def test_get_required_remote_branch_when_not_present():
+def test_get_required_remote_branch_when_not_present() -> None:
     # given
     local_branch = Faker().word()
     cfg = config.Config(

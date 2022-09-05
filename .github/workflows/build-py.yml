@@ -26,12 +26,14 @@ jobs:
           curl -fsSL https://trunk.io/releases/trunk -o .github/bin/trunk
           chmod u+x .github/bin/trunk
       - name: Install Trunk linters
-        run: ./.github/bin/trunk install
+        run: ./.github/bin/trunk install --ci
       - name: Fetch Git History
         run: git fetch origin HEAD
-      - name: Trunk Check All
-        run: ./.github/bin/trunk check --all
-      - name: Test with pytest
-        run: pytest -vv
+      - name: Trunk Verify Formatting
+        run: ./.github/bin/trunk fmt --ci --all
+      - name: Trunk Check
+        run: ./.github/bin/trunk check --ci --all
       - name: Pyre Check
         run: pyre --sequential check
+      - name: Pytest
+        run: pytest -vv

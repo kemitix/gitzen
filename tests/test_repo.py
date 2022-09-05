@@ -10,7 +10,7 @@ from .fakes.git_env import FakeGitEnv
 
 
 @mock.patch("subprocess.run")
-def test_rootDir(mock_subproc_run):
+def test_rootDir(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
@@ -22,7 +22,7 @@ def test_rootDir(mock_subproc_run):
 
 
 @mock.patch("subprocess.run")
-def test_rootDir_returns_path(mock_subproc_run):
+def test_rootDir_returns_path(mock_subproc_run) -> None:
     """
     Test that rootDir returns the directory
     """
@@ -37,7 +37,7 @@ def test_rootDir_returns_path(mock_subproc_run):
 
 
 @mock.patch("subprocess.run")
-def test_getLocalBranchName_calls_git_branch(mock_subproc_run):
+def test_getLocalBranchName_calls_git_branch(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
@@ -54,7 +54,7 @@ def test_getLocalBranchName_calls_git_branch(mock_subproc_run):
 
 
 @mock.patch("subprocess.run")
-def test_getLocalBranchName_returns_correct_branch(mock_subproc_run):
+def test_getLocalBranchName_returns_correct_branch(mock_subproc_run) -> None:
     """
     Test that getLocalBranchName parses the correct branch from the git
     branch output
@@ -69,7 +69,7 @@ def test_getLocalBranchName_returns_correct_branch(mock_subproc_run):
     assert result == "me"
 
 
-def test_getRepoDetailsFromRemoteV():
+def test_getRepoDetailsFromRemoteV() -> None:
     class TestCase:
         remote: str
         host: str
@@ -208,7 +208,7 @@ def test_getRepoDetailsFromRemoteV():
         ), f"match match failed for {testCase.remote}, got '{match}'"
 
 
-def test_git_commit_stack():
+def test_git_commit_stack() -> None:
     # given
     git_env = FakeGitEnv(
         responses={

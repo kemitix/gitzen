@@ -20,6 +20,6 @@ class GitGithubEnv:
     gitEnv: GitEnv
     githubEnv: GithubEnv
 
-    def __init__(self, gitEnv: GitEnv, githubEnv: GithubEnv):
+    def __init__(self, gitEnv: GitEnv, githubEnv: GithubEnv) -> None:
         self.gitEnv = gitEnv
         self.githubEnv = githubEnv
