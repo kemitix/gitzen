@@ -2,3 +2,6 @@ __pycache__/
 .pytest_cache/
 .trunk/
 /.pyre/
+/.coverage
+/coverage.lcov
+/coverage.xml
