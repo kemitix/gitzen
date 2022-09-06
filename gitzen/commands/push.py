@@ -19,9 +19,11 @@ def push(git_github_env: envs.GitGithubEnv, config: config.Config) -> None:
         remote_branch,
     )
     print(repr(commit_stack))
-    close_prs_for_deleted_commits(
+    open_prs = close_prs_for_deleted_commits(
         git_github_env.github_env, status.pull_requests, commit_stack
     )
+    open_prs
+    # check_for_reordered_commits(github_env, status, commit_stack)
     # sync commit stach to github
     # call git zen status
 
@@ -30,16 +32,20 @@ def close_prs_for_deleted_commits(
     github_env: envs.GithubEnv,
     pull_requests: List[PullRequest],
     commits: List[Commit],
-) -> None:
+) -> List[PullRequest]:
     zen_map: Dict[str, Commit] = {}
     for commit in commits:
         if commit.zen_token is not None:
             zen_map[commit.zen_token] = commit
+    kept = []
     for pr in pull_requests:
         if pr.zen_token not in zen_map:
             github.close_pull_request_with_comment(
                 github_env, pr, "Closing pull request: commit has gone away"
             )
+        else:
+            kept.append(pr)
+    return kept
 
 
 # # check for commits having been reordered
