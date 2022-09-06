@@ -6,7 +6,7 @@ from gitzen.models.github_commit import Commit
 class PullRequest:
     id: str
     zen_token: str
-    number: int
+    number: str
     title: str
     body: str
     baseRefName: str
@@ -20,7 +20,7 @@ class PullRequest:
         self,
         id: str,
         zen_token: str,
-        number: int,
+        number: str,
         title: str,
         body: str,
         baseRefName: str,

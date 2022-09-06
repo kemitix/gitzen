@@ -123,7 +123,7 @@ def fetch_info(gitGithubEnv: envs.GitGithubEnv) -> GithubInfo:
             PullRequest(
                 id=pr_node["id"],
                 zen_token=token,
-                number=pr_node["number"],
+                number=f'{pr_node["number"]}',
                 title=pr_node["title"],
                 body=body,
                 baseRefName=base_ref,

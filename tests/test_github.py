@@ -264,7 +264,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     pull_request_a = PullRequest(
         id="PR_kwDOEVHCd84vkAyI",
         zen_token="234ad5c1",
-        number=248,
+        number="248",
         title="build(deps): bump microprofile from 4.1 to 5.0 with zentoken",
         body="zen-token:234ad5c1",
         baseRefName="master",
@@ -296,7 +296,7 @@ def test_add_comment(mock_subproc_run) -> None:
     """
     # given
     fake = Faker()
-    pr_number = fake.random_int(min=1, max=1000)
+    pr_number = f"{fake.random_int(min=1, max=1000)}"
     comment = fake.text()
     pull_request = PullRequest(
         id="",
@@ -319,7 +319,7 @@ def test_add_comment(mock_subproc_run) -> None:
             "gh",
             "pr",
             "comment",
-            f"{pr_number}",
+            pr_number,
             "--body",
             comment,
         ],
