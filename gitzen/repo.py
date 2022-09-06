@@ -75,11 +75,14 @@ def get_commit_stack(
                 print("No zen-token found - is pre-commit hook installed?")
                 exit(exit_code.ZEN_TOKENS_MISSING)
             hash = commit_matches.group(1)
+            print(f":: hash: {hash}")
             have_hash = True
             subject_index = line_number + 4
             continue
         token = zen_token.find_in_line(line[4:])
         if token is not None:
+            print(f":: zen-token: {token}")
+            print(f":: body: {body.strip()}")
             commits.append(
                 Commit(
                     zen_token=token,
@@ -95,6 +98,7 @@ def get_commit_stack(
         if have_hash:
             if line_number == subject_index:
                 headline = line.strip()
+                print(f":: title: {headline}")
             elif line_number == (subject_index + 1) and line != "\n":
                 body += line.strip() + "\n"
             elif line_number > (subject_index + 1):

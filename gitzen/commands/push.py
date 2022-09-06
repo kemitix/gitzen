@@ -18,6 +18,7 @@ def push(git_github_env: envs.GitGithubEnv, config: config.Config) -> None:
         config.remote,
         remote_branch,
     )
+    print(repr(commit_stack))
     close_prs_for_deleted_commits(
         git_github_env.github_env, status.pull_requests, commit_stack
     )
