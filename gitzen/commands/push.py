@@ -22,6 +22,8 @@ def push(git_github_env: envs.GitGithubEnv, config: config.Config) -> None:
     close_prs_for_deleted_commits(
         git_github_env.github_env, status.pull_requests, commit_stack
     )
+    # sync commit stach to github
+    # call git zen status
 
 
 def close_prs_for_deleted_commits(
@@ -40,14 +42,11 @@ def close_prs_for_deleted_commits(
             )
 
 
-# # close prs for delete commits
-#     # create a map of local commits by the tag we added to them
-#     # loop over each PR looking for the commit tag in each
-#     # if there is no local commit in the stack - comment and close the PR
-#         # what if the commit is on another stack?
 # # check for commits having been reordered
 #     # rebase all PRs on target branch
 #     # update all PRs
+
+
 # # sync commit stack to github
 # # loop over each local commit
 #     # if it has a PR
@@ -59,4 +58,6 @@ def close_prs_for_deleted_commits(
 #           (unless first commit)
 # # loop over the PR update queue
 #     # update the PR
+
+
 # # call: git zen status
