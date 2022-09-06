@@ -1,4 +1,8 @@
+from typing import Dict, List
+
 from gitzen import branches, config, envs, git, github, repo
+from gitzen.models.github_commit import Commit
+from gitzen.models.github_pull_request import PullRequest
 
 
 def push(git_github_env: envs.GitGithubEnv, config: config.Config) -> None:
@@ -14,7 +18,25 @@ def push(git_github_env: envs.GitGithubEnv, config: config.Config) -> None:
         config.remote,
         remote_branch,
     )
-    commit_stack
+    close_prs_for_deleted_commits(
+        git_github_env.github_env, status.pull_requests, commit_stack
+    )
+
+
+def close_prs_for_deleted_commits(
+    github_env: envs.GithubEnv,
+    pull_requests: List[PullRequest],
+    commits: List[Commit],
+) -> None:
+    zen_map: Dict[str, Commit] = {}
+    for commit in commits:
+        if commit.zen_token is not None:
+            zen_map[commit.zen_token] = commit
+    for pr in pull_requests:
+        if pr.zen_token not in zen_map:
+            github.close_pull_request_with_comment(
+                github_env, pr, "Closing pull request: commit has gone away"
+            )
 
 
 # # close prs for delete commits
