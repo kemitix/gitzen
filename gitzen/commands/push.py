@@ -48,9 +48,22 @@ def close_prs_for_deleted_commits(
     return kept
 
 
-# # check for commits having been reordered
-#     # rebase all PRs on target branch
-#     # update all PRs
+def check_for_reordered_commits(
+    github_env: envs.GithubEnv,
+    open_prs: List[PullRequest],
+    commits: List[Commit],
+) -> None:
+    if reordered(open_prs, commits):
+        pass
+        # rebase all PRs on target branch
+        # update all PRs
+
+
+def reordered(open_prs: List[PullRequest], commits: List[Commit]) -> bool:
+    for i, pr in enumerate(open_prs):
+        if pr.commits[0] != commits[i]:
+            return True
+    return False
 
 
 # # sync commit stack to github
