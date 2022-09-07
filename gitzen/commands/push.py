@@ -17,7 +17,11 @@ def push(git_github_env: envs.GitGithubEnv, config: config.Config) -> None:
     branches.validate_not_remote_pr(local_branch)
     commits = repo.get_commit_stack(git_env, config.remote, remote_branch)
     print(repr(commits))
-    open_prs = close_prs_for_deleted_commits(github_env, status.pull_requests, commits)
+    open_prs = close_prs_for_deleted_commits(
+        github_env,
+        status.pull_requests,
+        commits,
+    )
     check_for_reordered_commits(github_env, open_prs, commits)
     # sync commit stach to github
     # call git zen status
