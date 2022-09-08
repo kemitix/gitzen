@@ -57,14 +57,15 @@ def check_for_reordered_commits(
             pass
             # rebase on target branch
             # get remote branch name from repo as baseRefName (default master)
-            # if there was a previous commit - here there never is - generic code might
+            # if there was a previous commit
+            # - here there never is - but generic code might
             # # get the baseRefName from that previous commit
             # format body from list of pull requests
             # title from commit
             # github.update_pull_request
             # # setting: baseRefName, title and body
         # sync commit stack to github:
-        # # syncCommitStackToGitHub gets all the local commits in the given branch
+        # # syncCommitStackToGitHub gets all local commits in the given branch
         # # which are new (on top of remote branch) and creates a corresponding
         # # branch on github for each commit.
         # # - git status --porcelain --untracked-files=no

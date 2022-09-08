@@ -118,7 +118,8 @@ The default behaviour of git zen merge is to attempt to merge the first PR on yo
 
 - for the first commit, the branch `gz/pr/${zen-token-1}` is checked
   - is it mergable (approved, passing checks, no conflicts, etc)
-- merge the PR
+  - ensure adding our single commit to remote upstream give the same tree as merging the branch?
+- merge the PR using a squash merge
 - for the second commit, the branch `gz/pr/${zen-token-2}` is updated
   - rebase on `main` (or `master`)
   - update the PR to target the main branch
