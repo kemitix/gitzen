@@ -2,6 +2,7 @@ import re
 from typing import List, Tuple
 
 from gitzen import envs, exit_code, git, zen_token
+from gitzen.console import say
 from gitzen.models.github_commit import Commit
 
 
@@ -13,13 +14,16 @@ def root_dir(git_env: git.GitEnv) -> str:
     return output[0]
 
 
-def get_local_branch_name(git_env: git.GitEnv) -> str:
+def get_local_branch_name(
+    console_env: envs.ConsoleEnv,
+    git_env: git.GitEnv,
+) -> str:
     branches = git.branch(git_env)
     for branch in branches:
         # TODO detected detached HEAD
         if branch.startswith("* "):
             return branch[2:]
-    print("ERROR: Can't find local branch name")
+    say(console_env, "ERROR: Can't find local branch name")
     exit(exit_code.NO_LOCAL_BRANCH_FOUND)
 
 
@@ -54,6 +58,7 @@ def get_repo_details_from_remote(remote: str) -> Tuple[str, str, str, bool]:
 
 
 def get_commit_stack(
+    console_env: envs.ConsoleEnv,
     git_env: envs.GitEnv,
     remote: str,
     remote_branch: str,
@@ -68,21 +73,24 @@ def get_commit_stack(
     subject_index = 0
     for line in log:
         line_number += 1
-        print(f"{line_number}: {line}")
+        say(console_env, f"{line_number}: {line}")
         commit_matches = re.search("^commit ([a-f0-9]{40})", line)
         if commit_matches:
             if have_hash:
-                print("No zen-token found - is pre-commit hook installed?")
+                say(
+                    console_env,
+                    "No zen-token found - is pre-commit hook installed?",
+                )
                 exit(exit_code.ZEN_TOKENS_MISSING)
             hash = commit_matches.group(1)
-            print(f":: hash: {hash}")
+            say(console_env, f":: hash: {hash}")
             have_hash = True
             subject_index = line_number + 4
             continue
         token = zen_token.find_in_line(line[4:])
         if token is not None:
-            print(f":: zen-token: {token}")
-            print(f":: body: {body.strip()}")
+            say(console_env, f":: zen-token: {token}")
+            say(console_env, f":: body: {body.strip()}")
             commits.append(
                 Commit(
                     zen_token=token,
@@ -98,7 +106,7 @@ def get_commit_stack(
         if have_hash:
             if line_number == subject_index:
                 headline = line.strip()
-                print(f":: title: {headline}")
+                say(console_env, f":: title: {headline}")
             elif line_number == (subject_index + 1) and line != "\n":
                 body += line.strip() + "\n"
             elif line_number > (subject_index + 1):

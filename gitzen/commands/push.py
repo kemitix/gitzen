@@ -21,7 +21,12 @@ def push(
     print(f"remote branch: {config.remote}/{remote_branch}")
     git.rebase(git_env, f"{config.remote}/{remote_branch}")
     branches.validate_not_remote_pr(console_env, local_branch)
-    commits = repo.get_commit_stack(git_env, config.remote, remote_branch)
+    commits = repo.get_commit_stack(
+        console_env,
+        git_env,
+        config.remote,
+        remote_branch,
+    )
     print(repr(commits))
     open_prs = close_prs_for_deleted_commits(
         github_env,
