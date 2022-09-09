@@ -5,6 +5,7 @@ import subprocess
 from typing import Any, Dict, List
 
 from gitzen import envs, repo, zen_token
+from gitzen.console import say
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
@@ -87,7 +88,10 @@ query_status = """query($repo_owner: String!, $repo_name: String!){
 """
 
 
-def fetch_info(gitGithubEnv: envs.GitGithubEnv) -> GithubInfo:
+def fetch_info(
+    console_env: envs.ConsoleEnv,
+    gitGithubEnv: envs.GitGithubEnv,
+) -> GithubInfo:
     data = gitGithubEnv.github_env.graphql(
         {
             "repo_owner": "{owner}",
@@ -99,19 +103,22 @@ def fetch_info(gitGithubEnv: envs.GitGithubEnv) -> GithubInfo:
     viewer = data["viewer"]
     pr_nodes = viewer["repository"]["pullRequests"]["nodes"]
     prs: List[PullRequest] = []
-    print(f"Found {len(pr_nodes)} prs")
+    say(console_env, f"Found {len(pr_nodes)} prs")
     for pr_node in pr_nodes:
         pr_repo_id = pr_node["repository"]["id"]
         if repo_id != pr_repo_id:
             continue
         base_ref = pr_node["baseRefName"]
         head_ref = pr_node["headRefName"]
-        print(f"{base_ref} <- {head_ref}")
+        say(console_env, f"{base_ref} <- {head_ref}")
         match = re.search(r"^gitzen/pr/(?P<localBranch>.*)$", head_ref)
         if match is None:
             continue
         if match.group("localBranch") != base_ref:
-            print("ignore prs that don't target expected base branch ???")
+            say(
+                console_env,
+                "ignore prs that don't target expected base branch ???",
+            )
             continue
         review_node = pr_node["reviewDecision"]
         review_decision = review_node if review_node is not None else ""
@@ -134,7 +141,7 @@ def fetch_info(gitGithubEnv: envs.GitGithubEnv) -> GithubInfo:
                 commits=get_commits(pr_node),
             )
         )
-    print(f"Kept {len(prs)} prs")
+    say(console_env, f"Kept {len(prs)} prs")
     return GithubInfo(
         username=viewer["login"],
         repo_id=repo_id,
