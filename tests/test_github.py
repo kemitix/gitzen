@@ -100,7 +100,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
               "title": "build(deps): bump microprofile from 4.1 to 5.0 with zentoken",
               "body": "zen-token:234ad5c1",
               "baseRefName": "master",
-              "headRefName": "gitzen/pr/master",
+              "headRefName": "gitzen/pr/kemitix/master/234ad5c1",
               "mergeable": "CONFLICTING",
               "reviewDecision": null,
               "repository": {
@@ -267,7 +267,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         title="build(deps): bump microprofile from 4.1 to 5.0 with zentoken",
         body="zen-token:234ad5c1",
         baseRefName="master",
-        headRefName="gitzen/pr/master",
+        headRefName="gitzen/pr/kemitix/master/234ad5c1",
         mergeable="CONFLICTING",
         reviewDecision="",
         repoId="MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE=",
