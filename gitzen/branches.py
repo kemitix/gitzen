@@ -1,6 +1,6 @@
 import re
 
-from gitzen import config, envs, exit_code
+from gitzen import config, envs, exit_code, patterns
 from gitzen.console import say
 
 
@@ -29,11 +29,7 @@ def validate_not_remote_pr(
     console_env: envs.ConsoleEnv,
     local_branch: str,
 ) -> None:
-    matches = re.search(
-        # gitzen/pr/{user}/{target-branch}/{zentoken}
-        r"gitzen/pr/[a-zA-Z0-9_\-]+/([a-zA-Z0-9_\-/\.]+)/([a-f0-9]{8})$",
-        local_branch,
-    )
+    matches = re.search(patterns.remote_branch, local_branch)
     if matches:
         say(
             console_env,

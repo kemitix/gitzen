@@ -1,7 +1,7 @@
 import re
 from typing import List, Tuple
 
-from gitzen import envs, exit_code, git, zen_token
+from gitzen import envs, exit_code, git, patterns, zen_token
 from gitzen.console import say
 from gitzen.models.github_commit import Commit
 
@@ -74,7 +74,7 @@ def get_commit_stack(
     for line in log:
         line_number += 1
         say(console_env, f"{line_number}: {line}")
-        commit_matches = re.search("^commit ([a-f0-9]{40})", line)
+        commit_matches = re.search(patterns.commit_log_hash, line)
         if commit_matches:
             if have_hash:
                 say(

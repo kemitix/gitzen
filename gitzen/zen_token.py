@@ -1,11 +1,13 @@
 import re
 from typing import Optional
 
+from gitzen import patterns
+
 
 def find_in_line(line: str) -> Optional[str]:
-    matches = re.search("^zen-token:(?P<token>[a-f0-9]{8})$", line)
+    matches = re.search(patterns.commit_body_zen_token, line)
     if matches:
-        return matches.group("token")
+        return matches.group("zen_token")
     return None
 
 

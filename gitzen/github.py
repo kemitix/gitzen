@@ -4,7 +4,7 @@ import shlex
 import subprocess
 from typing import Any, Dict, List
 
-from gitzen import envs, repo, zen_token
+from gitzen import envs, patterns, repo, zen_token
 from gitzen.console import say
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
@@ -111,13 +111,14 @@ def fetch_info(
         base_ref = pr_node["baseRefName"]
         head_ref = pr_node["headRefName"]
         say(console_env, f"{base_ref} <- {head_ref}")
-        match = re.search(r"^gitzen/pr/(?P<localBranch>.*)$", head_ref)
+        match = re.search(patterns.remote_branch, head_ref)
         if match is None:
+            print("unknown head_ref: " + head_ref)
             continue
-        if match.group("localBranch") != base_ref:
+        if match.group("target_branch") != base_ref:
             say(
                 console_env,
-                "ignore prs that don't target expected base branch ???",
+                "ignore prs that don't target expected base branch",
             )
             continue
         review_node = pr_node["reviewDecision"]
