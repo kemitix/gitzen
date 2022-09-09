@@ -89,9 +89,10 @@ query_status = """query($repo_owner: String!, $repo_name: String!){
 
 def fetch_info(
     console_env: envs.ConsoleEnv,
-    gitGithubEnv: envs.GitGithubEnv,
+    git_env: envs.GitEnv,
+    github_env: envs.GithubEnv,
 ) -> GithubInfo:
-    data = gitGithubEnv.github_env.graphql(
+    data = github_env.graphql(
         {
             "repo_owner": "{owner}",
             "repo_name": "{repo}",
@@ -146,7 +147,7 @@ def fetch_info(
         repo_id=repo_id,
         local_branch=repo.get_local_branch_name(
             console_env,
-            gitGithubEnv.git_env,
+            git_env,
         ),
         pull_requests=prs,
     )
