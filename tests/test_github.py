@@ -5,7 +5,7 @@ from unittest import mock
 
 from faker import Faker
 
-from gitzen import envs, git, github
+from gitzen import console, envs, git, github
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
@@ -32,10 +32,11 @@ def test_fetch_info_invokes_command(mock_subproc_run) -> None:
     ]
     # when
     github.fetch_info(
+        console.RealConsoleEnv(),
         envs.GitGithubEnv(
             git.RealGitEnv(),
             github.RealGithubEnv(),
-        )
+        ),
     )
     # then
     query = github.query_status
@@ -276,7 +277,8 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     )
     # when
     result = github.fetch_info(
-        envs.GitGithubEnv(git.RealGitEnv(), github.RealGithubEnv())
+        console.RealConsoleEnv(),
+        envs.GitGithubEnv(git.RealGitEnv(), github.RealGithubEnv()),
     )
     # then
     assert len(result.pull_requests) == 1
