@@ -3,6 +3,9 @@ from typing import List
 
 import yaml
 
+from gitzen import envs
+from gitzen.console import say
+
 
 class Config:
     default_remote_branch: str
@@ -41,17 +44,17 @@ default_config: Config = Config(
 )
 
 
-def load(dir: str) -> Config:
+def load(console_env: envs.ConsoleEnv, dir: str) -> Config:
     config_file = f"{dir}/.gitzen.yml"
     if exists(config_file):
-        print(f"Reading config from {config_file}")
+        say(console_env, f"Reading config from {config_file}")
         gitzen_yml = read_yaml(config_file)
         return Config(
             default_remote_branch=gitzen_yml["defaultRemoteBranch"],
             remote_branches=gitzen_yml["remoteBranches"],
             remote=gitzen_yml["remote"],
         )
-    print(f"Using default config - no file: {config_file}")
+    say(console_env, f"Using default config - no file: {config_file}")
     return default_config
 
 
