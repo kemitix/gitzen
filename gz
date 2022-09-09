@@ -17,8 +17,7 @@ config = config.load(console_env, rootDir)
 for i, arg in enumerate(sys.argv):
     if i != 1:
         continue
-    match arg:
-        case "status":
-            status.status(console_env, git_env, github_env)
-        case "push":
-            push.push(console_env, git_env, github_env, config)
+    if arg == "status":
+        status.status(console_env, git_env, github_env)
+    if arg == "push":
+        push.push(console_env, git_env, github_env, config)
