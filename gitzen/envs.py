@@ -1,6 +1,11 @@
 from typing import Any, Dict, List
 
 
+class ConsoleEnv:
+    def say(self, message: str) -> None:
+        pass
+
+
 class GitEnv:
     def git(self, args: str) -> List[str]:
         pass
