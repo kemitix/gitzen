@@ -34,7 +34,6 @@ class RealGithubEnv(envs.GithubEnv):
 
     def gh(self, args: str) -> List[str]:
         gh_command = f"gh {args}"
-        print(f"> {gh_command}")
         result: subprocess.CompletedProcess[bytes] = subprocess.run(
             shlex.split(gh_command), stdout=subprocess.PIPE
         )
