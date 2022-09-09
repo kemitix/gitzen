@@ -5,16 +5,22 @@ from gitzen.models.github_commit import Commit
 from gitzen.models.github_pull_request import PullRequest
 
 
-def push(git_github_env: envs.GitGithubEnv, config: config.Config) -> None:
+def push(
+    console_env: envs.ConsoleEnv,
+    git_github_env: envs.GitGithubEnv,
+    config: config.Config,
+) -> None:
     git_env = git_github_env.git_env
     github_env = git_github_env.github_env
     status = github.fetch_info(git_github_env)
     local_branch = status.local_branch
     print(f"local branch: {local_branch}")
-    remote_branch = branches.get_required_remote_branch(local_branch, config)
+    remote_branch = branches.get_required_remote_branch(
+        console_env, local_branch, config
+    )
     print(f"remote branch: {config.remote}/{remote_branch}")
     git.rebase(git_env, f"{config.remote}/{remote_branch}")
-    branches.validate_not_remote_pr(local_branch)
+    branches.validate_not_remote_pr(console_env, local_branch)
     commits = repo.get_commit_stack(git_env, config.remote, remote_branch)
     print(repr(commits))
     open_prs = close_prs_for_deleted_commits(

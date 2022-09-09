@@ -2,10 +2,11 @@
 
 import sys
 
-from gitzen import config, envs, git, github, repo
+from gitzen import config, console, envs, git, github, repo
 from gitzen.commands import push, status
 
-print("`git zen` - prototype")
+console_env: envs.ConsoleEnv = console.RealConsoleEnv()
+console.say(console_env, "`git zen` - prototype")
 
 git_env: envs.GitEnv = git.RealGitEnv()
 github_env: envs.GithubEnv = github.RealGithubEnv()
@@ -21,4 +22,4 @@ for i, arg in enumerate(sys.argv):
         case "status":
             status.status(git_github_env)
         case "push":
-            push.push(git_github_env, config)
+            push.push(console_env, git_github_env, config)
