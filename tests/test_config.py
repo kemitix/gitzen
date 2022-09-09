@@ -3,15 +3,16 @@ from pathlib import PosixPath
 from subprocess import DEVNULL, run
 from typing import List
 
-from gitzen import config
+from gitzen import config, console
 
 
 def test_load_when_file_not_found(tmp_path) -> None:
     # given
     # a repo with no config file
     given_repo(tmp_path)
+    console_env = console.RealConsoleEnv()
     # when
-    result = config.load(tmp_path)
+    result = config.load(console_env, tmp_path)
     # then
     assert result == config.default_config
 
@@ -29,8 +30,9 @@ def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
             "remote: other",
         ],
     )
+    console_env = console.RealConsoleEnv()
     # when
-    result = config.load(f"{tmp_path}")
+    result = config.load(console_env, f"{tmp_path}")
     # then
     assert result == config.Config(
         default_remote_branch="drb", remote_branches=["rbn"], remote="other"

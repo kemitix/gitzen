@@ -13,7 +13,7 @@ github_env: envs.GithubEnv = github.RealGithubEnv()
 git_github_env: envs.GitGithubEnv = envs.GitGithubEnv(git_env, github_env)
 
 rootDir = repo.root_dir(git_env)  # verifies that we are in a git repo or exits
-config = config.load(rootDir)
+config = config.load(console_env, rootDir)
 
 for i, arg in enumerate(sys.argv):
     if i != 1:
