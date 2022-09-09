@@ -1,6 +1,7 @@
 from typing import Dict, List
 
 from gitzen import branches, config, envs, git, github, repo
+from gitzen.console import say
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_pull_request import PullRequest
 
@@ -14,11 +15,11 @@ def push(
     github_env = git_github_env.github_env
     status = github.fetch_info(console_env, git_github_env)
     local_branch = status.local_branch
-    print(f"local branch: {local_branch}")
+    say(console_env, f"local branch: {local_branch}")
     remote_branch = branches.get_required_remote_branch(
         console_env, local_branch, config
     )
-    print(f"remote branch: {config.remote}/{remote_branch}")
+    say(console_env, f"remote branch: {config.remote}/{remote_branch}")
     git.rebase(git_env, f"{config.remote}/{remote_branch}")
     branches.validate_not_remote_pr(console_env, local_branch)
     commits = repo.get_commit_stack(
@@ -27,7 +28,7 @@ def push(
         config.remote,
         remote_branch,
     )
-    print(repr(commits))
+    say(console_env, repr(commits))
     open_prs = close_prs_for_deleted_commits(
         github_env,
         status.pull_requests,
