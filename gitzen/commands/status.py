@@ -4,10 +4,11 @@ from gitzen.console import say
 
 def status(
     console_env: envs.ConsoleEnv,
-    gitGithubEnv: envs.GitGithubEnv,
+    git_env: envs.GitEnv,
+    github_env: envs.GithubEnv,
 ) -> None:
     say(console_env, "Querying Github...")
-    prs = github.fetch_info(console_env, gitGithubEnv).pull_requests
+    prs = github.fetch_info(console_env, git_env, github_env).pull_requests
     numPRs = len(prs)
     if numPRs == 0:
         say(console_env, "Stack is empty - no PRs found")

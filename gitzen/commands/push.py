@@ -8,12 +8,11 @@ from gitzen.models.github_pull_request import PullRequest
 
 def push(
     console_env: envs.ConsoleEnv,
-    git_github_env: envs.GitGithubEnv,
+    git_env: envs.GitEnv,
+    github_env: envs.GithubEnv,
     config: config.Config,
 ) -> None:
-    git_env = git_github_env.git_env
-    github_env = git_github_env.github_env
-    status = github.fetch_info(console_env, git_github_env)
+    status = github.fetch_info(console_env, git_env, github_env)
     local_branch = status.local_branch
     say(console_env, f"local branch: {local_branch}")
     remote_branch = branches.get_required_remote_branch(
