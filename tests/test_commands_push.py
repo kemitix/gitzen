@@ -8,7 +8,13 @@ from .fakes.github_env import FakeGithubEnv
 
 def test_close_prs_for_deleted_commits_closes_with_comment() -> None:
     # given
-    github_env: envs.GithubEnv = FakeGithubEnv()
+    close_123_args = (
+        "pr close 123 --comment 'Closing pull request: commit has gone away'"
+    )
+    github_env: envs.GithubEnv = FakeGithubEnv(
+        gh_responses={close_123_args: [[]]},
+        gql_responses={},
+    )
     pr_to_close: PullRequest = PullRequest(
         id="abcd123",
         zen_token="12341234",
@@ -58,7 +64,13 @@ def test_close_prs_for_deleted_commits_closes_with_comment() -> None:
 
 def test_close_prs_for_deleted_commits_returns_remaining_prs() -> None:
     # given
-    github_env: envs.GithubEnv = FakeGithubEnv()
+    close_123_args = (
+        "pr close 123 --comment 'Closing pull request: commit has gone away'"
+    )
+    github_env: envs.GithubEnv = FakeGithubEnv(
+        gh_responses={close_123_args: [[]]},
+        gql_responses={},
+    )
     pr_to_close: PullRequest = PullRequest(
         id="abcd123",
         zen_token="12341234",
