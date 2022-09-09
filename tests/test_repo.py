@@ -3,7 +3,7 @@ from subprocess import PIPE, CompletedProcess
 from typing import List
 from unittest import mock
 
-from gitzen import git, repo
+from gitzen import console, git, repo
 from gitzen.models.github_commit import Commit
 
 from .fakes.git_env import FakeGitEnv
@@ -45,8 +45,9 @@ def test_getLocalBranchName_calls_git_branch(mock_subproc_run) -> None:
     mock_subproc_run.return_value = CompletedProcess(
         "", 0, stdout="* branch-name".encode()
     )
+    console_env = console.RealConsoleEnv()
     # when
-    repo.get_local_branch_name(git.RealGitEnv())
+    repo.get_local_branch_name(console_env, git.RealGitEnv())
     # then
     mock_subproc_run.assert_called_with(
         ["git", "branch", "--no-color"], stdout=subprocess.PIPE
@@ -63,8 +64,9 @@ def test_getLocalBranchName_returns_correct_branch(mock_subproc_run) -> None:
     mock_subproc_run.return_value = CompletedProcess(
         "", 0, stdout="\n".join(["  not-me", "* me", "  not-me-2"]).encode()
     )
+    console_env = console.RealConsoleEnv()
     # when
-    result = repo.get_local_branch_name(git.RealGitEnv())
+    result = repo.get_local_branch_name(console_env, git.RealGitEnv())
     # then
     assert result == "me"
 
@@ -269,8 +271,9 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
     )
     remote = "origin"
     remote_branch = "remote-branch"
+    console_env = console.RealConsoleEnv()
     # when
-    result = repo.get_commit_stack(git_env, remote, remote_branch)
+    result = repo.get_commit_stack(console_env, git_env, remote, remote_branch)
     # then
     assert result == [
         Commit(  # 1

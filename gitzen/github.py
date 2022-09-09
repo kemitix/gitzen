@@ -145,7 +145,10 @@ def fetch_info(
     return GithubInfo(
         username=viewer["login"],
         repo_id=repo_id,
-        local_branch=repo.get_local_branch_name(gitGithubEnv.git_env),
+        local_branch=repo.get_local_branch_name(
+            console_env,
+            gitGithubEnv.git_env,
+        ),
         pull_requests=prs,
     )
 
