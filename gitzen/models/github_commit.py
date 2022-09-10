@@ -1,11 +1,11 @@
 from typing import Optional
 
-from gitzen.types import ZenToken
+from gitzen.types import GitHash, ZenToken
 
 
 class Commit:
     zen_token: Optional[ZenToken]
-    hash: str
+    hash: GitHash
     messageHeadline: str
     messageBody: str
     wip: bool
@@ -13,7 +13,7 @@ class Commit:
     def __init__(
         self,
         zen_token: Optional[ZenToken],
-        hash: str,
+        hash: GitHash,
         headline: str,
         body: str,
         wip: bool,
