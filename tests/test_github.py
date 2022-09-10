@@ -9,6 +9,7 @@ from gitzen import console, git, github
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
+from gitzen.types import ZenToken
 
 
 @mock.patch("subprocess.run")
@@ -254,7 +255,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         "Signed-off-by: dependabot[bot] <support@github.com>"
     )
     commit_a = Commit(
-        zen_token="234ad5c1",
+        zen_token=ZenToken("234ad5c1"),
         hash="715fbc4220806fe283e39ee74c6fca3dac52c041",
         headline="build(deps): bump microprofile from 4.1 to 5.0",
         body=commit_body + "\n\nzen-token:234ad5c1",
@@ -262,7 +263,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     )
     pull_request_a = PullRequest(
         id="PR_kwDOEVHCd84vkAyI",
-        zen_token="234ad5c1",
+        zen_token=ZenToken("234ad5c1"),
         number="248",
         title="build(deps): bump microprofile from 4.1 to 5.0 with zentoken",
         body="zen-token:234ad5c1",
@@ -301,7 +302,7 @@ def test_add_comment(mock_subproc_run) -> None:
     comment = fake.text()
     pull_request = PullRequest(
         id="",
-        zen_token="",
+        zen_token=ZenToken(""),
         number=pr_number,
         title="",
         body="",
@@ -338,7 +339,7 @@ def test_close_pull_request(mock_subproc_run) -> None:
     pr_number = fake.random_int(min=1, max=1000)
     pull_request = PullRequest(
         id="",
-        zen_token="",
+        zen_token=ZenToken(""),
         number=pr_number,
         title="",
         body="",
@@ -374,7 +375,7 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
     comment = fake.text()
     pull_request = PullRequest(
         id="",
-        zen_token="",
+        zen_token=ZenToken(""),
         number=pr_number,
         title="",
         body="",

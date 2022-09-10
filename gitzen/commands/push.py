@@ -4,6 +4,7 @@ from gitzen import branches, config, envs, git, github, repo
 from gitzen.console import say
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_pull_request import PullRequest
+from gitzen.types import ZenToken
 
 
 def push(
@@ -43,7 +44,7 @@ def clean_up_deleted_commits(
     pull_requests: List[PullRequest],
     commits: List[Commit],
 ) -> List[PullRequest]:
-    zen_map: Dict[str, Commit] = {}
+    zen_map: Dict[ZenToken, Commit] = {}
     for commit in commits:
         if commit.zen_token is not None:
             zen_map[commit.zen_token] = commit

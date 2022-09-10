@@ -26,6 +26,9 @@ def handle_commit_message(filename: str) -> None:
     write_file(filename, message)
 
 
+# This is the only place we should be creating a zen_token value
+# We want to deal with it as a str, rather then ZenToken as we
+# are only about to insert the value into another str.
 def gen_zen_token() -> str:
     return "".join(choice(hexdigits) for i in range(8)).lower()
 
