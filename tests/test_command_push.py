@@ -2,7 +2,7 @@ from gitzen import envs
 from gitzen.commands import push
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import GitHash, ZenToken
+from gitzen.types import CommitHash, ZenToken
 
 from .fakes.github_env import FakeGithubEnv
 
@@ -44,7 +44,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         commits=[
             Commit(
                 zen_token=zen_token,
-                hash=GitHash(""),
+                hash=CommitHash(""),
                 headline="",
                 body="",
                 wip=False,
@@ -100,7 +100,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         commits=[
             Commit(
                 zen_token=zen_token,
-                hash=GitHash(""),
+                hash=CommitHash(""),
                 headline="",
                 body="",
                 wip=False,
@@ -117,7 +117,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
 
 def test_reordered_when_too_many_commits() -> None:
     # given
-    commits = [Commit(ZenToken("foo"), GitHash(""), "", "", False)]
+    commits = [Commit(ZenToken("foo"), CommitHash(""), "", "", False)]
     prs = []
     # when
     result = push.reordered(prs, commits)
@@ -130,8 +130,8 @@ def test_reordered_when_too_many_commits() -> None:
 
 def test_reordered_when_not_reordered() -> None:
     # given
-    commit_foo = Commit(ZenToken("foo"), GitHash(""), "", "", False)
-    commit_bar = Commit(ZenToken("bar"), GitHash(""), "", "", False)
+    commit_foo = Commit(ZenToken("foo"), CommitHash(""), "", "", False)
+    commit_bar = Commit(ZenToken("bar"), CommitHash(""), "", "", False)
     commits = [commit_foo, commit_bar]
     prs = [
         PullRequest(
@@ -169,8 +169,8 @@ def test_reordered_when_not_reordered() -> None:
 
 def test_reordered_when_reordered() -> None:
     # given
-    commit_foo = Commit(ZenToken("foo"), GitHash(""), "", "", False)
-    commit_bar = Commit(ZenToken("bar"), GitHash(""), "", "", False)
+    commit_foo = Commit(ZenToken("foo"), CommitHash(""), "", "", False)
+    commit_bar = Commit(ZenToken("bar"), CommitHash(""), "", "", False)
     commits = [commit_foo, commit_bar]
     prs = [
         PullRequest(

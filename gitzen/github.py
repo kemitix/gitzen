@@ -9,7 +9,7 @@ from gitzen.console import say
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import GitHash
+from gitzen.types import CommitHash
 
 
 class RealGithubEnv(envs.GithubEnv):
@@ -165,7 +165,7 @@ def get_commits(pr_node) -> List[Commit]:
         commits.append(
             Commit(
                 zen_token=token,
-                hash=GitHash(commit_node["oid"]),
+                hash=CommitHash(commit_node["oid"]),
                 headline=title,
                 body=body,
                 wip=title.startswith("WIP "),
