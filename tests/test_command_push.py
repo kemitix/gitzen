@@ -8,6 +8,7 @@ from gitzen.types import (
     CommitTitle,
     PullRequestBody,
     PullRequestId,
+    PullRequestNumber,
     ZenToken,
 )
 
@@ -26,7 +27,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
     pr_to_close: PullRequest = PullRequest(
         id=PullRequestId("abcd123"),
         zen_token=ZenToken("12341234"),
-        number="123",
+        number=PullRequestNumber("123"),
         title="pr 123",
         body=PullRequestBody("zen-token:12341234"),
         baseRefName="base",
@@ -40,7 +41,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
     pr_to_keep: PullRequest = PullRequest(
         id=PullRequestId("def456"),
         zen_token=zen_token,
-        number="321",
+        number=PullRequestNumber("321"),
         title="pr 321",
         body=PullRequestBody("zen-token:43214321"),
         baseRefName="base",
@@ -63,9 +64,9 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
     # when
     push.clean_up_deleted_commits(github_env, prs, commits)
     # then
-    assert pr_to_close.number in github_env.closed_with_comment
+    assert pr_to_close.number.value in github_env.closed_with_comment
     assert (
-        github_env.closed_with_comment[pr_to_close.number]
+        github_env.closed_with_comment[pr_to_close.number.value]
         == "Closing pull request: commit has gone away"
     )
 
@@ -82,7 +83,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
     pr_to_close: PullRequest = PullRequest(
         id=PullRequestId("abcd123"),
         zen_token=ZenToken("12341234"),
-        number="123",
+        number=PullRequestNumber("123"),
         title="pr 123",
         body=PullRequestBody("zen-token:12341234"),
         baseRefName="base",
@@ -96,7 +97,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
     pr_to_keep: PullRequest = PullRequest(
         id=PullRequestId("def456"),
         zen_token=zen_token,
-        number="321",
+        number=PullRequestNumber("321"),
         title="pr 321",
         body=PullRequestBody("zen-token:43214321"),
         baseRefName="base",
@@ -164,7 +165,7 @@ def test_reordered_when_not_reordered() -> None:
         PullRequest(
             PullRequestId(""),
             ZenToken(""),
-            "",
+            PullRequestNumber(""),
             "",
             PullRequestBody(""),
             "",
@@ -177,7 +178,7 @@ def test_reordered_when_not_reordered() -> None:
         PullRequest(
             PullRequestId(""),
             ZenToken(""),
-            "",
+            PullRequestNumber(""),
             "",
             PullRequestBody(""),
             "",
@@ -215,7 +216,7 @@ def test_reordered_when_reordered() -> None:
         PullRequest(
             PullRequestId(""),
             ZenToken(""),
-            "",
+            PullRequestNumber(""),
             "",
             PullRequestBody(""),
             "",
@@ -228,7 +229,7 @@ def test_reordered_when_reordered() -> None:
         PullRequest(
             PullRequestId(""),
             ZenToken(""),
-            "",
+            PullRequestNumber(""),
             "",
             PullRequestBody(""),
             "",

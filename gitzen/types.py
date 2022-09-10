@@ -48,3 +48,8 @@ class PullRequestBody(StrWrapper):
 class PullRequestId(StrWrapper):
     def __init__(self, value: str) -> None:
         super().__init__(PullRequestId, value)
+
+
+class PullRequestNumber(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(PullRequestNumber, value)
