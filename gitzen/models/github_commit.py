@@ -1,8 +1,10 @@
 from typing import Optional
 
+from gitzen.types import ZenToken
+
 
 class Commit:
-    zen_token: Optional[str]
+    zen_token: Optional[ZenToken]
     hash: str
     messageHeadline: str
     messageBody: str
@@ -10,7 +12,7 @@ class Commit:
 
     def __init__(
         self,
-        zen_token: Optional[str],
+        zen_token: Optional[ZenToken],
         hash: str,
         headline: str,
         body: str,
@@ -33,7 +35,7 @@ class Commit:
 
     def __repr__(self) -> str:
         return (
-            f"Commit(zen_token={repr(self.zen_token)}, "
+            f"Commit(zen_token={self.zen_token}, "
             f"hash={self.hash}, "
             f"messageHeadline={self.messageHeadline}, "
             f"messageBody={self.messageBody}, "

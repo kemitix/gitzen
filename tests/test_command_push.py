@@ -2,6 +2,7 @@ from gitzen import envs
 from gitzen.commands import push
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_pull_request import PullRequest
+from gitzen.types import ZenToken
 
 from .fakes.github_env import FakeGithubEnv
 
@@ -17,7 +18,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
     )
     pr_to_close: PullRequest = PullRequest(
         id="abcd123",
-        zen_token="12341234",
+        zen_token=ZenToken("12341234"),
         number="123",
         title="pr 123",
         body="zen-token:12341234",
@@ -28,7 +29,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         repoId="foo",
         commits=[],
     )
-    zen_token = "43214321"
+    zen_token = ZenToken("43214321")
     pr_to_keep: PullRequest = PullRequest(
         id="def456",
         zen_token=zen_token,
@@ -73,7 +74,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
     )
     pr_to_close: PullRequest = PullRequest(
         id="abcd123",
-        zen_token="12341234",
+        zen_token=ZenToken("12341234"),
         number="123",
         title="pr 123",
         body="zen-token:12341234",
@@ -84,7 +85,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         repoId="foo",
         commits=[],
     )
-    zen_token = "43214321"
+    zen_token = ZenToken("43214321")
     pr_to_keep: PullRequest = PullRequest(
         id="def456",
         zen_token=zen_token,
@@ -116,7 +117,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
 
 def test_reordered_when_too_many_commits() -> None:
     # given
-    commits = [Commit("foo", "", "", "", False)]
+    commits = [Commit(ZenToken("foo"), "", "", "", False)]
     prs = []
     # when
     result = push.reordered(prs, commits)
@@ -129,12 +130,36 @@ def test_reordered_when_too_many_commits() -> None:
 
 def test_reordered_when_not_reordered() -> None:
     # given
-    commit_foo = Commit("foo", "", "", "", False)
-    commit_bar = Commit("bar", "", "", "", False)
+    commit_foo = Commit(ZenToken("foo"), "", "", "", False)
+    commit_bar = Commit(ZenToken("bar"), "", "", "", False)
     commits = [commit_foo, commit_bar]
     prs = [
-        PullRequest("", "", "", "", "", "", "", "", "", "", [commit_foo]),
-        PullRequest("", "", "", "", "", "", "", "", "", "", [commit_bar]),
+        PullRequest(
+            "",
+            ZenToken(""),
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            [commit_foo],
+        ),
+        PullRequest(
+            "",
+            ZenToken(""),
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            [commit_bar],
+        ),
     ]
     # when
     result = push.reordered(prs, commits)
@@ -144,12 +169,36 @@ def test_reordered_when_not_reordered() -> None:
 
 def test_reordered_when_reordered() -> None:
     # given
-    commit_foo = Commit("foo", "", "", "", False)
-    commit_bar = Commit("bar", "", "", "", False)
+    commit_foo = Commit(ZenToken("foo"), "", "", "", False)
+    commit_bar = Commit(ZenToken("bar"), "", "", "", False)
     commits = [commit_foo, commit_bar]
     prs = [
-        PullRequest("", "", "", "", "", "", "", "", "", "", [commit_bar]),
-        PullRequest("", "", "", "", "", "", "", "", "", "", [commit_foo]),
+        PullRequest(
+            "",
+            ZenToken(""),
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            [commit_bar],
+        ),
+        PullRequest(
+            "",
+            ZenToken(""),
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            [commit_foo],
+        ),
     ]
     # when
     result = push.reordered(prs, commits)

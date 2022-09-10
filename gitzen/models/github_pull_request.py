@@ -1,11 +1,12 @@
 from typing import List
 
 from gitzen.models.github_commit import Commit
+from gitzen.types import ZenToken
 
 
 class PullRequest:
     id: str
-    zen_token: str
+    zen_token: ZenToken
     number: str
     title: str
     body: str
@@ -19,7 +20,7 @@ class PullRequest:
     def __init__(
         self,
         id: str,
-        zen_token: str,
+        zen_token: ZenToken,
         number: str,
         title: str,
         body: str,
