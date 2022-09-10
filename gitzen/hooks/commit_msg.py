@@ -1,5 +1,4 @@
 import re
-import sys
 from random import choice
 from string import hexdigits
 from typing import List
@@ -53,7 +52,3 @@ def write_file(filename: str, contents: List[str]) -> None:
 def read_file(filename: str) -> List[str]:
     with open(filename, "r") as f:
         return f.read().splitlines()
-
-
-if __name__ == "__main__":
-    main(sys.argv)
