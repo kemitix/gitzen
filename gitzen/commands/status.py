@@ -14,7 +14,7 @@ def status(
         say(console_env, "Stack is empty - no PRs found")
         exit
     for pr in prs:
-        n = pr.number
+        n = pr.number.value
         m = pr.mergeable
         t = pr.title
         say(console_env, f"PR-{n} - {m} - {t}")

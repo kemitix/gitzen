@@ -15,6 +15,7 @@ from gitzen.types import (
     CommitTitle,
     PullRequestBody,
     PullRequestId,
+    PullRequestNumber,
 )
 
 
@@ -138,7 +139,7 @@ def fetch_info(
             PullRequest(
                 id=PullRequestId(pr_node["id"]),
                 zen_token=token,
-                number=f'{pr_node["number"]}',
+                number=PullRequestNumber(f'{pr_node["number"]}'),
                 title=pr_node["title"],
                 body=body,
                 baseRefName=base_ref,
@@ -185,14 +186,14 @@ def add_comment(
     pull_request: PullRequest,
     comment: str,
 ) -> None:
-    github_env.gh(f"pr comment {pull_request.number} --body '{comment}'")
+    github_env.gh(f"pr comment {pull_request.number.value} --body '{comment}'")
 
 
 def close_pull_request(
     github_env: envs.GithubEnv,
     pull_request: PullRequest,
 ) -> None:
-    github_env.gh(f"pr close {pull_request.number}")
+    github_env.gh(f"pr close {pull_request.number.value}")
 
 
 def close_pull_request_with_comment(
@@ -200,4 +201,6 @@ def close_pull_request_with_comment(
     pull_request: PullRequest,
     comment: str,
 ) -> None:
-    github_env.gh(f"pr close {pull_request.number} --comment '{comment}'")
+    github_env.gh(
+        f"pr close {pull_request.number.value} --comment '{comment}'",
+    )

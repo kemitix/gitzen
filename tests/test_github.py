@@ -15,6 +15,7 @@ from gitzen.types import (
     CommitTitle,
     PullRequestBody,
     PullRequestId,
+    PullRequestNumber,
     ZenToken,
 )
 
@@ -271,7 +272,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     pull_request_a = PullRequest(
         id=PullRequestId("PR_kwDOEVHCd84vkAyI"),
         zen_token=ZenToken("234ad5c1"),
-        number="248",
+        number=PullRequestNumber("248"),
         title="build(deps): bump microprofile from 4.1 to 5.0 with zentoken",
         body=PullRequestBody("zen-token:234ad5c1"),
         baseRefName="master",
@@ -305,7 +306,7 @@ def test_add_comment(mock_subproc_run) -> None:
     """
     # given
     fake = Faker()
-    pr_number = f"{fake.random_int(min=1, max=1000)}"
+    pr_number = PullRequestNumber(f"{fake.random_int(min=1, max=1000)}")
     comment = fake.text()
     pull_request = PullRequest(
         id=PullRequestId(""),
@@ -328,7 +329,7 @@ def test_add_comment(mock_subproc_run) -> None:
             "gh",
             "pr",
             "comment",
-            pr_number,
+            f"{pr_number.value}",
             "--body",
             comment,
         ],
@@ -343,7 +344,7 @@ def test_close_pull_request(mock_subproc_run) -> None:
     """
     # given
     fake = Faker()
-    pr_number = fake.random_int(min=1, max=1000)
+    pr_number = PullRequestNumber(fake.random_int(min=1, max=1000))
     pull_request = PullRequest(
         id=PullRequestId(""),
         zen_token=ZenToken(""),
@@ -365,7 +366,7 @@ def test_close_pull_request(mock_subproc_run) -> None:
             "gh",
             "pr",
             "close",
-            f"{pr_number}",
+            f"{pr_number.value}",
         ],
         stdout=PIPE,
     )
@@ -378,7 +379,7 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
     """
     # given
     fake = Faker()
-    pr_number = fake.random_int(min=1, max=1000)
+    pr_number = PullRequestNumber(fake.random_int(min=1, max=1000))
     comment = fake.text()
     pull_request = PullRequest(
         id=PullRequestId(""),
@@ -403,7 +404,7 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
             "gh",
             "pr",
             "close",
-            f"{pr_number}",
+            f"{pr_number.value}",
             "--comment",
             comment,
         ],
