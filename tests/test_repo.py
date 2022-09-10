@@ -5,7 +5,7 @@ from unittest import mock
 
 from gitzen import console, git, repo
 from gitzen.models.github_commit import Commit
-from gitzen.types import CommitHash, ZenToken
+from gitzen.types import CommitHash, CommitTitle, ZenToken
 
 from .fakes.git_env import FakeGitEnv
 
@@ -280,42 +280,48 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
         Commit(  # 1
             zen_token=ZenToken("d6cdc6ed"),
             hash=CommitHash("1f293d6cdc6ed3b1100aa21c9528e4fc5c608fa9"),
-            headline="Rename as branches.validate_not_remote_pr()",
+            headline=CommitTitle(
+                "Rename as branches.validate_not_remote_pr()",
+            ),
             body="",
             wip=False,
         ),
         Commit(  # 2
             zen_token=ZenToken("d21feb41"),
             hash=CommitHash("47d8ed21feb4164499828a920e8d8df280392a51"),
-            headline="Extract barnches.get_required_remote_branch()",
+            headline=CommitTitle(
+                "Extract barnches.get_required_remote_branch()",
+            ),
             body="",
             wip=False,
         ),
         Commit(  # 3
             zen_token=ZenToken("e0b93f99"),
             hash=CommitHash("6a42e3c56e657e0b93f99e570fbab10ec35a81f8"),
-            headline="WIP Create stub repo.get_local_commit_stack()",
+            headline=CommitTitle(
+                "WIP Create stub repo.get_local_commit_stack()",
+            ),
             body="",
             wip=True,
         ),
         Commit(  # 4
             zen_token=ZenToken("d0d9c392"),
             hash=CommitHash("55b1cc72019cad0d9c392eef10b817d86378ea61"),
-            headline="Add git.log()",
+            headline=CommitTitle("Add git.log()"),
             body="",
             wip=False,
         ),
         Commit(  # 5
             zen_token=ZenToken("db8b277e"),
             hash=CommitHash("b7bcf5ebdb8b277e267e47ee87fb568e53a8df06"),
-            headline="gitzen.branches: whitespace cleanup",
+            headline=CommitTitle("gitzen.branches: whitespace cleanup"),
             body="",
             wip=False,
         ),
         Commit(  # 6
             zen_token=ZenToken("97123f3a"),
             hash=CommitHash("d9c3765ee8c6a1dee34d623b78c50a38bc57201c"),
-            headline="models.Commit: rename field oid as hash_id",
+            headline=CommitTitle("models.Commit: rename field oid as hash_id"),
             body="oid is used by Github.",
             wip=False,
         ),
