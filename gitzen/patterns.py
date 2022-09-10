@@ -6,3 +6,5 @@ commit_body_zen_token = rf"^(zen-token):{zen_token}$"
 user = r"[a-zA-Z0-9_\-]+"
 target_branch = r"(?P<target_branch>[a-zA-Z0-9_\-/\.]+)"
 remote_branch = rf"^gitzen/pr/{user}/{target_branch}/{zen_token}$"
+
+rebase_pick = r"^pick\s+(?P<hash>[a-f0-9]{7})\s+(?P<log>.*)$"
