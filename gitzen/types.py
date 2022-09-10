@@ -25,6 +25,6 @@ class ZenToken(StrWrapper):
         super().__init__(ZenToken, value)
 
 
-class GitHash(StrWrapper):
+class CommitHash(StrWrapper):
     def __init__(self, value: str) -> None:
-        super().__init__(GitHash, value)
+        super().__init__(CommitHash, value)

@@ -4,7 +4,7 @@ from typing import List, Tuple
 from gitzen import envs, exit_code, git, patterns, zen_token
 from gitzen.console import say
 from gitzen.models.github_commit import Commit
-from gitzen.types import GitHash
+from gitzen.types import CommitHash
 
 
 # will exit the program if called from outside a git repo
@@ -67,7 +67,7 @@ def get_commit_stack(
     log = git.log(git_env, f"{remote}/{remote_branch}..HEAD")
     have_hash = False
     commits: List[Commit] = []
-    hash = GitHash("")
+    hash = CommitHash("")
     headline = ""
     body = ""
     line_number = 0
@@ -83,7 +83,7 @@ def get_commit_stack(
                     "No zen-token found - is pre-commit hook installed?",
                 )
                 exit(exit_code.ZEN_TOKENS_MISSING)
-            hash = GitHash(commit_matches.group(1))
+            hash = CommitHash(commit_matches.group(1))
             say(console_env, f":: hash: {hash}")
             have_hash = True
             subject_index = line_number + 4
