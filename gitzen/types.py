@@ -43,3 +43,8 @@ class CommitBody(StrWrapper):
 class PullRequestBody(StrWrapper):
     def __init__(self, value: str) -> None:
         super().__init__(PullRequestBody, value)
+
+
+class PullRequestId(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(PullRequestId, value)
