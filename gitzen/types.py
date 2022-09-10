@@ -1,38 +1,30 @@
-class ZenToken:
+class StrWrapper:
     _value: str
+    _type: type
 
     @property
     def value(self) -> str:
         return self._value
 
-    def __init__(self, value: str) -> None:
+    def __init__(self, type: type, value: str) -> None:
+        self._type = type
         self._value = value
 
     def __eq__(self, __o: object) -> bool:
-        return isinstance(__o, ZenToken) and self._value == __o._value
+        return isinstance(__o, self._type) and self._value == __o._value
 
     def __hash__(self) -> int:
         return hash(self._value)
 
     def __repr__(self) -> str:
-        return f"ZenToken({self._value})"
+        return f"{self._type.__name__}({self._value})"
 
 
-class GitHash:
-    _value: str
-
-    @property
-    def value(self) -> str:
-        return self._value
-
+class ZenToken(StrWrapper):
     def __init__(self, value: str) -> None:
-        self._value = value
+        super().__init__(ZenToken, value)
 
-    def __eq__(self, __o: object) -> bool:
-        return isinstance(__o, GitHash) and self._value == __o._value
 
-    def __hash__(self) -> int:
-        return hash(self._value)
-
-    def __repr__(self) -> str:
-        return f"Hash({self._value})"
+class GitHash(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(GitHash, value)
