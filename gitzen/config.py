@@ -29,15 +29,6 @@ class Config:
             and self.remote == __o.remote
         )
 
-    def __repr__(self) -> str:
-        return (
-            "Config("
-            f"default_remote_branch={repr(self.default_remote_branch)}, "
-            f"remote_branches={repr(self.remote_branches)}, "
-            f"remote={self.remote}, "
-            ")"
-        )
-
 
 default_config: Config = Config(
     default_remote_branch="master", remote_branches=[], remote="origin"
@@ -61,13 +52,6 @@ def load(console_env: envs.ConsoleEnv, dir: str) -> Config:
 def read_yaml(file_name):
     f = open(file_name, "r")
     yaml_content = f.read()
-    result = {}
-    if "---" in yaml_content:
-        seperate_yaml_files = yaml_content.split("---")
-        result = []
-        for yf in seperate_yaml_files:
-            result.append(yaml.load(yf, Loader=yaml.FullLoader))
-    else:
-        result = yaml.load(yaml_content, Loader=yaml.FullLoader)
+    result = yaml.load(yaml_content, Loader=yaml.FullLoader)
     f.close()
     return result
