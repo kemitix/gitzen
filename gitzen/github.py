@@ -111,7 +111,7 @@ def fetch_info(
         base_ref = pr_node["baseRefName"]
         head_ref = pr_node["headRefName"]
         say(console_env, f"{base_ref} <- {head_ref}")
-        match = re.search(patterns.remote_branch, head_ref)
+        match = re.search(patterns.remote_pr_branch, head_ref)
         if match is None:
             print("unknown head_ref: " + head_ref)
             continue

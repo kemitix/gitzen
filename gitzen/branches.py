@@ -29,7 +29,7 @@ def validate_not_remote_pr(
     console_env: envs.ConsoleEnv,
     local_branch: str,
 ) -> None:
-    matches = re.search(patterns.remote_branch, local_branch)
+    matches = re.search(patterns.remote_pr_branch, local_branch)
     if matches:
         say(
             console_env,
