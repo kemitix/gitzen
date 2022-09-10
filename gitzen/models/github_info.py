@@ -23,7 +23,8 @@ class GithubInfo:
 
     def __eq__(self, __o: object) -> bool:
         return (
-            self.username == __o.username
+            isinstance(__o, GithubInfo)
+            and self.username == __o.username
             and self.repo_id == __o.repo_id
             and self.local_branch == __o.local_branch
             and self.pull_requests == __o.pull_requests

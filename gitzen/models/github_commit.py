@@ -26,7 +26,8 @@ class Commit:
 
     def __eq__(self, __o: object) -> bool:
         return (
-            self.zen_token == __o.zen_token
+            isinstance(__o, Commit)
+            and self.zen_token == __o.zen_token
             and self.hash == __o.hash
             and self.messageHeadline == __o.messageHeadline
             and self.messageBody == __o.messageBody
