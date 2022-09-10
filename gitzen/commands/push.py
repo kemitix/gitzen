@@ -28,7 +28,7 @@ def push(
         remote_branch,
     )
     say(console_env, repr(commits))
-    open_prs = close_prs_for_deleted_commits(
+    open_prs = clean_up_deleted_commits(
         github_env,
         status.pull_requests,
         commits,
@@ -38,7 +38,7 @@ def push(
     # call git zen status
 
 
-def close_prs_for_deleted_commits(
+def clean_up_deleted_commits(
     github_env: envs.GithubEnv,
     pull_requests: List[PullRequest],
     commits: List[Commit],

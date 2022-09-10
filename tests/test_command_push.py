@@ -6,7 +6,7 @@ from gitzen.models.github_pull_request import PullRequest
 from .fakes.github_env import FakeGithubEnv
 
 
-def test_close_prs_for_deleted_commits_closes_with_comment() -> None:
+def test_clean_up_deleted_commits_closes_with_comment() -> None:
     # given
     close_123_args = (
         "pr close 123 --comment 'Closing pull request: commit has gone away'"
@@ -53,7 +53,7 @@ def test_close_prs_for_deleted_commits_closes_with_comment() -> None:
     prs = [pr_to_close, pr_to_keep]
     commits = pr_to_keep.commits
     # when
-    push.close_prs_for_deleted_commits(github_env, prs, commits)
+    push.clean_up_deleted_commits(github_env, prs, commits)
     # then
     assert pr_to_close.number in github_env.closed_with_comment
     assert (
@@ -62,7 +62,7 @@ def test_close_prs_for_deleted_commits_closes_with_comment() -> None:
     )
 
 
-def test_close_prs_for_deleted_commits_returns_remaining_prs() -> None:
+def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
     # given
     close_123_args = (
         "pr close 123 --comment 'Closing pull request: commit has gone away'"
@@ -109,7 +109,7 @@ def test_close_prs_for_deleted_commits_returns_remaining_prs() -> None:
     prs = [pr_to_close, pr_to_keep]
     commits = pr_to_keep.commits
     # when
-    open_prs = push.close_prs_for_deleted_commits(github_env, prs, commits)
+    open_prs = push.clean_up_deleted_commits(github_env, prs, commits)
     # then
     assert open_prs == [pr_to_keep]
 
