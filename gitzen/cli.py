@@ -2,6 +2,7 @@ from typing import List
 
 from gitzen import config, console, envs, git, github, repo
 from gitzen.commands import push, status
+from gitzen.hooks import commit_msg
 
 
 def main(args: List[str]) -> None:
@@ -19,6 +20,10 @@ def main(args: List[str]) -> None:
     for i, arg in enumerate(args):
         if i != 1:
             continue
+        if arg == "init":
+            pass  # install the commit_msg hook
+        if arg == "hook":
+            commit_msg.main(args[2:])
         if arg == "status":
             status.status(console_env, git_env, github_env)
         if arg == "push":

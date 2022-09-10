@@ -1,8 +1,7 @@
 import re
 from typing import List
 
-from gitzen import patterns
-from gitzen.hooks import commit_msg
+from gitzen import cli, patterns
 
 
 def test_handle_commit_message_with_empty_body(tmp_path) -> None:
@@ -10,7 +9,7 @@ def test_handle_commit_message_with_empty_body(tmp_path) -> None:
     filename = f"{tmp_path}/COMMIT_MSG"
     write_file(filename, ["Initial commit"])
     # when
-    commit_msg.main([filename])
+    cli.main(["", "hook", filename])
     # then
     contents = read_file(filename)
     assert contents[0] == "Initial commit"
@@ -33,7 +32,7 @@ def test_handle_commit_message_with_a_body(tmp_path) -> None:
         ],
     )
     # when
-    commit_msg.main([filename])
+    cli.main(["", "hook", filename])
     # then
     contents = read_file(filename)
     assert contents[0] == "Initial commit"
@@ -51,7 +50,7 @@ def test_handle_commit_message_with_empty_body_and_token(tmp_path) -> None:
     filename = f"{tmp_path}/COMMIT_MSG"
     write_file(filename, ["Initial commit", "", "zen-token:1234abcd"])
     # when
-    commit_msg.main([filename])
+    cli.main(["", "hook", filename])
     # then
     contents = read_file(filename)
     assert contents[0] == "Initial commit"
@@ -76,7 +75,7 @@ def test_handle_commit_message_with_a_body_and_token(tmp_path) -> None:
         ],
     )
     # when
-    commit_msg.main([filename])
+    cli.main(["", "hook", filename])
     # then
     contents = read_file(filename)
     assert contents[0] == "Initial commit"
@@ -103,7 +102,7 @@ def test_handle_interactive_rebase(tmp_path) -> None:
         ],
     )
     # when
-    commit_msg.main([filename])
+    cli.main(["", "hook", filename])
     # then
     contents = read_file(filename)
     assert contents[0] == "reword 1234567 log message 1"
