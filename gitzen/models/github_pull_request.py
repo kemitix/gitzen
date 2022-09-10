@@ -45,7 +45,8 @@ class PullRequest:
 
     def __eq__(self, __o: object) -> bool:
         return (
-            self.id == __o.id
+            isinstance(__o, PullRequest)
+            and self.id == __o.id
             and self.zen_token == __o.zen_token
             and self.number == __o.number
             and self.title == __o.title
