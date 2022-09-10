@@ -1,13 +1,13 @@
 from typing import Optional
 
-from gitzen.types import CommitHash, CommitTitle, ZenToken
+from gitzen.types import CommitBody, CommitHash, CommitTitle, ZenToken
 
 
 class Commit:
     zen_token: Optional[ZenToken]
     hash: CommitHash
     messageHeadline: CommitTitle
-    messageBody: str
+    messageBody: CommitBody
     wip: bool
 
     def __init__(
@@ -15,7 +15,7 @@ class Commit:
         zen_token: Optional[ZenToken],
         hash: CommitHash,
         headline: CommitTitle,
-        body: str,
+        body: CommitBody,
         wip: bool,
     ) -> None:
         self.zen_token = zen_token

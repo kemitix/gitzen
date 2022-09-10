@@ -33,3 +33,13 @@ class CommitHash(StrWrapper):
 class CommitTitle(StrWrapper):
     def __init__(self, value: str) -> None:
         super().__init__(CommitTitle, value)
+
+
+class CommitBody(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(CommitBody, value)
+
+
+class PullRequestBody(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(PullRequestBody, value)
