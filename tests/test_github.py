@@ -9,7 +9,7 @@ from gitzen import console, git, github
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import CommitHash, ZenToken
+from gitzen.types import CommitHash, CommitTitle, ZenToken
 
 
 @mock.patch("subprocess.run")
@@ -257,7 +257,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     commit_a = Commit(
         zen_token=ZenToken("234ad5c1"),
         hash=CommitHash("715fbc4220806fe283e39ee74c6fca3dac52c041"),
-        headline="build(deps): bump microprofile from 4.1 to 5.0",
+        headline=CommitTitle("build(deps): bump microprofile from 4.1 to 5.0"),
         body=commit_body + "\n\nzen-token:234ad5c1",
         wip=False,
     )

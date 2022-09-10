@@ -28,3 +28,8 @@ class ZenToken(StrWrapper):
 class CommitHash(StrWrapper):
     def __init__(self, value: str) -> None:
         super().__init__(CommitHash, value)
+
+
+class CommitTitle(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(CommitTitle, value)
