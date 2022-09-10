@@ -1,8 +1,8 @@
 import re
-from typing import Optional
+from typing import Optional, Union
 
 from gitzen import patterns
-from gitzen.types import ZenToken
+from gitzen.types import CommitBody, PullRequestBody, ZenToken
 
 
 def find_in_line(line: str) -> Optional[ZenToken]:
@@ -12,8 +12,10 @@ def find_in_line(line: str) -> Optional[ZenToken]:
     return None
 
 
-def find_in_body(body: str) -> Optional[ZenToken]:
-    for line in body.splitlines():
+def find_in_body(
+    body: Union[CommitBody, PullRequestBody],
+) -> Optional[ZenToken]:
+    for line in body.value.splitlines():
         token = find_in_line(line)
         if token is not None:
             return token

@@ -2,7 +2,9 @@ from gitzen import envs
 from gitzen.commands import push
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import CommitHash, CommitTitle, ZenToken
+
+# trunk-ignore(flake8/E501)
+from gitzen.types import CommitBody, CommitHash, CommitTitle, PullRequestBody, ZenToken
 
 from .fakes.github_env import FakeGithubEnv
 
@@ -21,7 +23,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         zen_token=ZenToken("12341234"),
         number="123",
         title="pr 123",
-        body="zen-token:12341234",
+        body=PullRequestBody("zen-token:12341234"),
         baseRefName="base",
         headRefName="head",
         mergeable="MERGEABLE",
@@ -35,7 +37,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         zen_token=zen_token,
         number="321",
         title="pr 321",
-        body="zen-token:43214321",
+        body=PullRequestBody("zen-token:43214321"),
         baseRefName="base",
         headRefName="head",
         mergeable="MERGEABLE",
@@ -46,7 +48,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
                 zen_token=zen_token,
                 hash=CommitHash(""),
                 headline=CommitTitle(""),
-                body="",
+                body=CommitBody(""),
                 wip=False,
             )
         ],
@@ -77,7 +79,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         zen_token=ZenToken("12341234"),
         number="123",
         title="pr 123",
-        body="zen-token:12341234",
+        body=PullRequestBody("zen-token:12341234"),
         baseRefName="base",
         headRefName="head",
         mergeable="MERGEABLE",
@@ -91,7 +93,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         zen_token=zen_token,
         number="321",
         title="pr 321",
-        body="zen-token:43214321",
+        body=PullRequestBody("zen-token:43214321"),
         baseRefName="base",
         headRefName="head",
         mergeable="MERGEABLE",
@@ -102,7 +104,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
                 zen_token=zen_token,
                 hash=CommitHash(""),
                 headline=CommitTitle(""),
-                body="",
+                body=CommitBody(""),
                 wip=False,
             )
         ],
@@ -122,7 +124,7 @@ def test_reordered_when_too_many_commits() -> None:
             ZenToken("foo"),
             CommitHash(""),
             CommitTitle(""),
-            "",
+            CommitBody(""),
             False,
         )
     ]
@@ -142,14 +144,14 @@ def test_reordered_when_not_reordered() -> None:
         ZenToken("foo"),
         CommitHash(""),
         CommitTitle(""),
-        "",
+        CommitBody(""),
         False,
     )
     commit_bar = Commit(
         ZenToken("bar"),
         CommitHash(""),
         CommitTitle(""),
-        "",
+        CommitBody(""),
         False,
     )
     commits = [commit_foo, commit_bar]
@@ -159,7 +161,7 @@ def test_reordered_when_not_reordered() -> None:
             ZenToken(""),
             "",
             "",
-            "",
+            PullRequestBody(""),
             "",
             "",
             "",
@@ -172,7 +174,7 @@ def test_reordered_when_not_reordered() -> None:
             ZenToken(""),
             "",
             "",
-            "",
+            PullRequestBody(""),
             "",
             "",
             "",
@@ -193,14 +195,14 @@ def test_reordered_when_reordered() -> None:
         ZenToken("foo"),
         CommitHash(""),
         CommitTitle(""),
-        "",
+        CommitBody(""),
         False,
     )
     commit_bar = Commit(
         ZenToken("bar"),
         CommitHash(""),
         CommitTitle(""),
-        "",
+        CommitBody(""),
         False,
     )
     commits = [commit_foo, commit_bar]
@@ -210,7 +212,7 @@ def test_reordered_when_reordered() -> None:
             ZenToken(""),
             "",
             "",
-            "",
+            PullRequestBody(""),
             "",
             "",
             "",
@@ -223,7 +225,7 @@ def test_reordered_when_reordered() -> None:
             ZenToken(""),
             "",
             "",
-            "",
+            PullRequestBody(""),
             "",
             "",
             "",

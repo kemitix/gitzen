@@ -9,7 +9,7 @@ from gitzen.console import say
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import CommitHash, CommitTitle
+from gitzen.types import CommitBody, CommitHash, CommitTitle, PullRequestBody
 
 
 class RealGithubEnv(envs.GithubEnv):
@@ -124,7 +124,7 @@ def fetch_info(
             continue
         review_node = pr_node["reviewDecision"]
         review_decision = review_node if review_node is not None else ""
-        body = pr_node["body"]
+        body = PullRequestBody(pr_node["body"])
         token = zen_token.find_in_body(body)
         if token is None:
             continue
@@ -160,7 +160,7 @@ def get_commits(pr_node) -> List[Commit]:
     for commit_node_item in pr_node["commits"]["nodes"]:
         commit_node = commit_node_item["commit"]
         title = CommitTitle(commit_node["messageHeadline"])
-        body = commit_node["messageBody"]
+        body = CommitBody(commit_node["messageBody"])
         token = zen_token.find_in_body(body)
         commits.append(
             Commit(

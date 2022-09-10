@@ -1,7 +1,7 @@
 from typing import List
 
 from gitzen.models.github_commit import Commit
-from gitzen.types import ZenToken
+from gitzen.types import PullRequestBody, ZenToken
 
 
 class PullRequest:
@@ -9,7 +9,7 @@ class PullRequest:
     zen_token: ZenToken
     number: str
     title: str
-    body: str
+    body: PullRequestBody
     baseRefName: str
     headRefName: str
     mergeable: str  # enum
@@ -23,7 +23,7 @@ class PullRequest:
         zen_token: ZenToken,
         number: str,
         title: str,
-        body: str,
+        body: PullRequestBody,
         baseRefName: str,
         headRefName: str,
         mergeable: str,
