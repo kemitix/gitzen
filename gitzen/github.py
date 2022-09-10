@@ -9,7 +9,13 @@ from gitzen.console import say
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import CommitBody, CommitHash, CommitTitle, PullRequestBody
+from gitzen.types import (
+    CommitBody,
+    CommitHash,
+    CommitTitle,
+    PullRequestBody,
+    PullRequestId,
+)
 
 
 class RealGithubEnv(envs.GithubEnv):
@@ -130,7 +136,7 @@ def fetch_info(
             continue
         prs.append(
             PullRequest(
-                id=pr_node["id"],
+                id=PullRequestId(pr_node["id"]),
                 zen_token=token,
                 number=f'{pr_node["number"]}',
                 title=pr_node["title"],

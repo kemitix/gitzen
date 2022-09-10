@@ -2,9 +2,14 @@ from gitzen import envs
 from gitzen.commands import push
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_pull_request import PullRequest
-
-# trunk-ignore(flake8/E501)
-from gitzen.types import CommitBody, CommitHash, CommitTitle, PullRequestBody, ZenToken
+from gitzen.types import (
+    CommitBody,
+    CommitHash,
+    CommitTitle,
+    PullRequestBody,
+    PullRequestId,
+    ZenToken,
+)
 
 from .fakes.github_env import FakeGithubEnv
 
@@ -19,7 +24,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         gql_responses={},
     )
     pr_to_close: PullRequest = PullRequest(
-        id="abcd123",
+        id=PullRequestId("abcd123"),
         zen_token=ZenToken("12341234"),
         number="123",
         title="pr 123",
@@ -33,7 +38,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
     )
     zen_token = ZenToken("43214321")
     pr_to_keep: PullRequest = PullRequest(
-        id="def456",
+        id=PullRequestId("def456"),
         zen_token=zen_token,
         number="321",
         title="pr 321",
@@ -75,7 +80,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         gql_responses={},
     )
     pr_to_close: PullRequest = PullRequest(
-        id="abcd123",
+        id=PullRequestId("abcd123"),
         zen_token=ZenToken("12341234"),
         number="123",
         title="pr 123",
@@ -89,7 +94,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
     )
     zen_token = ZenToken("43214321")
     pr_to_keep: PullRequest = PullRequest(
-        id="def456",
+        id=PullRequestId("def456"),
         zen_token=zen_token,
         number="321",
         title="pr 321",
@@ -157,7 +162,7 @@ def test_reordered_when_not_reordered() -> None:
     commits = [commit_foo, commit_bar]
     prs = [
         PullRequest(
-            "",
+            PullRequestId(""),
             ZenToken(""),
             "",
             "",
@@ -170,7 +175,7 @@ def test_reordered_when_not_reordered() -> None:
             [commit_foo],
         ),
         PullRequest(
-            "",
+            PullRequestId(""),
             ZenToken(""),
             "",
             "",
@@ -208,7 +213,7 @@ def test_reordered_when_reordered() -> None:
     commits = [commit_foo, commit_bar]
     prs = [
         PullRequest(
-            "",
+            PullRequestId(""),
             ZenToken(""),
             "",
             "",
@@ -221,7 +226,7 @@ def test_reordered_when_reordered() -> None:
             [commit_bar],
         ),
         PullRequest(
-            "",
+            PullRequestId(""),
             ZenToken(""),
             "",
             "",
