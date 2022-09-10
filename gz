@@ -1,23 +1,32 @@
 #!/usr/bin/env python
 
 import sys
+from typing import List
 
 from gitzen import config, console, envs, git, github, repo
 from gitzen.commands import push, status
 
-console_env: envs.ConsoleEnv = console.RealConsoleEnv()
-console.say(console_env, "`git zen` - prototype")
 
-git_env: envs.GitEnv = git.RealGitEnv()
-github_env: envs.GithubEnv = github.RealGithubEnv()
+def main(args: List[str]) -> None:
+    console_env: envs.ConsoleEnv = console.RealConsoleEnv()
+    console.say(console_env, "`git zen` - prototype")
 
-rootDir = repo.root_dir(git_env)  # verifies that we are in a git repo or exits
-config = config.load(console_env, rootDir)
+    git_env: envs.GitEnv = git.RealGitEnv()
 
-for i, arg in enumerate(sys.argv):
-    if i != 1:
-        continue
-    if arg == "status":
-        status.status(console_env, git_env, github_env)
-    if arg == "push":
-        push.push(console_env, git_env, github_env, config)
+    # verify that we are in a git repo or exit
+    rootDir = repo.root_dir(git_env)
+
+    github_env: envs.GithubEnv = github.RealGithubEnv()
+    cfg = config.load(console_env, rootDir)
+
+    for i, arg in enumerate(args):
+        if i != 1:
+            continue
+        if arg == "status":
+            status.status(console_env, git_env, github_env)
+        if arg == "push":
+            push.push(console_env, git_env, github_env, cfg)
+
+
+if __name__ == "__main__":
+    main(sys.argv)
