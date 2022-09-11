@@ -6,6 +6,7 @@ from gitzen.types import (
     GitRefName,
     PullRequestBody,
     PullRequestId,
+    PullRequestMergeable,
     PullRequestNumber,
     PullRequestTitle,
     ZenToken,
@@ -20,7 +21,7 @@ class PullRequest:
     body: PullRequestBody
     baseRefName: GitRefName
     headRefName: GitRefName
-    mergeable: str  # enum
+    mergeable: PullRequestMergeable
     reviewDecision: str  # enum
     repoId: GithubRepoId
     commits: List[Commit]
@@ -34,7 +35,7 @@ class PullRequest:
         body: PullRequestBody,
         baseRefName: GitRefName,
         headRefName: GitRefName,
-        mergeable: str,
+        mergeable: PullRequestMergeable,
         reviewDecision: str,
         repoId: GithubRepoId,
         commits: List[Commit],

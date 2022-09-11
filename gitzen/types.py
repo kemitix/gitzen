@@ -68,3 +68,8 @@ class GitRefName(StrWrapper):
 class GithubRepoId(StrWrapper):
     def __init__(self, value: str) -> None:
         super().__init__(GithubRepoId, value)
+
+
+class PullRequestMergeable(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(PullRequestMergeable, value)

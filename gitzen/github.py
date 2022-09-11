@@ -17,6 +17,7 @@ from gitzen.types import (
     GitRefName,
     PullRequestBody,
     PullRequestId,
+    PullRequestMergeable,
     PullRequestNumber,
     PullRequestTitle,
 )
@@ -147,7 +148,7 @@ def fetch_info(
                 body=body,
                 baseRefName=base_ref,
                 headRefName=head_ref,
-                mergeable=pr_node["mergeable"],
+                mergeable=PullRequestMergeable(pr_node["mergeable"]),
                 reviewDecision=review_decision,
                 repoId=pr_repo_id,
                 commits=get_commits(pr_node),
