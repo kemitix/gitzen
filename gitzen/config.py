@@ -5,19 +5,19 @@ import yaml
 
 from gitzen import envs
 from gitzen.console import say
-from gitzen.types import GitBranchName
+from gitzen.types import GitBranchName, GitRemoteName
 
 
 class Config:
     default_remote_branch: GitBranchName
     remote_branches: List[GitBranchName]
-    remote: str
+    remote: GitRemoteName
 
     def __init__(
         self,
         default_remote_branch: GitBranchName,
         remote_branches: List[GitBranchName],
-        remote: str,
+        remote: GitRemoteName,
     ) -> None:
         self.default_remote_branch = default_remote_branch
         self.remote_branches = remote_branches
@@ -34,7 +34,7 @@ class Config:
 default_config: Config = Config(
     default_remote_branch=GitBranchName("master"),
     remote_branches=[],
-    remote="origin",
+    remote=GitRemoteName("origin"),
 )
 
 
@@ -50,7 +50,7 @@ def load(console_env: envs.ConsoleEnv, dir: str) -> Config:
         return Config(
             default_branch,
             remote_branches,
-            gitzen_yml["remote"],
+            GitRemoteName(gitzen_yml["remote"]),
         )
     say(console_env, f"Using default config - no file: {config_file}")
     return default_config

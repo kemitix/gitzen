@@ -10,6 +10,7 @@ from gitzen.types import (
     CommitTitle,
     CommitWipStatus,
     GitBranchName,
+    GitRemoteName,
 )
 
 
@@ -67,10 +68,10 @@ def get_repo_details_from_remote(remote: str) -> Tuple[str, str, str, bool]:
 def get_commit_stack(
     console_env: envs.ConsoleEnv,
     git_env: envs.GitEnv,
-    remote: str,
+    remote: GitRemoteName,
     remote_branch: GitBranchName,
 ) -> List[Commit]:
-    log = git.log(git_env, f"{remote}/{remote_branch.value}..HEAD")
+    log = git.log(git_env, f"{remote.value}/{remote_branch.value}..HEAD")
     have_hash = False
     commits: List[Commit] = []
     hash = CommitHash("")

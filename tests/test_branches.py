@@ -2,7 +2,7 @@ import pytest
 from faker import Faker
 
 from gitzen import branches, config, console, exit_code
-from gitzen.types import GitBranchName
+from gitzen.types import GitBranchName, GitRemoteName
 
 
 def test_get_remote_branch_name_when_no_match() -> None:
@@ -16,7 +16,7 @@ def test_get_remote_branch_name_when_no_match() -> None:
     cfg = config.Config(
         default_remote_branch=defaultBranch,
         remote_branches=[GitBranchName("baz")],
-        remote="origin",
+        remote=GitRemoteName("origin"),
     )
     # when
     result = branches.get_remote_branch(GitBranchName("other"), cfg)
@@ -35,7 +35,7 @@ def test_get_remote_branch_name_when_second_remote_matches() -> None:
     cfg = config.Config(
         default_remote_branch=defaultBranch,
         remote_branches=[GitBranchName("baz"), GitBranchName("other")],
-        remote="origin",
+        remote=GitRemoteName("origin"),
     )
     # when
     result = branches.get_remote_branch(GitBranchName("other"), cfg)
@@ -69,7 +69,9 @@ def test_get_required_remote_branch_when_present_in_default_branch() -> None:
     # given
     local_branch = GitBranchName(Faker().word())
     cfg = config.Config(
-        default_remote_branch=local_branch, remote="origin", remote_branches=[]
+        default_remote_branch=local_branch,
+        remote=GitRemoteName("origin"),
+        remote_branches=[],
     )
     console_env = console.RealConsoleEnv()
     # when
@@ -87,7 +89,7 @@ def test_get_required_remote_branch_when_present_in_remote_branches() -> None:
     local_branch = GitBranchName(Faker().word())
     cfg = config.Config(
         default_remote_branch=GitBranchName("master"),
-        remote="origin",
+        remote=GitRemoteName("origin"),
         remote_branches=[local_branch],
     )
     console_env = console.RealConsoleEnv()
@@ -106,7 +108,7 @@ def test_get_required_remote_branch_when_not_present() -> None:
     local_branch = GitBranchName(Faker().word())
     cfg = config.Config(
         default_remote_branch=GitBranchName(""),
-        remote="origin",
+        remote=GitRemoteName("origin"),
         remote_branches=[],
     )
     console_env = console.RealConsoleEnv()

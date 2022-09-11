@@ -11,6 +11,7 @@ from gitzen.types import (
     CommitTitle,
     CommitWipStatus,
     GitBranchName,
+    GitRemoteName,
     ZenToken,
 )
 
@@ -277,7 +278,7 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
             ]
         }
     )
-    remote = "origin"
+    remote = GitRemoteName("origin")
     remote_branch = GitBranchName("remote-branch")
     console_env = console.RealConsoleEnv()
     # when
