@@ -2,11 +2,14 @@ import re
 
 from gitzen import config, envs, exit_code, patterns
 from gitzen.console import say
+from gitzen.types import GitBranchName
 
 
 # look for the local branch name in the remote branches from config
 # if found use that, otherwise, use the default branch from Config
-def get_remote_branch(local_branch: str, config: config.Config) -> str:
+def get_remote_branch(
+    local_branch: GitBranchName, config: config.Config
+) -> GitBranchName:
     for remote_branch in config.remote_branches:
         if remote_branch == local_branch:
             return remote_branch
@@ -15,11 +18,11 @@ def get_remote_branch(local_branch: str, config: config.Config) -> str:
 
 def get_required_remote_branch(
     console_env: envs.ConsoleEnv,
-    local_branch: str,
+    local_branch: GitBranchName,
     config: config.Config,
-) -> str:
+) -> GitBranchName:
     remote_branch = get_remote_branch(local_branch, config)
-    if len(remote_branch) == 0:
+    if len(remote_branch.value) == 0:
         say(console_env, "remote branch not found")
         exit(exit_code.REMOTE_BRANCH_NOT_FOUND)
     return remote_branch
@@ -27,9 +30,9 @@ def get_required_remote_branch(
 
 def validate_not_remote_pr(
     console_env: envs.ConsoleEnv,
-    local_branch: str,
+    local_branch: GitBranchName,
 ) -> None:
-    matches = re.search(patterns.remote_pr_branch, local_branch)
+    matches = re.search(patterns.remote_pr_branch, local_branch.value)
     if matches:
         say(
             console_env,

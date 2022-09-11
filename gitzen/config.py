@@ -5,17 +5,18 @@ import yaml
 
 from gitzen import envs
 from gitzen.console import say
+from gitzen.types import GitBranchName
 
 
 class Config:
-    default_remote_branch: str
-    remote_branches: List[str]
+    default_remote_branch: GitBranchName
+    remote_branches: List[GitBranchName]
     remote: str
 
     def __init__(
         self,
-        default_remote_branch: str,
-        remote_branches: List[str],
+        default_remote_branch: GitBranchName,
+        remote_branches: List[GitBranchName],
         remote: str,
     ) -> None:
         self.default_remote_branch = default_remote_branch
@@ -31,7 +32,9 @@ class Config:
 
 
 default_config: Config = Config(
-    default_remote_branch="master", remote_branches=[], remote="origin"
+    default_remote_branch=GitBranchName("master"),
+    remote_branches=[],
+    remote="origin",
 )
 
 
@@ -40,18 +43,19 @@ def load(console_env: envs.ConsoleEnv, dir: str) -> Config:
     if exists(config_file):
         say(console_env, f"Reading config from {config_file}")
         gitzen_yml = read_yaml(config_file)
+        default_branch = GitBranchName(gitzen_yml["defaultRemoteBranch"])
+        remote_branches = [
+            GitBranchName(branch) for branch in gitzen_yml["remoteBranches"]
+        ]
         return Config(
-            default_remote_branch=gitzen_yml["defaultRemoteBranch"],
-            remote_branches=gitzen_yml["remoteBranches"],
-            remote=gitzen_yml["remote"],
+            default_branch,
+            remote_branches,
+            gitzen_yml["remote"],
         )
     say(console_env, f"Using default config - no file: {config_file}")
     return default_config
 
 
 def read_yaml(file_name):
-    f = open(file_name, "r")
-    yaml_content = f.read()
-    result = yaml.load(yaml_content, Loader=yaml.FullLoader)
-    f.close()
-    return result
+    with open(file_name, "r") as f:
+        return yaml.load(f.read(), Loader=yaml.FullLoader)
