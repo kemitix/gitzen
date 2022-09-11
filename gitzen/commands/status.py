@@ -16,5 +16,5 @@ def status(
     for pr in prs:
         n = pr.number.value
         m = pr.mergeable
-        t = pr.title
+        t = pr.title.value
         say(console_env, f"PR-{n} - {m} - {t}")

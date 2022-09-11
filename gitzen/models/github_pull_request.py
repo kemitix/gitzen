@@ -1,16 +1,20 @@
 from typing import List
 
 from gitzen.models.github_commit import Commit
-
-# trunk-ignore(flake8/E501)
-from gitzen.types import PullRequestBody, PullRequestId, PullRequestNumber, ZenToken
+from gitzen.types import (
+    PullRequestBody,
+    PullRequestId,
+    PullRequestNumber,
+    PullRequestTitle,
+    ZenToken,
+)
 
 
 class PullRequest:
     id: PullRequestId
     zen_token: ZenToken
     number: PullRequestNumber
-    title: str
+    title: PullRequestTitle
     body: PullRequestBody
     baseRefName: str
     headRefName: str
@@ -24,7 +28,7 @@ class PullRequest:
         id: PullRequestId,
         zen_token: ZenToken,
         number: PullRequestNumber,
-        title: str,
+        title: PullRequestTitle,
         body: PullRequestBody,
         baseRefName: str,
         headRefName: str,

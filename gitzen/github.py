@@ -16,6 +16,7 @@ from gitzen.types import (
     PullRequestBody,
     PullRequestId,
     PullRequestNumber,
+    PullRequestTitle,
 )
 
 
@@ -140,7 +141,7 @@ def fetch_info(
                 id=PullRequestId(pr_node["id"]),
                 zen_token=token,
                 number=PullRequestNumber(f'{pr_node["number"]}'),
-                title=pr_node["title"],
+                title=PullRequestTitle(pr_node["title"]),
                 body=body,
                 baseRefName=base_ref,
                 headRefName=head_ref,
