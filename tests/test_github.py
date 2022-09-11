@@ -16,6 +16,7 @@ from gitzen.types import (
     PullRequestBody,
     PullRequestId,
     PullRequestNumber,
+    PullRequestTitle,
     ZenToken,
 )
 
@@ -273,7 +274,9 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         id=PullRequestId("PR_kwDOEVHCd84vkAyI"),
         zen_token=ZenToken("234ad5c1"),
         number=PullRequestNumber("248"),
-        title="build(deps): bump microprofile from 4.1 to 5.0 with zentoken",
+        title=PullRequestTitle(
+            "build(deps): bump microprofile from 4.1 to 5.0 with zentoken"
+        ),
         body=PullRequestBody("zen-token:234ad5c1"),
         baseRefName="master",
         headRefName="gitzen/pr/kemitix/master/234ad5c1",
@@ -312,7 +315,7 @@ def test_add_comment(mock_subproc_run) -> None:
         id=PullRequestId(""),
         zen_token=ZenToken(""),
         number=pr_number,
-        title="",
+        title=PullRequestTitle(""),
         body=PullRequestBody(""),
         baseRefName="",
         headRefName="",
@@ -349,7 +352,7 @@ def test_close_pull_request(mock_subproc_run) -> None:
         id=PullRequestId(""),
         zen_token=ZenToken(""),
         number=pr_number,
-        title="",
+        title=PullRequestTitle(""),
         body=PullRequestBody(""),
         baseRefName="",
         headRefName="",
@@ -385,7 +388,7 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
         id=PullRequestId(""),
         zen_token=ZenToken(""),
         number=pr_number,
-        title="",
+        title=PullRequestTitle(""),
         body=PullRequestBody(""),
         baseRefName="",
         headRefName="",
