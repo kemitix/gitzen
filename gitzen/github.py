@@ -13,6 +13,7 @@ from gitzen.types import (
     CommitBody,
     CommitHash,
     CommitTitle,
+    GitRefName,
     PullRequestBody,
     PullRequestId,
     PullRequestNumber,
@@ -117,14 +118,14 @@ def fetch_info(
         pr_repo_id = pr_node["repository"]["id"]
         if repo_id != pr_repo_id:
             continue
-        base_ref = pr_node["baseRefName"]
-        head_ref = pr_node["headRefName"]
-        say(console_env, f"{base_ref} <- {head_ref}")
-        match = re.search(patterns.remote_pr_branch, head_ref)
+        base_ref = GitRefName(pr_node["baseRefName"])
+        head_ref = GitRefName(pr_node["headRefName"])
+        say(console_env, f"{base_ref.value} <- {head_ref.value}")
+        match = re.search(patterns.remote_pr_branch, head_ref.value)
         if match is None:
-            print("unknown head_ref: " + head_ref)
+            print("unknown head_ref: " + head_ref.value)
             continue
-        if match.group("target_branch") != base_ref:
+        if match.group("target_branch") != base_ref.value:
             say(
                 console_env,
                 "ignore prs that don't target expected base branch",

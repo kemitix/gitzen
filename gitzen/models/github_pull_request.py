@@ -2,6 +2,7 @@ from typing import List
 
 from gitzen.models.github_commit import Commit
 from gitzen.types import (
+    GitRefName,
     PullRequestBody,
     PullRequestId,
     PullRequestNumber,
@@ -16,8 +17,8 @@ class PullRequest:
     number: PullRequestNumber
     title: PullRequestTitle
     body: PullRequestBody
-    baseRefName: str
-    headRefName: str
+    baseRefName: GitRefName
+    headRefName: GitRefName
     mergeable: str  # enum
     reviewDecision: str  # enum
     repoId: str
@@ -30,8 +31,8 @@ class PullRequest:
         number: PullRequestNumber,
         title: PullRequestTitle,
         body: PullRequestBody,
-        baseRefName: str,
-        headRefName: str,
+        baseRefName: GitRefName,
+        headRefName: GitRefName,
         mergeable: str,
         reviewDecision: str,
         repoId: str,
