@@ -19,6 +19,7 @@ from gitzen.types import (
     PullRequestId,
     PullRequestMergeable,
     PullRequestNumber,
+    PullRequestReviewDecision,
     PullRequestTitle,
     ZenToken,
 )
@@ -284,7 +285,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         baseRefName=GitRefName("master"),
         headRefName=GitRefName("gitzen/pr/kemitix/master/234ad5c1"),
         mergeable=PullRequestMergeable("CONFLICTING"),
-        reviewDecision="",
+        reviewDecision=PullRequestReviewDecision(""),
         repoId=GithubRepoId("MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE="),
         commits=[commit_a],
     )
@@ -323,7 +324,7 @@ def test_add_comment(mock_subproc_run) -> None:
         baseRefName=GitRefName(""),
         headRefName=GitRefName(""),
         mergeable=PullRequestMergeable(""),
-        reviewDecision="",
+        reviewDecision=PullRequestReviewDecision(""),
         repoId=GithubRepoId(""),
         commits=[],
     )
@@ -360,7 +361,7 @@ def test_close_pull_request(mock_subproc_run) -> None:
         baseRefName=GitRefName(""),
         headRefName=GitRefName(""),
         mergeable=PullRequestMergeable(""),
-        reviewDecision="",
+        reviewDecision=PullRequestReviewDecision(""),
         repoId=GithubRepoId(""),
         commits=[],
     )
@@ -396,7 +397,7 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
         baseRefName=GitRefName(""),
         headRefName=GitRefName(""),
         mergeable=PullRequestMergeable(""),
-        reviewDecision="",
+        reviewDecision=PullRequestReviewDecision(""),
         repoId=GithubRepoId(""),
         commits=[],
     )

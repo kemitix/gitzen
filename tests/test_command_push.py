@@ -12,6 +12,7 @@ from gitzen.types import (
     PullRequestId,
     PullRequestMergeable,
     PullRequestNumber,
+    PullRequestReviewDecision,
     PullRequestTitle,
     ZenToken,
 )
@@ -37,12 +38,12 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         baseRefName=GitRefName("base"),
         headRefName=GitRefName("head"),
         mergeable=PullRequestMergeable("MERGEABLE"),
-        reviewDecision="UNKNOWN",
+        reviewDecision=PullRequestReviewDecision("UNKNOWN"),
         repoId=GithubRepoId("foo"),
         commits=[],
     )
     zen_token = ZenToken("43214321")
-    pr_to_keep: PullRequest = PullRequest(
+    pr_to_keep = PullRequest(
         id=PullRequestId("def456"),
         zen_token=zen_token,
         number=PullRequestNumber("321"),
@@ -51,7 +52,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         baseRefName=GitRefName("base"),
         headRefName=GitRefName("head"),
         mergeable=PullRequestMergeable("MERGEABLE"),
-        reviewDecision="UNKNOWN",
+        reviewDecision=PullRequestReviewDecision("UNKNOWN"),
         repoId=GithubRepoId("foo"),
         commits=[
             Commit(
@@ -93,7 +94,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         baseRefName=GitRefName("base"),
         headRefName=GitRefName("head"),
         mergeable=PullRequestMergeable("MERGEABLE"),
-        reviewDecision="UNKNOWN",
+        reviewDecision=PullRequestReviewDecision("UNKNOWN"),
         repoId=GithubRepoId("foo"),
         commits=[],
     )
@@ -107,7 +108,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         baseRefName=GitRefName("base"),
         headRefName=GitRefName("head"),
         mergeable=PullRequestMergeable("MERGEABLE"),
-        reviewDecision="UNKNOWN",
+        reviewDecision=PullRequestReviewDecision("UNKNOWN"),
         repoId=GithubRepoId("foo"),
         commits=[
             Commit(
@@ -175,7 +176,7 @@ def test_reordered_when_not_reordered() -> None:
             GitRefName(""),
             GitRefName(""),
             PullRequestMergeable(""),
-            "",
+            PullRequestReviewDecision(""),
             GithubRepoId(""),
             [commit_foo],
         ),
@@ -188,7 +189,7 @@ def test_reordered_when_not_reordered() -> None:
             GitRefName(""),
             GitRefName(""),
             PullRequestMergeable(""),
-            "",
+            PullRequestReviewDecision(""),
             GithubRepoId(""),
             [commit_bar],
         ),
@@ -226,7 +227,7 @@ def test_reordered_when_reordered() -> None:
             GitRefName(""),
             GitRefName(""),
             PullRequestMergeable(""),
-            "",
+            PullRequestReviewDecision(""),
             GithubRepoId(""),
             [commit_bar],
         ),
@@ -239,7 +240,7 @@ def test_reordered_when_reordered() -> None:
             GitRefName(""),
             GitRefName(""),
             PullRequestMergeable(""),
-            "",
+            PullRequestReviewDecision(""),
             GithubRepoId(""),
             [commit_foo],
         ),
