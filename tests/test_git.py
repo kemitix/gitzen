@@ -2,6 +2,7 @@ from subprocess import PIPE, CompletedProcess
 from unittest import mock
 
 from gitzen import git
+from gitzen.types import GitBranchName
 
 
 @mock.patch("subprocess.run")
@@ -70,7 +71,7 @@ def test_rebase(mock_subproc_run) -> None:
     Test that the correct command is invoked
     """
     # when
-    git.rebase(git.RealGitEnv(), "target/branch")
+    git.rebase(git.RealGitEnv(), GitBranchName("target/branch"))
     # then
     mock_subproc_run.assert_called_with(
         [

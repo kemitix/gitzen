@@ -3,6 +3,7 @@ import subprocess
 from typing import List
 
 from gitzen.envs import GitEnv
+from gitzen.types import GitBranchName
 
 
 class RealGitEnv(GitEnv):
@@ -31,8 +32,8 @@ def log(env: GitEnv, args: str = "") -> List[str]:
     return env.git(f"log --no-color {args}")
 
 
-def rebase(env: GitEnv, target: str) -> List[str]:
-    return env.git(f"rebase {target} --autostash")
+def rebase(env: GitEnv, target: GitBranchName) -> List[str]:
+    return env.git(f"rebase {target.value} --autostash")
 
 
 def remote(env: GitEnv) -> List[str]:
