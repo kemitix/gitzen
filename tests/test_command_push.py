@@ -6,6 +6,7 @@ from gitzen.types import (
     CommitBody,
     CommitHash,
     CommitTitle,
+    GithubRepoId,
     GitRefName,
     PullRequestBody,
     PullRequestId,
@@ -36,7 +37,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         headRefName=GitRefName("head"),
         mergeable="MERGEABLE",
         reviewDecision="UNKNOWN",
-        repoId="foo",
+        repoId=GithubRepoId("foo"),
         commits=[],
     )
     zen_token = ZenToken("43214321")
@@ -50,7 +51,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         headRefName=GitRefName("head"),
         mergeable="MERGEABLE",
         reviewDecision="UNKNOWN",
-        repoId="foo",
+        repoId=GithubRepoId("foo"),
         commits=[
             Commit(
                 zen_token=zen_token,
@@ -92,7 +93,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         headRefName=GitRefName("head"),
         mergeable="MERGEABLE",
         reviewDecision="UNKNOWN",
-        repoId="foo",
+        repoId=GithubRepoId("foo"),
         commits=[],
     )
     zen_token = ZenToken("43214321")
@@ -106,7 +107,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         headRefName=GitRefName("head"),
         mergeable="MERGEABLE",
         reviewDecision="UNKNOWN",
-        repoId="foo",
+        repoId=GithubRepoId("foo"),
         commits=[
             Commit(
                 zen_token=zen_token,
@@ -174,7 +175,7 @@ def test_reordered_when_not_reordered() -> None:
             GitRefName(""),
             "",
             "",
-            "",
+            GithubRepoId(""),
             [commit_foo],
         ),
         PullRequest(
@@ -187,7 +188,7 @@ def test_reordered_when_not_reordered() -> None:
             GitRefName(""),
             "",
             "",
-            "",
+            GithubRepoId(""),
             [commit_bar],
         ),
     ]
@@ -225,7 +226,7 @@ def test_reordered_when_reordered() -> None:
             GitRefName(""),
             "",
             "",
-            "",
+            GithubRepoId(""),
             [commit_bar],
         ),
         PullRequest(
@@ -238,7 +239,7 @@ def test_reordered_when_reordered() -> None:
             GitRefName(""),
             "",
             "",
-            "",
+            GithubRepoId(""),
             [commit_foo],
         ),
     ]

@@ -2,6 +2,7 @@ from typing import List
 
 from gitzen.models.github_commit import Commit
 from gitzen.types import (
+    GithubRepoId,
     GitRefName,
     PullRequestBody,
     PullRequestId,
@@ -21,7 +22,7 @@ class PullRequest:
     headRefName: GitRefName
     mergeable: str  # enum
     reviewDecision: str  # enum
-    repoId: str
+    repoId: GithubRepoId
     commits: List[Commit]
 
     def __init__(
@@ -35,7 +36,7 @@ class PullRequest:
         headRefName: GitRefName,
         mergeable: str,
         reviewDecision: str,
-        repoId: str,
+        repoId: GithubRepoId,
         commits: List[Commit],
     ) -> None:
         self.id = id

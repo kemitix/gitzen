@@ -63,3 +63,8 @@ class PullRequestTitle(StrWrapper):
 class GitRefName(StrWrapper):
     def __init__(self, value: str) -> None:
         super().__init__(GitRefName, value)
+
+
+class GithubRepoId(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(GithubRepoId, value)
