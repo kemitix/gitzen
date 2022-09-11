@@ -13,6 +13,7 @@ from gitzen.types import (
     CommitBody,
     CommitHash,
     CommitTitle,
+    GithubRepoId,
     GitRefName,
     PullRequestBody,
     PullRequestId,
@@ -109,13 +110,13 @@ def fetch_info(
         },
         query_status,
     )["data"]
-    repo_id = data["repository"]["id"]
+    repo_id = GithubRepoId(data["repository"]["id"])
     viewer = data["viewer"]
     pr_nodes = viewer["repository"]["pullRequests"]["nodes"]
     prs: List[PullRequest] = []
     say(console_env, f"Found {len(pr_nodes)} prs")
     for pr_node in pr_nodes:
-        pr_repo_id = pr_node["repository"]["id"]
+        pr_repo_id = GithubRepoId(pr_node["repository"]["id"])
         if repo_id != pr_repo_id:
             continue
         base_ref = GitRefName(pr_node["baseRefName"])

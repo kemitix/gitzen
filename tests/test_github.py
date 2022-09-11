@@ -13,6 +13,7 @@ from gitzen.types import (
     CommitBody,
     CommitHash,
     CommitTitle,
+    GithubRepoId,
     GitRefName,
     PullRequestBody,
     PullRequestId,
@@ -283,7 +284,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         headRefName=GitRefName("gitzen/pr/kemitix/master/234ad5c1"),
         mergeable="CONFLICTING",
         reviewDecision="",
-        repoId="MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE=",
+        repoId=GithubRepoId("MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE="),
         commits=[commit_a],
     )
     # when
@@ -296,7 +297,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     assert len(result.pull_requests) == 1
     expected = GithubInfo(
         username="kemitix",
-        repo_id="MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE=",
+        repo_id=GithubRepoId("MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE="),
         local_branch="baz",
         pull_requests=[pull_request_a],
     )
@@ -322,7 +323,7 @@ def test_add_comment(mock_subproc_run) -> None:
         headRefName=GitRefName(""),
         mergeable="",
         reviewDecision="",
-        repoId="",
+        repoId=GithubRepoId(""),
         commits=[],
     )
     # when
@@ -359,7 +360,7 @@ def test_close_pull_request(mock_subproc_run) -> None:
         headRefName=GitRefName(""),
         mergeable="",
         reviewDecision="",
-        repoId="",
+        repoId=GithubRepoId(""),
         commits=[],
     )
     # when
@@ -395,7 +396,7 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
         headRefName=GitRefName(""),
         mergeable="",
         reviewDecision="",
-        repoId="",
+        repoId=GithubRepoId(""),
         commits=[],
     )
     # when

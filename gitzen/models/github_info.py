@@ -1,18 +1,19 @@
 from typing import List
 
 from gitzen.models.github_pull_request import PullRequest
+from gitzen.types import GithubRepoId
 
 
 class GithubInfo:
     username: str
-    repo_id: str
+    repo_id: GithubRepoId
     local_branch: str
     pull_requests: List[PullRequest]
 
     def __init__(
         self,
         username: str,
-        repo_id: str,
+        repo_id: GithubRepoId,
         local_branch: str,
         pull_requests: List[PullRequest],
     ) -> None:
