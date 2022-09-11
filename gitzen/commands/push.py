@@ -15,7 +15,7 @@ def push(
 ) -> None:
     status = github.fetch_info(console_env, git_env, github_env)
     local_branch = status.local_branch
-    say(console_env, f"local branch: {local_branch}")
+    say(console_env, f"local branch: {local_branch.value}")
     remote_branch = branches.get_required_remote_branch(
         console_env, local_branch, config
     )

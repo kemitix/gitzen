@@ -14,6 +14,7 @@ from gitzen.types import (
     CommitHash,
     CommitTitle,
     CommitWipStatus,
+    GitBranchName,
     GithubRepoId,
     GithubUsername,
     GitRefName,
@@ -302,7 +303,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     expected = GithubInfo(
         username=GithubUsername("kemitix"),
         repo_id=GithubRepoId("MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE="),
-        local_branch="baz",
+        local_branch=GitBranchName("baz"),
         pull_requests=[pull_request_a],
     )
     assert result == expected

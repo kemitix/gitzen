@@ -4,7 +4,13 @@ from typing import List, Tuple
 from gitzen import envs, exit_code, git, patterns, zen_token
 from gitzen.console import say
 from gitzen.models.github_commit import Commit
-from gitzen.types import CommitBody, CommitHash, CommitTitle, CommitWipStatus
+from gitzen.types import (
+    CommitBody,
+    CommitHash,
+    CommitTitle,
+    CommitWipStatus,
+    GitBranchName,
+)
 
 
 # will exit the program if called from outside a git repo
@@ -18,12 +24,12 @@ def root_dir(git_env: git.GitEnv) -> str:
 def get_local_branch_name(
     console_env: envs.ConsoleEnv,
     git_env: git.GitEnv,
-) -> str:
+) -> GitBranchName:
     branches = git.branch(git_env)
     for branch in branches:
         # TODO detected detached HEAD
         if branch.startswith("* "):
-            return branch[2:]
+            return GitBranchName(branch[2:])
     say(console_env, "ERROR: Can't find local branch name")
     exit(exit_code.NO_LOCAL_BRANCH_FOUND)
 
@@ -62,9 +68,9 @@ def get_commit_stack(
     console_env: envs.ConsoleEnv,
     git_env: envs.GitEnv,
     remote: str,
-    remote_branch: str,
+    remote_branch: GitBranchName,
 ) -> List[Commit]:
-    log = git.log(git_env, f"{remote}/{remote_branch}..HEAD")
+    log = git.log(git_env, f"{remote}/{remote_branch.value}..HEAD")
     have_hash = False
     commits: List[Commit] = []
     hash = CommitHash("")

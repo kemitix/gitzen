@@ -5,9 +5,14 @@ from unittest import mock
 
 from gitzen import console, git, repo
 from gitzen.models.github_commit import Commit
-
-# trunk-ignore(flake8/E501)
-from gitzen.types import CommitBody, CommitHash, CommitTitle, CommitWipStatus, ZenToken
+from gitzen.types import (
+    CommitBody,
+    CommitHash,
+    CommitTitle,
+    CommitWipStatus,
+    GitBranchName,
+    ZenToken,
+)
 
 from .fakes.git_env import FakeGitEnv
 
@@ -71,7 +76,7 @@ def test_getLocalBranchName_returns_correct_branch(mock_subproc_run) -> None:
     # when
     result = repo.get_local_branch_name(console_env, git.RealGitEnv())
     # then
-    assert result == "me"
+    assert result == GitBranchName("me")
 
 
 def test_getRepoDetailsFromRemoteV() -> None:
@@ -273,7 +278,7 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
         }
     )
     remote = "origin"
-    remote_branch = "remote-branch"
+    remote_branch = GitBranchName("remote-branch")
     console_env = console.RealConsoleEnv()
     # when
     result = repo.get_commit_stack(console_env, git_env, remote, remote_branch)
