@@ -4,7 +4,7 @@ from subprocess import DEVNULL, run
 from typing import List
 
 from gitzen import config, console
-from gitzen.types import GitBranchName
+from gitzen.types import GitBranchName, GitRemoteName
 
 
 def test_load_when_file_not_found(tmp_path) -> None:
@@ -36,9 +36,9 @@ def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
     result = config.load(console_env, f"{tmp_path}")
     # then
     assert result == config.Config(
-        default_remote_branch=GitBranchName("drb"),
-        remote_branches=[GitBranchName("rbn")],
-        remote="other",
+        GitBranchName("drb"),
+        [GitBranchName("rbn")],
+        GitRemoteName("other"),
     )
 
 

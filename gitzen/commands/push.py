@@ -19,7 +19,7 @@ def push(
     remote_branch = branches.get_required_remote_branch(
         console_env, local_branch, config
     )
-    say(console_env, f"remote branch: {config.remote}/{remote_branch}")
+    say(console_env, f"remote branch: {config.remote.value}/{remote_branch}")
     git.rebase(git_env, f"{config.remote}/{remote_branch}")
     branches.validate_not_remote_pr(console_env, local_branch)
     commits = repo.get_commit_stack(
