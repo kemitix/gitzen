@@ -73,3 +73,8 @@ class GithubRepoId(StrWrapper):
 class PullRequestMergeable(StrWrapper):
     def __init__(self, value: str) -> None:
         super().__init__(PullRequestMergeable, value)
+
+
+class PullRequestReviewDecision(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(PullRequestReviewDecision, value)

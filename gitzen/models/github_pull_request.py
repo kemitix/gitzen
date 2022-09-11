@@ -8,6 +8,7 @@ from gitzen.types import (
     PullRequestId,
     PullRequestMergeable,
     PullRequestNumber,
+    PullRequestReviewDecision,
     PullRequestTitle,
     ZenToken,
 )
@@ -22,7 +23,7 @@ class PullRequest:
     baseRefName: GitRefName
     headRefName: GitRefName
     mergeable: PullRequestMergeable
-    reviewDecision: str  # enum
+    reviewDecision: PullRequestReviewDecision
     repoId: GithubRepoId
     commits: List[Commit]
 
@@ -36,7 +37,7 @@ class PullRequest:
         baseRefName: GitRefName,
         headRefName: GitRefName,
         mergeable: PullRequestMergeable,
-        reviewDecision: str,
+        reviewDecision: PullRequestReviewDecision,
         repoId: GithubRepoId,
         commits: List[Commit],
     ) -> None:

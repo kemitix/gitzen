@@ -19,6 +19,7 @@ from gitzen.types import (
     PullRequestId,
     PullRequestMergeable,
     PullRequestNumber,
+    PullRequestReviewDecision,
     PullRequestTitle,
 )
 
@@ -134,7 +135,9 @@ def fetch_info(
             )
             continue
         review_node = pr_node["reviewDecision"]
-        review_decision = review_node if review_node is not None else ""
+        review_decision = PullRequestReviewDecision(
+            review_node if review_node is not None else ""
+        )
         body = PullRequestBody(pr_node["body"])
         token = zen_token.find_in_body(body)
         if token is None:
