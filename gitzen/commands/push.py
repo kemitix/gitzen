@@ -4,7 +4,7 @@ from gitzen import branches, config, envs, git, github, repo
 from gitzen.console import say
 from gitzen.models.github_commit import Commit
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import ZenToken
+from gitzen.types import GitBranchName, ZenToken
 
 
 def push(
@@ -20,7 +20,7 @@ def push(
         console_env, local_branch, config
     )
     say(console_env, f"remote branch: {config.remote.value}/{remote_branch}")
-    git.rebase(git_env, f"{config.remote}/{remote_branch}")
+    git.rebase(git_env, GitBranchName(f"{config.remote}/{remote_branch}"))
     branches.validate_not_remote_pr(console_env, local_branch)
     commits = repo.get_commit_stack(
         console_env,
