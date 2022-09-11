@@ -4,7 +4,7 @@ from typing import List, Tuple
 from gitzen import envs, exit_code, git, patterns, zen_token
 from gitzen.console import say
 from gitzen.models.github_commit import Commit
-from gitzen.types import CommitBody, CommitHash, CommitTitle
+from gitzen.types import CommitBody, CommitHash, CommitTitle, CommitWipStatus
 
 
 # will exit the program if called from outside a git repo
@@ -98,7 +98,7 @@ def get_commit_stack(
                     hash=hash,
                     headline=CommitTitle(headline),
                     body=CommitBody(body.strip()),
-                    wip=headline.startswith("WIP "),
+                    wip=CommitWipStatus(headline.startswith("WIP ")),
                 )
             )
             body = ""

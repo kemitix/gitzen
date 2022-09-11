@@ -6,6 +6,7 @@ from gitzen.types import (
     CommitBody,
     CommitHash,
     CommitTitle,
+    CommitWipStatus,
     GithubRepoId,
     GitRefName,
     PullRequestBody,
@@ -60,7 +61,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
                 hash=CommitHash(""),
                 headline=CommitTitle(""),
                 body=CommitBody(""),
-                wip=False,
+                wip=CommitWipStatus(False),
             )
         ],
     )
@@ -116,7 +117,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
                 hash=CommitHash(""),
                 headline=CommitTitle(""),
                 body=CommitBody(""),
-                wip=False,
+                wip=CommitWipStatus(False),
             )
         ],
     )
@@ -136,7 +137,7 @@ def test_reordered_when_too_many_commits() -> None:
             CommitHash(""),
             CommitTitle(""),
             CommitBody(""),
-            False,
+            CommitWipStatus(False),
         )
     ]
     prs = []
@@ -156,14 +157,14 @@ def test_reordered_when_not_reordered() -> None:
         CommitHash(""),
         CommitTitle(""),
         CommitBody(""),
-        False,
+        CommitWipStatus(False),
     )
     commit_bar = Commit(
         ZenToken("bar"),
         CommitHash(""),
         CommitTitle(""),
         CommitBody(""),
-        False,
+        CommitWipStatus(False),
     )
     commits = [commit_foo, commit_bar]
     prs = [
@@ -207,14 +208,14 @@ def test_reordered_when_reordered() -> None:
         CommitHash(""),
         CommitTitle(""),
         CommitBody(""),
-        False,
+        CommitWipStatus(False),
     )
     commit_bar = Commit(
         ZenToken("bar"),
         CommitHash(""),
         CommitTitle(""),
         CommitBody(""),
-        False,
+        CommitWipStatus(False),
     )
     commits = [commit_foo, commit_bar]
     prs = [
