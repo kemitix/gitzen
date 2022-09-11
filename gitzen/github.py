@@ -14,9 +14,9 @@ from gitzen.types import (
     CommitHash,
     CommitTitle,
     CommitWipStatus,
+    GitBranchName,
     GithubRepoId,
     GithubUsername,
-    GitRefName,
     PullRequestBody,
     PullRequestId,
     PullRequestMergeable,
@@ -119,8 +119,8 @@ def fetch_info(
         pr_repo_id = GithubRepoId(pr_node["repository"]["id"])
         if repo_id != pr_repo_id:
             continue
-        base_ref = GitRefName(pr_node["baseRefName"])
-        head_ref = GitRefName(pr_node["headRefName"])
+        base_ref = GitBranchName(pr_node["baseRefName"])
+        head_ref = GitBranchName(pr_node["headRefName"])
         say(console_env, f"{base_ref.value} <- {head_ref.value}")
         match = re.search(patterns.remote_pr_branch, head_ref.value)
         if match is None:

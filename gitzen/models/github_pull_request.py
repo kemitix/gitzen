@@ -2,8 +2,8 @@ from typing import List
 
 from gitzen.models.github_commit import Commit
 from gitzen.types import (
+    GitBranchName,
     GithubRepoId,
-    GitRefName,
     PullRequestBody,
     PullRequestId,
     PullRequestMergeable,
@@ -20,8 +20,8 @@ class PullRequest:
     number: PullRequestNumber
     title: PullRequestTitle
     body: PullRequestBody
-    baseRefName: GitRefName
-    headRefName: GitRefName
+    baseRefName: GitBranchName
+    headRefName: GitBranchName
     mergeable: PullRequestMergeable
     reviewDecision: PullRequestReviewDecision
     repoId: GithubRepoId
@@ -34,8 +34,8 @@ class PullRequest:
         number: PullRequestNumber,
         title: PullRequestTitle,
         body: PullRequestBody,
-        baseRefName: GitRefName,
-        headRefName: GitRefName,
+        baseRefName: GitBranchName,
+        headRefName: GitBranchName,
         mergeable: PullRequestMergeable,
         reviewDecision: PullRequestReviewDecision,
         repoId: GithubRepoId,
