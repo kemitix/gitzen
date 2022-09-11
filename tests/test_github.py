@@ -15,6 +15,7 @@ from gitzen.types import (
     CommitTitle,
     CommitWipStatus,
     GithubRepoId,
+    GithubUsername,
     GitRefName,
     PullRequestBody,
     PullRequestId,
@@ -299,7 +300,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     # then
     assert len(result.pull_requests) == 1
     expected = GithubInfo(
-        username="kemitix",
+        username=GithubUsername("kemitix"),
         repo_id=GithubRepoId("MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE="),
         local_branch="baz",
         pull_requests=[pull_request_a],

@@ -15,6 +15,7 @@ from gitzen.types import (
     CommitTitle,
     CommitWipStatus,
     GithubRepoId,
+    GithubUsername,
     GitRefName,
     PullRequestBody,
     PullRequestId,
@@ -160,7 +161,7 @@ def fetch_info(
         )
     say(console_env, f"Kept {len(prs)} prs")
     return GithubInfo(
-        username=viewer["login"],
+        username=GithubUsername(viewer["login"]),
         repo_id=repo_id,
         local_branch=repo.get_local_branch_name(
             console_env,
