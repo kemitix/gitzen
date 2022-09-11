@@ -13,6 +13,7 @@ from gitzen.types import (
     CommitBody,
     CommitHash,
     CommitTitle,
+    CommitWipStatus,
     GithubRepoId,
     GitRefName,
     PullRequestBody,
@@ -272,7 +273,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         hash=CommitHash("715fbc4220806fe283e39ee74c6fca3dac52c041"),
         headline=CommitTitle("build(deps): bump microprofile from 4.1 to 5.0"),
         body=CommitBody(commit_body.value + "\n\nzen-token:234ad5c1"),
-        wip=False,
+        wip=CommitWipStatus(False),
     )
     pull_request_a = PullRequest(
         id=PullRequestId("PR_kwDOEVHCd84vkAyI"),

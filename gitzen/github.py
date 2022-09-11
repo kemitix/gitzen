@@ -13,6 +13,7 @@ from gitzen.types import (
     CommitBody,
     CommitHash,
     CommitTitle,
+    CommitWipStatus,
     GithubRepoId,
     GitRefName,
     PullRequestBody,
@@ -182,7 +183,7 @@ def get_commits(pr_node) -> List[Commit]:
                 hash=CommitHash(commit_node["oid"]),
                 headline=title,
                 body=body,
-                wip=title.value.startswith("WIP "),
+                wip=CommitWipStatus(title.value.startswith("WIP ")),
             )
         )
     return commits

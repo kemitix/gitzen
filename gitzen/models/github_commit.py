@@ -1,6 +1,7 @@
 from typing import Optional
 
-from gitzen.types import CommitBody, CommitHash, CommitTitle, ZenToken
+# trunk-ignore(flake8/E501)
+from gitzen.types import CommitBody, CommitHash, CommitTitle, CommitWipStatus, ZenToken
 
 
 class Commit:
@@ -8,7 +9,7 @@ class Commit:
     hash: CommitHash
     messageHeadline: CommitTitle
     messageBody: CommitBody
-    wip: bool
+    wip: CommitWipStatus
 
     def __init__(
         self,
@@ -16,7 +17,7 @@ class Commit:
         hash: CommitHash,
         headline: CommitTitle,
         body: CommitBody,
-        wip: bool,
+        wip: CommitWipStatus,
     ) -> None:
         self.zen_token = zen_token
         self.hash = hash

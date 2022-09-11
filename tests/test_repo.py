@@ -5,7 +5,9 @@ from unittest import mock
 
 from gitzen import console, git, repo
 from gitzen.models.github_commit import Commit
-from gitzen.types import CommitBody, CommitHash, CommitTitle, ZenToken
+
+# trunk-ignore(flake8/E501)
+from gitzen.types import CommitBody, CommitHash, CommitTitle, CommitWipStatus, ZenToken
 
 from .fakes.git_env import FakeGitEnv
 
@@ -284,7 +286,7 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
                 "Rename as branches.validate_not_remote_pr()",
             ),
             body=CommitBody(""),
-            wip=False,
+            wip=CommitWipStatus(False),
         ),
         Commit(  # 2
             zen_token=ZenToken("d21feb41"),
@@ -293,7 +295,7 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
                 "Extract barnches.get_required_remote_branch()",
             ),
             body=CommitBody(""),
-            wip=False,
+            wip=CommitWipStatus(False),
         ),
         Commit(  # 3
             zen_token=ZenToken("e0b93f99"),
@@ -302,27 +304,27 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
                 "WIP Create stub repo.get_local_commit_stack()",
             ),
             body=CommitBody(""),
-            wip=True,
+            wip=CommitWipStatus(True),
         ),
         Commit(  # 4
             zen_token=ZenToken("d0d9c392"),
             hash=CommitHash("55b1cc72019cad0d9c392eef10b817d86378ea61"),
             headline=CommitTitle("Add git.log()"),
             body=CommitBody(""),
-            wip=False,
+            wip=CommitWipStatus(False),
         ),
         Commit(  # 5
             zen_token=ZenToken("db8b277e"),
             hash=CommitHash("b7bcf5ebdb8b277e267e47ee87fb568e53a8df06"),
             headline=CommitTitle("gitzen.branches: whitespace cleanup"),
             body=CommitBody(""),
-            wip=False,
+            wip=CommitWipStatus(False),
         ),
         Commit(  # 6
             zen_token=ZenToken("97123f3a"),
             hash=CommitHash("d9c3765ee8c6a1dee34d623b78c50a38bc57201c"),
             headline=CommitTitle("models.Commit: rename field oid as hash_id"),
             body=CommitBody("oid is used by Github."),
-            wip=False,
+            wip=CommitWipStatus(False),
         ),
     ]
