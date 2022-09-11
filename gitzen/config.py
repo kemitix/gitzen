@@ -31,14 +31,17 @@ class Config:
         )
 
 
-default_config: Config = Config(
+default_config = Config(
     default_remote_branch=GitBranchName("master"),
     remote_branches=[],
     remote=GitRemoteName("origin"),
 )
 
 
-def load(console_env: envs.ConsoleEnv, dir: str) -> Config:
+def load(
+    console_env: envs.ConsoleEnv,
+    dir: str,
+) -> Config:
     config_file = f"{dir}/.gitzen.yml"
     if exists(config_file):
         say(console_env, f"Reading config from {config_file}")

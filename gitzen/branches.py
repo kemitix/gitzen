@@ -8,7 +8,8 @@ from gitzen.types import GitBranchName
 # look for the local branch name in the remote branches from config
 # if found use that, otherwise, use the default branch from Config
 def get_remote_branch(
-    local_branch: GitBranchName, config: config.Config
+    local_branch: GitBranchName,
+    config: config.Config,
 ) -> GitBranchName:
     for remote_branch in config.remote_branches:
         if remote_branch == local_branch:

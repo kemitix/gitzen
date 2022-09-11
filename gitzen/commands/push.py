@@ -87,7 +87,10 @@ def check_for_reordered_commits(
         # update all PRs
 
 
-def reordered(open_prs: List[PullRequest], commits: List[Commit]) -> bool:
+def reordered(
+    open_prs: List[PullRequest],
+    commits: List[Commit],
+) -> bool:
     for i, pr in enumerate(open_prs):
         if pr.commits[0] != commits[i]:
             return True

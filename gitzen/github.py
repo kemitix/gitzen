@@ -38,9 +38,7 @@ class RealGithubEnv(envs.GithubEnv):
             args.append(f"{pair}=" + params[pair])
         args.append("-f")
         args.append(f"query={query}")
-        result: subprocess.CompletedProcess[bytes] = subprocess.run(
-            args, stdout=subprocess.PIPE
-        )
+        result = subprocess.run(args, stdout=subprocess.PIPE)
         stdout = result.stdout
         if stdout:
             return json.loads(stdout.decode())
@@ -48,10 +46,8 @@ class RealGithubEnv(envs.GithubEnv):
             return {}  # TODO return some error condition
 
     def gh(self, args: str) -> List[str]:
-        gh_command = f"gh {args}"
-        result: subprocess.CompletedProcess[bytes] = subprocess.run(
-            shlex.split(gh_command), stdout=subprocess.PIPE
-        )
+        gh_command = shlex.split(f"gh {args}")
+        result = subprocess.run(gh_command, stdout=subprocess.PIPE)
         stdout = result.stdout
         if stdout:
             lines = stdout.decode().splitlines()
