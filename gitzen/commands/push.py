@@ -19,9 +19,12 @@ def push(
     remote_branch = branches.get_required_remote_branch(
         console_env, local_branch, config
     )
-    say(console_env, f"remote branch: {config.remote.value}/{remote_branch}")
+    remote_target = GitBranchName(
+        f"remote branch: {config.remote.value}/{remote_branch.value}"
+    )
+    say(console_env, remote_target.value)
     git.fetch(git_env, config.remote)
-    git.rebase(git_env, GitBranchName(f"{config.remote}/{remote_branch}"))
+    git.rebase(git_env, remote_target)
     branches.validate_not_remote_pr(console_env, local_branch)
     commits = repo.get_commit_stack(
         console_env,
