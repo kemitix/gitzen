@@ -1,6 +1,8 @@
 from subprocess import PIPE, CompletedProcess
 from unittest import mock
 
+from faker import Faker
+
 from gitzen import git
 from gitzen.types import GitBranchName
 
@@ -92,8 +94,9 @@ def test_revParse(mock_subproc_run) -> None:
     # when
     git.rev_parse(git.RealGitEnv(), "--verify HEAD")
     # then
-    gitRevParse = ["git", "rev-parse", "--verify", "HEAD"]
-    mock_subproc_run.assert_called_with(gitRevParse, stdout=PIPE)
+    mock_subproc_run.assert_called_with(
+        ["git", "rev-parse", "--verify", "HEAD"], stdout=PIPE
+    )
 
 
 @mock.patch("subprocess.run")
@@ -109,3 +112,23 @@ def test_revParse_returns_value(mock_subproc_run) -> None:
     result = git.rev_parse(git.RealGitEnv())
     # then
     assert result == ["688881f74786d59ff397ef81efe1c137167f46b2"]
+
+
+@mock.patch("subprocess.run")
+def test_switch(mock_subproc_run) -> None:
+    """
+    Test that the correct command is invoked
+    """
+    # given
+    branch = GitBranchName(Faker().word())
+    # when
+    git.switch(git.RealGitEnv(), branch)
+    # then
+    mock_subproc_run.assert_called_with(
+        [
+            "git",
+            "switch",
+            branch.value,
+        ],
+        stdout=PIPE,
+    )

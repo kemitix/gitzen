@@ -34,7 +34,7 @@ def push(
         status.pull_requests,
         commits,
     )
-    check_for_reordered_commits(github_env, open_prs, commits)
+    check_for_reordered_commits(git_env, open_prs, commits)
     # sync commit stach to github
     # call git zen status
 
@@ -60,7 +60,7 @@ def clean_up_deleted_commits(
 
 
 def check_for_reordered_commits(
-    github_env: envs.GithubEnv,
+    git_env: envs.GitEnv,
     open_prs: List[PullRequest],
     commits: List[Commit],
 ) -> None:
@@ -68,6 +68,8 @@ def check_for_reordered_commits(
         for pr in open_prs:
             pass
             # rebase on target branch
+            git.switch(git_env, pr.headRefName)
+            git.rebase(git_env, pr.baseRefName)
             # get remote branch name from repo as baseRefName (default master)
             # if there was a previous commit
             # - here there never is - but generic code might
