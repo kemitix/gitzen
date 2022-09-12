@@ -42,3 +42,7 @@ def remote(env: GitEnv) -> List[str]:
 
 def rev_parse(env: GitEnv, args: str = "") -> List[str]:
     return env.git(f"rev-parse {args}")
+
+
+def switch(env: GitEnv, branch: GitBranchName) -> List[str]:
+    return env.git(f"switch {branch.value}")
