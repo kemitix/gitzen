@@ -4,7 +4,7 @@ from unittest import mock
 from faker import Faker
 
 from gitzen import git
-from gitzen.types import GitBranchName
+from gitzen.types import GitBranchName, GitRemoteName
 
 
 @mock.patch("subprocess.run")
@@ -30,10 +30,12 @@ def test_fetch(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
+    # given
+    remote = GitRemoteName(Faker().word())
     # when
-    git.fetch(git.RealGitEnv())
+    git.fetch(git.RealGitEnv(), remote)
     # then
-    gitFetch = ["git", "fetch"]
+    gitFetch = ["git", "fetch", remote.value]
     mock_subproc_run.assert_called_with(gitFetch, stdout=PIPE)
 
 

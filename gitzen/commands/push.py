@@ -20,6 +20,7 @@ def push(
         console_env, local_branch, config
     )
     say(console_env, f"remote branch: {config.remote.value}/{remote_branch}")
+    git.fetch(git_env, config.remote)
     git.rebase(git_env, GitBranchName(f"{config.remote}/{remote_branch}"))
     branches.validate_not_remote_pr(console_env, local_branch)
     commits = repo.get_commit_stack(
@@ -44,6 +45,11 @@ def clean_up_deleted_commits(
     pull_requests: List[PullRequest],
     commits: List[Commit],
 ) -> List[PullRequest]:
+    """
+    Any PR that has a zen-token that isn't in the current commit stack
+    is closed as the commit has gone away.
+    Issue: if commit is on another branch?
+    """
     zen_map: Dict[ZenToken, Commit] = {}
     for commit in commits:
         if commit.zen_token is not None:

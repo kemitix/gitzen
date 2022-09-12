@@ -3,7 +3,7 @@ import subprocess
 from typing import List
 
 from gitzen.envs import GitEnv
-from gitzen.types import GitBranchName
+from gitzen.types import GitBranchName, GitRemoteName
 
 
 class RealGitEnv(GitEnv):
@@ -24,8 +24,8 @@ def branch(env: GitEnv) -> List[str]:
     return env.git("branch --no-color")
 
 
-def fetch(env: GitEnv) -> List[str]:
-    return env.git("fetch")
+def fetch(env: GitEnv, remote: GitRemoteName) -> List[str]:
+    return env.git(f"fetch {remote.value}")
 
 
 def log(env: GitEnv, args: str = "") -> List[str]:
