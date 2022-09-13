@@ -14,14 +14,6 @@ from gitzen.types import (
 )
 
 
-# will exit the program if called from outside a git repo
-def root_dir(git_env: git.GitEnv) -> str:
-    output = git.rev_parse(git_env, "--show-toplevel")
-    if output == "":
-        exit(exit_code.NOT_IN_GIT_REPO)
-    return output[0]
-
-
 def get_local_branch_name(
     console_env: envs.ConsoleEnv,
     git_env: git.GitEnv,

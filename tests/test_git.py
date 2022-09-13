@@ -134,3 +134,30 @@ def test_switch(mock_subproc_run) -> None:
         ],
         stdout=PIPE,
     )
+
+
+@mock.patch("subprocess.run")
+def test_rootDir(mock_subproc_run) -> None:
+    """
+    Test that the correct command is invoked
+    """
+    # when
+    git.root_dir(git.RealGitEnv())
+    # then
+    gitRevParse = ["git", "rev-parse", "--show-toplevel"]
+    mock_subproc_run.assert_called_with(gitRevParse, stdout=PIPE)
+
+
+@mock.patch("subprocess.run")
+def test_rootDir_returns_path(mock_subproc_run) -> None:
+    """
+    Test that rootDir returns the directory
+    """
+    # given
+    mock_subproc_run.return_value = CompletedProcess(
+        "", 0, stdout="test-root-dir".encode()
+    )
+    # when
+    result = git.root_dir(git.RealGitEnv())
+    # then
+    assert result == "test-root-dir"
