@@ -1,6 +1,6 @@
 from typing import List
 
-from gitzen.models.github_commit import Commit
+from gitzen.models.github_commit import GithubCommit
 from gitzen.types import (
     GitBranchName,
     GithubRepoId,
@@ -25,7 +25,7 @@ class PullRequest:
     mergeable: PullRequestMergeable
     reviewDecision: PullRequestReviewDecision
     repoId: GithubRepoId
-    commits: List[Commit]
+    commits: List[GithubCommit]
 
     def __init__(
         self,
@@ -39,7 +39,7 @@ class PullRequest:
         mergeable: PullRequestMergeable,
         reviewDecision: PullRequestReviewDecision,
         repoId: GithubRepoId,
-        commits: List[Commit],
+        commits: List[GithubCommit],
     ) -> None:
         self.id = id
         self.zen_token = zen_token

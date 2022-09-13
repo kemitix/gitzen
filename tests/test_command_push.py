@@ -1,6 +1,7 @@
 from gitzen import envs
 from gitzen.commands import push
-from gitzen.models.github_commit import Commit
+from gitzen.models.git_commit import GitCommit
+from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_pull_request import PullRequest
 from gitzen.types import (
     CommitBody,
@@ -56,7 +57,7 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         reviewDecision=PullRequestReviewDecision("UNKNOWN"),
         repoId=GithubRepoId("foo"),
         commits=[
-            Commit(
+            GithubCommit(
                 zen_token=zen_token,
                 hash=CommitHash(""),
                 headline=CommitTitle(""),
@@ -66,9 +67,17 @@ def test_clean_up_deleted_commits_closes_with_comment() -> None:
         ],
     )
     prs = [pr_to_close, pr_to_keep]
-    commits = pr_to_keep.commits
+    git_commits = [
+        GitCommit(
+            zen_token=zen_token,
+            hash=CommitHash(""),
+            headline=CommitTitle(""),
+            body=CommitBody(""),
+            wip=CommitWipStatus(False),
+        )
+    ]
     # when
-    push.clean_up_deleted_commits(github_env, prs, commits)
+    push.clean_up_deleted_commits(github_env, prs, git_commits)
     # then
     assert pr_to_close.number.value in github_env.closed_with_comment
     assert (
@@ -112,7 +121,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         reviewDecision=PullRequestReviewDecision("UNKNOWN"),
         repoId=GithubRepoId("foo"),
         commits=[
-            Commit(
+            GithubCommit(
                 zen_token=zen_token,
                 hash=CommitHash(""),
                 headline=CommitTitle(""),
@@ -122,9 +131,17 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
         ],
     )
     prs = [pr_to_close, pr_to_keep]
-    commits = pr_to_keep.commits
+    git_commits = [
+        GitCommit(
+            zen_token=zen_token,
+            hash=CommitHash(""),
+            headline=CommitTitle(""),
+            body=CommitBody(""),
+            wip=CommitWipStatus(False),
+        )
+    ]
     # when
-    open_prs = push.clean_up_deleted_commits(github_env, prs, commits)
+    open_prs = push.clean_up_deleted_commits(github_env, prs, git_commits)
     # then
     assert open_prs == [pr_to_keep]
 
@@ -132,7 +149,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs() -> None:
 def test_reordered_when_too_many_commits() -> None:
     # given
     commits = [
-        Commit(
+        GitCommit(
             ZenToken("foo"),
             CommitHash(""),
             CommitTitle(""),
@@ -152,21 +169,21 @@ def test_reordered_when_too_many_commits() -> None:
 
 def test_reordered_when_not_reordered() -> None:
     # given
-    commit_foo = Commit(
+    git_commit_foo = GitCommit(
         ZenToken("foo"),
         CommitHash(""),
         CommitTitle(""),
         CommitBody(""),
         CommitWipStatus(False),
     )
-    commit_bar = Commit(
+    git_commit_bar = GitCommit(
         ZenToken("bar"),
         CommitHash(""),
         CommitTitle(""),
         CommitBody(""),
         CommitWipStatus(False),
     )
-    commits = [commit_foo, commit_bar]
+    commits = [git_commit_foo, git_commit_bar]
     prs = [
         PullRequest(
             PullRequestId(""),
@@ -179,7 +196,15 @@ def test_reordered_when_not_reordered() -> None:
             PullRequestMergeable(""),
             PullRequestReviewDecision(""),
             GithubRepoId(""),
-            [commit_foo],
+            [
+                GithubCommit(
+                    ZenToken("foo"),
+                    CommitHash(""),
+                    CommitTitle(""),
+                    CommitBody(""),
+                    CommitWipStatus(False),
+                )
+            ],
         ),
         PullRequest(
             PullRequestId(""),
@@ -192,7 +217,15 @@ def test_reordered_when_not_reordered() -> None:
             PullRequestMergeable(""),
             PullRequestReviewDecision(""),
             GithubRepoId(""),
-            [commit_bar],
+            [
+                GithubCommit(
+                    ZenToken("bar"),
+                    CommitHash(""),
+                    CommitTitle(""),
+                    CommitBody(""),
+                    CommitWipStatus(False),
+                )
+            ],
         ),
     ]
     # when
@@ -203,21 +236,21 @@ def test_reordered_when_not_reordered() -> None:
 
 def test_reordered_when_reordered() -> None:
     # given
-    commit_foo = Commit(
+    git_commit_foo = GitCommit(
         ZenToken("foo"),
         CommitHash(""),
         CommitTitle(""),
         CommitBody(""),
         CommitWipStatus(False),
     )
-    commit_bar = Commit(
+    git_commit_bar = GitCommit(
         ZenToken("bar"),
         CommitHash(""),
         CommitTitle(""),
         CommitBody(""),
         CommitWipStatus(False),
     )
-    commits = [commit_foo, commit_bar]
+    commits = [git_commit_foo, git_commit_bar]
     prs = [
         PullRequest(
             PullRequestId(""),
@@ -230,7 +263,15 @@ def test_reordered_when_reordered() -> None:
             PullRequestMergeable(""),
             PullRequestReviewDecision(""),
             GithubRepoId(""),
-            [commit_bar],
+            [
+                GithubCommit(
+                    ZenToken("bar"),
+                    CommitHash(""),
+                    CommitTitle(""),
+                    CommitBody(""),
+                    CommitWipStatus(False),
+                )
+            ],
         ),
         PullRequest(
             PullRequestId(""),
@@ -243,7 +284,15 @@ def test_reordered_when_reordered() -> None:
             PullRequestMergeable(""),
             PullRequestReviewDecision(""),
             GithubRepoId(""),
-            [commit_foo],
+            [
+                GithubCommit(
+                    ZenToken("foo"),
+                    CommitHash(""),
+                    CommitTitle(""),
+                    CommitBody(""),
+                    CommitWipStatus(False),
+                )
+            ],
         ),
     ]
     # when

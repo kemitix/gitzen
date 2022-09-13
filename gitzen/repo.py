@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 from gitzen import envs, exit_code, git, patterns, zen_token
 from gitzen.console import say
-from gitzen.models.github_commit import Commit
+from gitzen.models.git_commit import GitCommit
 from gitzen.types import (
     CommitBody,
     CommitHash,
@@ -70,10 +70,10 @@ def get_commit_stack(
     git_env: envs.GitEnv,
     remote: GitRemoteName,
     remote_branch: GitBranchName,
-) -> List[Commit]:
+) -> List[GitCommit]:
     log = git.log(git_env, f"{remote.value}/{remote_branch.value}..HEAD")
     have_hash = False
-    commits: List[Commit] = []
+    commits: List[GitCommit] = []
     hash = CommitHash("")
     headline = ""
     body: str = ""
@@ -100,7 +100,7 @@ def get_commit_stack(
             say(console_env, f":: zen-token: {token}")
             say(console_env, f":: body: {body.strip()}")
             commits.append(
-                Commit(
+                GitCommit(
                     zen_token=token,
                     hash=hash,
                     headline=CommitTitle(headline),

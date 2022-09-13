@@ -1,13 +1,9 @@
-from typing import Optional
-
 # trunk-ignore(flake8/E501)
 from gitzen.types import CommitBody, CommitHash, CommitTitle, CommitWipStatus, ZenToken
 
-from .git_commit import GitCommit
 
-
-class GithubCommit:
-    zen_token: Optional[ZenToken]
+class GitCommit:
+    zen_token: ZenToken
     hash: CommitHash
     messageHeadline: CommitTitle
     messageBody: CommitBody
@@ -15,7 +11,7 @@ class GithubCommit:
 
     def __init__(
         self,
-        zen_token: Optional[ZenToken],
+        zen_token: ZenToken,
         hash: CommitHash,
         headline: CommitTitle,
         body: CommitBody,
@@ -29,7 +25,7 @@ class GithubCommit:
 
     def __eq__(self, __o: object) -> bool:
         return (
-            (isinstance(__o, GithubCommit) or isinstance(__o, GitCommit))
+            isinstance(__o, GitCommit)
             and self.zen_token == __o.zen_token
             and self.hash == __o.hash
             and self.messageHeadline == __o.messageHeadline
@@ -39,7 +35,7 @@ class GithubCommit:
 
     def __repr__(self) -> str:
         return (
-            f"GithubCommit(zen_token={self.zen_token}, "
+            f"GitCommit(zen_token={self.zen_token}, "
             f"hash={self.hash}, "
             f"messageHeadline={self.messageHeadline}, "
             f"messageBody={self.messageBody}, "

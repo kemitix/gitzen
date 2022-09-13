@@ -6,7 +6,7 @@ from unittest import mock
 from faker import Faker
 
 from gitzen import console, git, github
-from gitzen.models.github_commit import Commit
+from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
 from gitzen.types import (
@@ -269,7 +269,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         "...\n\n"
         "Signed-off-by: dependabot[bot] <support@github.com>"
     )
-    commit_a = Commit(
+    commit_a = GithubCommit(
         zen_token=ZenToken("234ad5c1"),
         hash=CommitHash("715fbc4220806fe283e39ee74c6fca3dac52c041"),
         headline=CommitTitle("build(deps): bump microprofile from 4.1 to 5.0"),
