@@ -6,7 +6,7 @@ from typing import Any, Dict, List
 
 from gitzen import envs, patterns, repo, zen_token
 from gitzen.console import say
-from gitzen.models.github_commit import Commit
+from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
 from gitzen.types import (
@@ -167,7 +167,7 @@ def fetch_info(
     )
 
 
-def get_commits(pr_node) -> List[Commit]:
+def get_commits(pr_node) -> List[GithubCommit]:
     commits = []
     for commit_node_item in pr_node["commits"]["nodes"]:
         commit_node = commit_node_item["commit"]
@@ -175,7 +175,7 @@ def get_commits(pr_node) -> List[Commit]:
         body = CommitBody(commit_node["messageBody"])
         token = zen_token.find_in_body(body)
         commits.append(
-            Commit(
+            GithubCommit(
                 zen_token=token,
                 hash=CommitHash(commit_node["oid"]),
                 headline=title,

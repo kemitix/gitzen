@@ -2,7 +2,7 @@ from typing import Dict, List
 
 from gitzen import branches, config, envs, git, github, repo
 from gitzen.console import say
-from gitzen.models.github_commit import Commit
+from gitzen.models.git_commit import GitCommit
 from gitzen.models.github_pull_request import PullRequest
 from gitzen.types import GitBranchName, ZenToken
 
@@ -46,17 +46,17 @@ def push(
 def clean_up_deleted_commits(
     github_env: envs.GithubEnv,
     pull_requests: List[PullRequest],
-    commits: List[Commit],
+    commits: List[GitCommit],
 ) -> List[PullRequest]:
     """
     Any PR that has a zen-token that isn't in the current commit stack
     is closed as the commit has gone away.
     Issue: if commit is on another branch?
     """
-    zen_map: Dict[ZenToken, Commit] = {}
+    # TODO zen_map can just be a list of ZenTokens
+    zen_map: Dict[ZenToken, GitCommit] = {}
     for commit in commits:
-        if commit.zen_token is not None:
-            zen_map[commit.zen_token] = commit
+        zen_map[commit.zen_token] = commit
     kept = []
     for pr in pull_requests:
         if pr.zen_token not in zen_map:
@@ -71,7 +71,7 @@ def clean_up_deleted_commits(
 def check_for_reordered_commits(
     git_env: envs.GitEnv,
     open_prs: List[PullRequest],
-    commits: List[Commit],
+    commits: List[GitCommit],
 ) -> None:
     if reordered(open_prs, commits):
         for pr in open_prs:
@@ -100,7 +100,7 @@ def check_for_reordered_commits(
 
 def reordered(
     open_prs: List[PullRequest],
-    commits: List[Commit],
+    commits: List[GitCommit],
 ) -> bool:
     for i, pr in enumerate(open_prs):
         if pr.commits[0] != commits[i]:
