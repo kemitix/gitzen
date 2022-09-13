@@ -1,5 +1,7 @@
 from typing import Any, Dict, List
 
+from gitzen.models.git_patch import GitPatch
+
 
 class ConsoleEnv:
     def say(self, message: str) -> None:
@@ -8,6 +10,9 @@ class ConsoleEnv:
 
 class GitEnv:
     def git(self, args: str) -> List[str]:
+        pass
+
+    def write_patch(self, patch: GitPatch) -> None:
         pass
 
 

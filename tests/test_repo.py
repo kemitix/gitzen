@@ -1,5 +1,5 @@
 import subprocess
-from subprocess import PIPE, CompletedProcess
+from subprocess import CompletedProcess
 from typing import List
 from unittest import mock
 
@@ -16,33 +16,6 @@ from gitzen.types import (
 )
 
 from .fakes.git_env import FakeGitEnv
-
-
-@mock.patch("subprocess.run")
-def test_rootDir(mock_subproc_run) -> None:
-    """
-    Test that the correct command is invoked
-    """
-    # when
-    repo.root_dir(git.RealGitEnv())
-    # then
-    gitRevParse = ["git", "rev-parse", "--show-toplevel"]
-    mock_subproc_run.assert_called_with(gitRevParse, stdout=PIPE)
-
-
-@mock.patch("subprocess.run")
-def test_rootDir_returns_path(mock_subproc_run) -> None:
-    """
-    Test that rootDir returns the directory
-    """
-    # given
-    mock_subproc_run.return_value = CompletedProcess(
-        "", 0, stdout="test-root-dir".encode()
-    )
-    # when
-    result = repo.root_dir(git.RealGitEnv())
-    # then
-    assert result == "test-root-dir"
 
 
 @mock.patch("subprocess.run")

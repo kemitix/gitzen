@@ -34,14 +34,6 @@ class Config:
             and self.remote == __o.remote
         )
 
-    @property
-    def gitzen_refs(self) -> str:
-        return f"{self.root_dir}/.git/refs/gitzen"
-
-    @property
-    def gitzen_patches(self) -> str:
-        return f"{self.root_dir}/.git/refs/gitzen/patches"
-
 
 def default_config(root_dir: str) -> Config:
     return Config(

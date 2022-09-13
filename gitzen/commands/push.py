@@ -1,9 +1,9 @@
-from os import mkdir
 from typing import Dict, List
 
-from gitzen import branches, config, envs, file, git, github, repo
+from gitzen import branches, config, envs, git, github, repo
 from gitzen.console import say
 from gitzen.models.git_commit import GitCommit
+from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_pull_request import PullRequest
 from gitzen.types import GitBranchName, ZenToken
 
@@ -131,12 +131,11 @@ def update_patches(
     git_env: envs.GitEnv,
     config: config.Config,
     commits: List[GitCommit],
-) -> None:
+) -> List[GitPatch]:
     # create patches
-    mkdir(config.gitzen_refs)
-    mkdir(config.gitzen_patches)
+    patches: List[GitPatch] = []
     for commit in commits:
-        file.write(
-            f"{config.gitzen_patches}/{commit.zen_token.value}",
-            [commit.hash.value],
-        )
+        patch = GitPatch(commit.zen_token, commit.hash)
+        git.write_patch(git_env, patch, config.root_dir)
+        patches.append(patch)
+    return patches
