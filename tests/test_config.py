@@ -1,10 +1,9 @@
-import shlex
 from pathlib import PosixPath
-from subprocess import DEVNULL, run
-from typing import List
 
 from gitzen import config, console
 from gitzen.types import GitBranchName, GitRemoteName
+
+from .fakes.repo_files import given_file, given_repo
 
 
 def test_load_when_file_not_found(tmp_path) -> None:
@@ -43,15 +42,5 @@ def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
 
 
 def test_load_aborts_when_file_is_invalid() -> None:
+    # TODO
     pass
-
-
-def given_repo(dir: PosixPath) -> None:
-    cmd = shlex.split("git init")
-    run(cmd, cwd=dir, stdout=DEVNULL, stderr=DEVNULL)
-
-
-def given_file(file: str, lines: List[str]) -> None:
-    with open(file, "w") as fp:
-        contents = "\n".join(lines)
-        fp.write(contents)
