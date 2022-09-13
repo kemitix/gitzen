@@ -4,6 +4,7 @@ from gitzen import envs
 
 
 class FakeGitEnv(envs.GitEnv):
+    requests: List[str] = []
     responses: Dict[str, List[List[str]]]
     request_counters: Dict[str, int] = {}
 
@@ -14,6 +15,7 @@ class FakeGitEnv(envs.GitEnv):
 
     def git(self, args: str) -> List[str]:
         print(f">FakeGit> {args}")
+        self.requests.append(args)
         if args in self.responses:
             counter = self.request_counters[args]
             if len(self.responses[args]) > counter:
