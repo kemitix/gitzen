@@ -14,7 +14,7 @@ def test_load_when_file_not_found(tmp_path) -> None:
     # when
     result = config.load(console_env, tmp_path)
     # then
-    assert result == config.default_config
+    assert result == config.default_config(tmp_path)
 
 
 def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
@@ -35,6 +35,7 @@ def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
     result = config.load(console_env, f"{tmp_path}")
     # then
     assert result == config.Config(
+        f"{tmp_path}",
         GitBranchName("drb"),
         [GitBranchName("rbn")],
         GitRemoteName("other"),
