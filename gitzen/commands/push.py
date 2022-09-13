@@ -133,10 +133,10 @@ def update_patches(
     commits: List[GitCommit],
 ) -> None:
     # create patches
-    mkdir(f"{config.root_dir}/.git/refs/gitzen")
-    mkdir(f"{config.root_dir}/.git/refs/gitzen/patches")
+    mkdir(config.gitzen_refs)
+    mkdir(config.gitzen_patches)
     for commit in commits:
         file.write(
-            f".git/refs/gitzen/patches/{commit.zen_token.value}",
+            f"{config.gitzen_patches}/{commit.zen_token.value}",
             [commit.hash.value],
         )
