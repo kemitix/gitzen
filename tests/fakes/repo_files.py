@@ -13,8 +13,3 @@ def given_file(file: str, lines: List[str]) -> None:
     with open(file, "w") as fp:
         contents = "\n".join(lines)
         fp.write(contents)
-
-
-def read_file(filename: str) -> List[str]:
-    with open(filename, "r") as f:
-        return f.read().splitlines()

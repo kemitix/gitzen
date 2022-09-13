@@ -1,6 +1,7 @@
+from os import mkdir
 from typing import Dict, List
 
-from gitzen import branches, config, envs, git, github, repo
+from gitzen import branches, config, envs, file, git, github, repo
 from gitzen.console import say
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.github_pull_request import PullRequest
@@ -38,7 +39,9 @@ def push(
         status.pull_requests,
         commits,
     )
-    check_for_reordered_commits(git_env, open_prs, commits)
+    open_prs
+    # check_for_reordered_commits(git_env, open_prs, commits)
+    update_patches(git_env, config, commits)
     # sync commit stach to github
     # call git zen status
 
@@ -122,3 +125,18 @@ def reordered(
 
 
 # # call: git zen status
+
+
+def update_patches(
+    git_env: envs.GitEnv,
+    config: config.Config,
+    commits: List[GitCommit],
+) -> None:
+    # create patches
+    mkdir(f"{config.root_dir}/.git/refs/gitzen")
+    mkdir(f"{config.root_dir}/.git/refs/gitzen/patches")
+    for commit in commits:
+        file.write(
+            f".git/refs/gitzen/patches/{commit.zen_token.value}",
+            [commit.hash.value],
+        )

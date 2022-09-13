@@ -1,9 +1,8 @@
 import re
 from random import choice
 from string import hexdigits
-from typing import List
 
-from gitzen import patterns
+from gitzen import file, patterns
 
 
 def main(args) -> None:
@@ -15,7 +14,7 @@ def main(args) -> None:
 
 
 def handle_commit_message(filename: str) -> None:
-    message = read_file(filename)
+    message = file.read(filename)
     for line in message:
         if re.search(patterns.commit_body_zen_token, line):
             # already has a zen token
@@ -23,7 +22,7 @@ def handle_commit_message(filename: str) -> None:
     message.append("")
     zen_token = gen_zen_token()
     message.append(f"zen-token:{zen_token}")
-    write_file(filename, message)
+    file.write(filename, message)
 
 
 # This is the only place we should be creating a zen_token value
@@ -34,7 +33,7 @@ def gen_zen_token() -> str:
 
 
 def handle_interactive_rebase(filename: str) -> None:
-    plan = read_file(filename)
+    plan = file.read(filename)
     update = []
     for line in plan:
         matches = re.search(patterns.rebase_pick, line)
@@ -44,14 +43,4 @@ def handle_interactive_rebase(filename: str) -> None:
             update.append(f"reword {hash} {log}")
         else:
             update.append(line)
-    write_file(filename, update)
-
-
-def write_file(filename: str, contents: List[str]) -> None:
-    with open(filename, "w") as f:
-        f.write("\n".join(contents))
-
-
-def read_file(filename: str) -> List[str]:
-    with open(filename, "r") as f:
-        return f.read().splitlines()
+    file.write(filename, update)
