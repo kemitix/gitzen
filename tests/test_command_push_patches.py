@@ -1,4 +1,3 @@
-import os
 from pathlib import PosixPath
 from typing import List
 
@@ -7,25 +6,24 @@ from faker import Faker
 from gitzen import config, file
 from gitzen.commands.push import update_patches
 from gitzen.models.git_commit import GitCommit
-
-# trunk-ignore(flake8/E501)
-from gitzen.types import CommitBody, CommitHash, CommitTitle, CommitWipStatus, ZenToken
+from gitzen.types import (
+    CommitBody,
+    CommitHash,
+    CommitTitle,
+    CommitWipStatus,
+    GitRootDir,
+    ZenToken,
+)
 
 from .fakes.console_env import FakeConsoleEnv
-from .fakes.git_env import FakeGitEnv
 from .fakes.repo_files import given_repo
 
 
 def test_update_patches_creates_patches(tmp_path: PosixPath) -> None:
     # given
-    os.chdir(tmp_path)
-    given_repo(tmp_path)
+    root_dir = GitRootDir(f"{tmp_path}")
+    given_repo(root_dir)
     fake = Faker()
-    git_env = FakeGitEnv(
-        {
-            # responses go here
-        }
-    )
     commits: List[GitCommit] = [
         GitCommit(
             ZenToken(fake.word()),
@@ -43,9 +41,9 @@ def test_update_patches_creates_patches(tmp_path: PosixPath) -> None:
         ),
     ]
     console_env = FakeConsoleEnv()
-    cfg = config.load(console_env, f"{tmp_path}")
+    cfg = config.load(console_env, root_dir)
     # when
-    update_patches(git_env, cfg, commits)
+    update_patches(cfg.root_dir, commits)
     # then
     assert file.read(
         f"{tmp_path}/.git/refs/gitzen/patches/{commits[0].zen_token.value}"

@@ -1,7 +1,7 @@
 from pathlib import PosixPath
 
 from gitzen import config, console
-from gitzen.types import GitBranchName, GitRemoteName
+from gitzen.types import GitBranchName, GitRemoteName, GitRootDir
 
 from .fakes.repo_files import given_file, given_repo
 
@@ -9,19 +9,21 @@ from .fakes.repo_files import given_file, given_repo
 def test_load_when_file_not_found(tmp_path) -> None:
     # given
     # a repo with no config file
-    given_repo(tmp_path)
+    root_dir = GitRootDir(tmp_path)
+    given_repo(root_dir)
     console_env = console.RealConsoleEnv()
     # when
-    result = config.load(console_env, tmp_path)
+    result = config.load(console_env, root_dir)
     # then
-    assert result == config.default_config(tmp_path)
+    assert result == config.default_config(root_dir)
 
 
 def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
     # given
     # a repo with a config file
-    given_repo(tmp_path)
-    configFile = f"{tmp_path}/.gitzen.yml"
+    root_dir = GitRootDir(f"{tmp_path}")
+    given_repo(root_dir)
+    configFile = f"{root_dir.value}/.gitzen.yml"
     given_file(
         configFile,
         [
@@ -32,10 +34,10 @@ def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
     )
     console_env = console.RealConsoleEnv()
     # when
-    result = config.load(console_env, f"{tmp_path}")
+    result = config.load(console_env, root_dir)
     # then
     assert result == config.Config(
-        f"{tmp_path}",
+        root_dir,
         GitBranchName("drb"),
         [GitBranchName("rbn")],
         GitRemoteName("other"),

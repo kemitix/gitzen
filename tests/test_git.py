@@ -4,7 +4,7 @@ from unittest import mock
 from faker import Faker
 
 from gitzen import git
-from gitzen.types import GitBranchName, GitRemoteName
+from gitzen.types import GitBranchName, GitRemoteName, GitRootDir
 
 
 @mock.patch("subprocess.run")
@@ -137,7 +137,7 @@ def test_switch(mock_subproc_run) -> None:
 
 
 @mock.patch("subprocess.run")
-def test_rootDir(mock_subproc_run) -> None:
+def test_root_dir(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
@@ -149,7 +149,7 @@ def test_rootDir(mock_subproc_run) -> None:
 
 
 @mock.patch("subprocess.run")
-def test_rootDir_returns_path(mock_subproc_run) -> None:
+def test_root_dir_returns_path(mock_subproc_run) -> None:
     """
     Test that rootDir returns the directory
     """
@@ -160,4 +160,4 @@ def test_rootDir_returns_path(mock_subproc_run) -> None:
     # when
     result = git.root_dir(git.RealGitEnv())
     # then
-    assert result == "test-root-dir"
+    assert result == GitRootDir("test-root-dir")

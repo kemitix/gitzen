@@ -1,12 +1,15 @@
 import shlex
-from pathlib import PosixPath
+from os import chdir
 from subprocess import DEVNULL, run
 from typing import List
 
+from gitzen.types import GitRootDir
 
-def given_repo(dir: PosixPath) -> None:
+
+def given_repo(dir: GitRootDir) -> None:
     cmd = shlex.split("git init")
-    run(cmd, cwd=dir, stdout=DEVNULL, stderr=DEVNULL)
+    run(cmd, cwd=dir.value, stdout=DEVNULL, stderr=DEVNULL)
+    chdir(dir.value)
 
 
 def given_file(file: str, lines: List[str]) -> None:
