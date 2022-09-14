@@ -5,7 +5,7 @@ from gitzen.console import say
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import GitBranchName, ZenToken
+from gitzen.types import GitBranchName, GitRootDir, ZenToken
 
 
 def push(
@@ -41,7 +41,7 @@ def push(
     )
     open_prs
     # check_for_reordered_commits(git_env, open_prs, commits)
-    update_patches(git_env, config, commits)
+    update_patches(config.root_dir, commits)
     # sync commit stach to github
     # call git zen status
 
@@ -128,14 +128,12 @@ def reordered(
 
 
 def update_patches(
-    git_env: envs.GitEnv,
-    config: config.Config,
+    root_dir: GitRootDir,
     commits: List[GitCommit],
 ) -> List[GitPatch]:
-    # create patches
     patches: List[GitPatch] = []
     for commit in commits:
         patch = GitPatch(commit.zen_token, commit.hash)
-        git.write_patch(git_env, patch, config.root_dir)
+        git.write_patch(patch, root_dir)
         patches.append(patch)
     return patches

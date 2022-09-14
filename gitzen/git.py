@@ -1,13 +1,13 @@
-import os
 import shlex
 import subprocess
 from os import mkdir
+from os.path import isdir
 from typing import List
 
 from gitzen import exit_code, file
 from gitzen.envs import GitEnv
 from gitzen.models.git_patch import GitPatch
-from gitzen.types import GitBranchName, GitRemoteName
+from gitzen.types import GitBranchName, GitRemoteName, GitRootDir
 
 
 class RealGitEnv(GitEnv):
@@ -24,25 +24,25 @@ class RealGitEnv(GitEnv):
             return []
 
 
-def gitzen_refs(root_dir: str) -> str:
-    return f"{root_dir}/.git/refs/gitzen"
+def gitzen_refs(root_dir: GitRootDir) -> str:
+    return f"{root_dir.value}/.git/refs/gitzen"
 
 
-def gitzen_patches(root_dir: str) -> str:
+def gitzen_patches(root_dir: GitRootDir) -> str:
     return f"{gitzen_refs(root_dir)}/patches"
 
 
 # will exit the program if called from outside a git repo
-def root_dir(git_env: GitEnv) -> str:
+def root_dir(git_env: GitEnv) -> GitRootDir:
     output = rev_parse(git_env, "--show-toplevel")
     if output == "":
         exit(exit_code.NOT_IN_GIT_REPO)
-    return output[0]
+    return GitRootDir(output[0])
 
 
-def write_patch(git_env: GitEnv, patch: GitPatch, root_dir: str) -> None:
+def write_patch(patch: GitPatch, root_dir: GitRootDir) -> None:
     patches_dir = gitzen_patches(root_dir)
-    if not os.path.isdir(patches_dir):
+    if not isdir(patches_dir):
         mkdir(gitzen_refs(root_dir))
         mkdir(patches_dir)
     file.write(

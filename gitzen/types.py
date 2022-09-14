@@ -112,6 +112,11 @@ class GitRemoteName(StrWrapper):
         super().__init__(GitRemoteName, value)
 
 
+class GitRootDir(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(GitRootDir, value)
+
+
 class CommitWipStatus(BoolWrapper):
     def __init__(self, value: bool) -> None:
         super().__init__(CommitWipStatus, value)
