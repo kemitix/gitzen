@@ -1,13 +1,16 @@
+import os
 import shlex
 import subprocess
 from os import mkdir
 from os.path import isdir
 from typing import List
 
+from genericpath import exists
+
 from gitzen import exit_code, file
 from gitzen.envs import GitEnv
 from gitzen.models.git_patch import GitPatch
-from gitzen.types import GitBranchName, GitRemoteName, GitRootDir
+from gitzen.types import GitBranchName, GitRemoteName, GitRootDir, ZenToken
 
 
 class RealGitEnv(GitEnv):
@@ -49,6 +52,13 @@ def write_patch(patch: GitPatch, root_dir: GitRootDir) -> None:
         f"{patches_dir}/{patch.zen_token.value}",
         [patch.hash.value],
     )
+
+
+def delete_patch(zen_token: ZenToken, root_dir: GitRootDir) -> None:
+    patches_dir = gitzen_patches(root_dir)
+    patch_file = f"{patches_dir}/{zen_token.value}"
+    if exists(patch_file):
+        os.remove(patch_file)
 
 
 def branch(env: GitEnv) -> List[str]:
