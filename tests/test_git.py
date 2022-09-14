@@ -43,6 +43,20 @@ def test_cherry_pick(mock_subproc_run) -> None:
 
 
 @mock.patch("subprocess.run")
+def test_cherry_pick_skip(mock_subproc_run) -> None:
+    """
+    Test that the correct command is invoked
+    """
+    # when
+    git.cherry_pick_skip(git.RealGitEnv())
+    # then
+    mock_subproc_run.assert_called_with(
+        ["git", "cherry-pick", "--skip"],
+        stdout=PIPE,
+    )
+
+
+@mock.patch("subprocess.run")
 def test_fetch(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
