@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import List
 
 from gitzen import branches, config, envs, git, github, repo
 from gitzen.console import say
@@ -38,6 +38,7 @@ def push(
         github_env,
         status.pull_requests,
         commits,
+        config.root_dir,
     )
     open_prs
     # check_for_reordered_commits(git_env, open_prs, commits)
@@ -50,6 +51,7 @@ def clean_up_deleted_commits(
     github_env: envs.GithubEnv,
     pull_requests: List[PullRequest],
     commits: List[GitCommit],
+    root_dir: GitRootDir,
 ) -> List[PullRequest]:
     """
     Any PR that has a zen-token that isn't in the current commit stack
@@ -57,15 +59,16 @@ def clean_up_deleted_commits(
     Issue: if commit is on another branch?
     """
     # TODO zen_map can just be a list of ZenTokens
-    zen_map: Dict[ZenToken, GitCommit] = {}
+    zen_tokens: List[ZenToken] = []
     for commit in commits:
-        zen_map[commit.zen_token] = commit
+        zen_tokens.append(commit.zen_token)
     kept = []
     for pr in pull_requests:
-        if pr.zen_token not in zen_map:
+        if pr.zen_token not in zen_tokens:
             github.close_pull_request_with_comment(
                 github_env, pr, "Closing pull request: commit has gone away"
             )
+            git.delete_patch(pr.zen_token, root_dir)
         else:
             kept.append(pr)
     return kept
