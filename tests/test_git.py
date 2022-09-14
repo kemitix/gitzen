@@ -26,6 +26,29 @@ def test_branch(mock_subproc_run) -> None:
 
 
 @mock.patch("subprocess.run")
+def test_branch_create(mock_subproc_run) -> None:
+    """
+    Test that the correct command is invoked
+    """
+    # given
+    fake = Faker()
+    new_branch_name = GitBranchName(fake.word())
+    source_branch_name = GitBranchName(fake.word())
+    # when
+    git.branch_create(git.RealGitEnv(), new_branch_name, source_branch_name)
+    # then
+    mock_subproc_run.assert_called_with(
+        [
+            "git",
+            "branch",
+            new_branch_name.value,
+            source_branch_name.value,
+        ],
+        stdout=PIPE,
+    )
+
+
+@mock.patch("subprocess.run")
 def test_cherry_pick(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked

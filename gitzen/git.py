@@ -68,6 +68,16 @@ def branch(env: GitEnv) -> List[str]:
     return env.git("branch --no-color")
 
 
+def branch_create(
+    env: GitEnv,
+    new_branch_name: GitBranchName,
+    source_branch_name: GitBranchName,
+) -> List[str]:
+    return env.git(
+        f"branch {new_branch_name.value} {source_branch_name.value}",
+    )
+
+
 def cherry_pick(env: GitEnv, ref: GitBranchName) -> List[str]:
     return env.git(f"cherry-pick -x {ref.value}")
 
