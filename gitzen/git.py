@@ -35,6 +35,10 @@ def gitzen_patches(root_dir: GitRootDir) -> str:
     return f"{gitzen_refs(root_dir)}/patches"
 
 
+def gitzen_patch_file(zen_token: ZenToken, root_dir: GitRootDir) -> str:
+    return f"{gitzen_patches(root_dir)}/{zen_token.value}"
+
+
 # will exit the program if called from outside a git repo
 def root_dir(git_env: GitEnv) -> GitRootDir:
     output = rev_parse(git_env, "--show-toplevel")
@@ -49,14 +53,13 @@ def write_patch(patch: GitPatch, root_dir: GitRootDir) -> None:
         mkdir(gitzen_refs(root_dir))
         mkdir(patches_dir)
     file.write(
-        f"{patches_dir}/{patch.zen_token.value}",
+        gitzen_patch_file(patch.zen_token, root_dir),
         [patch.hash.value],
     )
 
 
 def delete_patch(zen_token: ZenToken, root_dir: GitRootDir) -> None:
-    patches_dir = gitzen_patches(root_dir)
-    patch_file = f"{patches_dir}/{zen_token.value}"
+    patch_file = gitzen_patch_file(zen_token, root_dir)
     if exists(patch_file):
         os.remove(patch_file)
 
