@@ -45,3 +45,24 @@ class GithubCommit:
             f"messageBody={self.messageBody}, "
             f"wip={repr(self.wip)})"
         )
+
+    def as_git_commit(self) -> Optional[GitCommit]:
+        if self.zen_token is not None:
+            return GitCommit(
+                self.zen_token,
+                self.hash,
+                self.messageHeadline,
+                self.messageBody,
+                self.wip,
+            )
+        return None
+
+
+def from_git_commit(self, git_commit: GitCommit) -> GithubCommit:
+    return GithubCommit(
+        git_commit.zen_token,
+        git_commit.hash,
+        git_commit.messageHeadline,
+        git_commit.messageBody,
+        git_commit.wip,
+    )
