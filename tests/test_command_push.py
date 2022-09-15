@@ -1,6 +1,5 @@
 from pathlib import PosixPath
 
-from faker import Faker
 from genericpath import exists
 
 from gitzen import envs, file, git
@@ -26,6 +25,7 @@ from gitzen.types import (
     ZenToken,
 )
 
+from . import object_mother
 from .fakes.github_env import FakeGithubEnv
 from .fakes.repo_files import given_repo
 
@@ -35,58 +35,19 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
     # given
     root_dir = GitRootDir(f"{tmp_path}")
     given_repo(root_dir)
-    close_123_args = (
-        "pr close 123 --comment 'Closing pull request: commit has gone away'"
+    pr_to_close: PullRequest = object_mother.gen_pr(token=None)
+    zen_token = object_mother.gen_zen_token()
+    pr_to_keep = object_mother.gen_pr(zen_token)
+    prs = [pr_to_close, pr_to_keep]
+    git_commits = [object_mother.gen_commit(zen_token)]
+    close_args = (
+        f"pr close {pr_to_close.number.value} "
+        "--comment 'Closing pull request: commit has gone away'"
     )
     github_env: envs.GithubEnv = FakeGithubEnv(
-        gh_responses={close_123_args: [[]]},
+        gh_responses={close_args: [[]]},
         gql_responses={},
     )
-    pr_to_close: PullRequest = PullRequest(
-        id=PullRequestId("abcd123"),
-        zen_token=ZenToken("12341234"),
-        number=PullRequestNumber("123"),
-        title=PullRequestTitle("pr 123"),
-        body=PullRequestBody("zen-token:12341234"),
-        baseRefName=GitBranchName("base"),
-        headRefName=GitBranchName("head"),
-        mergeable=PullRequestMergeable("MERGEABLE"),
-        reviewDecision=PullRequestReviewDecision("UNKNOWN"),
-        repoId=GithubRepoId("foo"),
-        commits=[],
-    )
-    zen_token = ZenToken("43214321")
-    pr_to_keep = PullRequest(
-        id=PullRequestId("def456"),
-        zen_token=zen_token,
-        number=PullRequestNumber("321"),
-        title=PullRequestTitle("pr 321"),
-        body=PullRequestBody("zen-token:43214321"),
-        baseRefName=GitBranchName("base"),
-        headRefName=GitBranchName("head"),
-        mergeable=PullRequestMergeable("MERGEABLE"),
-        reviewDecision=PullRequestReviewDecision("UNKNOWN"),
-        repoId=GithubRepoId("foo"),
-        commits=[
-            GithubCommit(
-                zen_token=zen_token,
-                hash=CommitHash(""),
-                headline=CommitTitle(""),
-                body=CommitBody(""),
-                wip=CommitWipStatus(False),
-            )
-        ],
-    )
-    prs = [pr_to_close, pr_to_keep]
-    git_commits = [
-        GitCommit(
-            zen_token=zen_token,
-            hash=CommitHash(""),
-            headline=CommitTitle(""),
-            body=CommitBody(""),
-            wip=CommitWipStatus(False),
-        )
-    ]
     # when
     push.clean_up_deleted_commits(github_env, prs, git_commits, root_dir)
     # then
@@ -102,58 +63,19 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
     # given
     root_dir = GitRootDir(f"{tmp_path}")
     given_repo(root_dir)
-    close_123_args = (
-        "pr close 123 --comment 'Closing pull request: commit has gone away'"
+    pr_to_close: PullRequest = object_mother.gen_pr(token=None)
+    zen_token = object_mother.gen_zen_token()
+    pr_to_keep = object_mother.gen_pr(zen_token)
+    prs = [pr_to_close, pr_to_keep]
+    git_commits = [object_mother.gen_commit(zen_token)]
+    close_args = (
+        f"pr close {pr_to_close.number.value} "
+        "--comment 'Closing pull request: commit has gone away'"
     )
     github_env: envs.GithubEnv = FakeGithubEnv(
-        gh_responses={close_123_args: [[]]},
+        gh_responses={close_args: [[]]},
         gql_responses={},
     )
-    pr_to_close: PullRequest = PullRequest(
-        id=PullRequestId("abcd123"),
-        zen_token=ZenToken("12341234"),
-        number=PullRequestNumber("123"),
-        title=PullRequestTitle("pr 123"),
-        body=PullRequestBody("zen-token:12341234"),
-        baseRefName=GitBranchName("base"),
-        headRefName=GitBranchName("head"),
-        mergeable=PullRequestMergeable("MERGEABLE"),
-        reviewDecision=PullRequestReviewDecision("UNKNOWN"),
-        repoId=GithubRepoId("foo"),
-        commits=[],
-    )
-    zen_token = ZenToken("43214321")
-    pr_to_keep: PullRequest = PullRequest(
-        id=PullRequestId("def456"),
-        zen_token=zen_token,
-        number=PullRequestNumber("321"),
-        title=PullRequestTitle("pr 321"),
-        body=PullRequestBody("zen-token:43214321"),
-        baseRefName=GitBranchName("base"),
-        headRefName=GitBranchName("head"),
-        mergeable=PullRequestMergeable("MERGEABLE"),
-        reviewDecision=PullRequestReviewDecision("UNKNOWN"),
-        repoId=GithubRepoId("foo"),
-        commits=[
-            GithubCommit(
-                zen_token=zen_token,
-                hash=CommitHash(""),
-                headline=CommitTitle(""),
-                body=CommitBody(""),
-                wip=CommitWipStatus(False),
-            )
-        ],
-    )
-    prs = [pr_to_close, pr_to_keep]
-    git_commits = [
-        GitCommit(
-            zen_token=zen_token,
-            hash=CommitHash(""),
-            headline=CommitTitle(""),
-            body=CommitBody(""),
-            wip=CommitWipStatus(False),
-        )
-    ]
     # when
     open_prs = push.clean_up_deleted_commits(
         github_env,
@@ -169,72 +91,26 @@ def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     # given
     root_dir = GitRootDir(f"{tmp_path}")
     given_repo(root_dir)
-    close_123_args = (
-        "pr close 123 --comment 'Closing pull request: commit has gone away'"
-    )
-    github_env: envs.GithubEnv = FakeGithubEnv(
-        gh_responses={close_123_args: [[]]},
-        gql_responses={},
-    )
-    fake = Faker()
-    deleted_zen_token = ZenToken(fake.hexify("^^^^^^^^"))
-    deleted_commit = GithubCommit(
-        deleted_zen_token,
-        CommitHash(fake.hexify("^^^^^^^^^^^^^^^^^")),
-        CommitTitle(""),
-        CommitBody(""),
-        CommitWipStatus(False),
-    )
-    pr_to_close: PullRequest = PullRequest(
-        id=PullRequestId("abcd123"),
-        zen_token=deleted_zen_token,
-        number=PullRequestNumber("123"),
-        title=PullRequestTitle("pr 123"),
-        body=PullRequestBody("zen-token:12341234"),
-        baseRefName=GitBranchName("base"),
-        headRefName=GitBranchName("head"),
-        mergeable=PullRequestMergeable("MERGEABLE"),
-        reviewDecision=PullRequestReviewDecision("UNKNOWN"),
-        repoId=GithubRepoId("foo"),
-        commits=[deleted_commit],
-    )
-    zen_token = ZenToken(fake.hexify("^^^^^^^^"))
-    pr_to_keep: PullRequest = PullRequest(
-        id=PullRequestId("def456"),
-        zen_token=zen_token,
-        number=PullRequestNumber("321"),
-        title=PullRequestTitle("pr 321"),
-        body=PullRequestBody("zen-token:43214321"),
-        baseRefName=GitBranchName("base"),
-        headRefName=GitBranchName("head"),
-        mergeable=PullRequestMergeable("MERGEABLE"),
-        reviewDecision=PullRequestReviewDecision("UNKNOWN"),
-        repoId=GithubRepoId("foo"),
-        commits=[
-            GithubCommit(
-                zen_token=zen_token,
-                hash=CommitHash(""),
-                headline=CommitTitle(""),
-                body=CommitBody(""),
-                wip=CommitWipStatus(False),
-            )
-        ],
-    )
+    deleted_zen_token = object_mother.gen_zen_token()
+    pr_to_close: PullRequest = object_mother.gen_pr(deleted_zen_token)
+    deleted_commit = pr_to_close.commits[0]
+    zen_token = object_mother.gen_zen_token()
+    pr_to_keep = object_mother.gen_pr(zen_token)
     prs = [pr_to_close, pr_to_keep]
-    git_commits = [
-        GitCommit(
-            zen_token=zen_token,
-            hash=CommitHash("abcdef1234567890"),
-            headline=CommitTitle(""),
-            body=CommitBody(""),
-            wip=CommitWipStatus(False),
-        )
-    ]
+    git_commits = [object_mother.gen_commit(zen_token)]
     patch = GitPatch(deleted_zen_token, deleted_commit.hash)
     git.write_patch(patch, root_dir)
     patch_file = f"{git.gitzen_patches(root_dir)}/{patch.zen_token.value}"
     assert exists(patch_file)
     assert file.read(patch_file) == [deleted_commit.hash.value]
+    close_args = (
+        f"pr close {pr_to_close.number.value} "
+        "--comment 'Closing pull request: commit has gone away'"
+    )
+    github_env: envs.GithubEnv = FakeGithubEnv(
+        gh_responses={close_args: [[]]},
+        gql_responses={},
+    )
     # when
     push.clean_up_deleted_commits(github_env, prs, git_commits, root_dir)
     # then
