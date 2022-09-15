@@ -19,6 +19,14 @@ class CommitPr:
             and self._pull_request == __o._pull_request
         )
 
+    def __repr__(self) -> str:
+        return (
+            "CommitPr("
+            f"git_commit={self._git_commit},"
+            f"pull_request={self.pull_request}"
+            ")"
+        )
+
     @property
     def git_commit(self) -> GitCommit:
         return self._git_commit

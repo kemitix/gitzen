@@ -1,7 +1,8 @@
-from typing import List
+from typing import Dict, List
 
 from gitzen import branches, config, envs, git, github, repo
 from gitzen.console import say
+from gitzen.models.commit_pr import CommitPr
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_pull_request import PullRequest
@@ -34,16 +35,17 @@ def push(
         remote_branch,
     )
     say(console_env, repr(commits))
-    open_prs = clean_up_deleted_commits(
+    commit_stack = clean_up_deleted_commits(
         github_env,
         status.pull_requests,
         commits,
         config.root_dir,
     )
-    open_prs
+    pr_count = len(commit_stack)
+    new_commits = [CommitPr(commit, None) for commit in commits[pr_count:]]
+    commit_stack.extend(new_commits)
     # check_for_reordered_commits(git_env, open_prs, commits)
     update_patches(config.root_dir, commits)
-    # sync commit stach to github
     # call git zen status
 
 
@@ -52,17 +54,16 @@ def clean_up_deleted_commits(
     pull_requests: List[PullRequest],
     commits: List[GitCommit],
     root_dir: GitRootDir,
-) -> List[PullRequest]:
+) -> List[CommitPr]:
     """
     Any PR that has a zen-token that isn't in the current commit stack
     is closed as the commit has gone away.
     Issue: if commit is on another branch?
     """
-    # TODO zen_map can just be a list of ZenTokens
-    zen_tokens: List[ZenToken] = []
+    zen_tokens: Dict[ZenToken, GitCommit] = {}
     for commit in commits:
-        zen_tokens.append(commit.zen_token)
-    kept = []
+        zen_tokens[commit.zen_token] = commit
+    kept: List[CommitPr] = []
     for pr in pull_requests:
         if pr.zen_token not in zen_tokens:
             github.close_pull_request_with_comment(
@@ -70,7 +71,8 @@ def clean_up_deleted_commits(
             )
             git.delete_patch(pr.zen_token, root_dir)
         else:
-            kept.append(pr)
+            commit = zen_tokens[pr.zen_token]
+            kept.append(CommitPr(commit, pr))
     return kept
 
 

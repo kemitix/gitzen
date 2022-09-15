@@ -77,14 +77,17 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
         gql_responses={},
     )
     # when
-    open_prs = push.clean_up_deleted_commits(
+    result = push.clean_up_deleted_commits(
         github_env,
         prs,
         git_commits,
         root_dir,
     )
     # then
-    assert open_prs == [pr_to_keep]
+    assert len(result) == 1
+    assert result[0].git_commit.zen_token == zen_token
+    result_pr = result[0].pull_request
+    assert result_pr == pr_to_keep
 
 
 def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
