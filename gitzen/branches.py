@@ -2,6 +2,7 @@ import re
 
 from gitzen import config, envs, exit_code, patterns
 from gitzen.console import say
+from gitzen.models.github_pull_request import PullRequest
 from gitzen.types import GitBranchName
 
 
@@ -43,3 +44,13 @@ def validate_not_remote_pr(
             "Then use `git zen push` to update the pull request.",
         )
         exit(exit_code.REMOTE_PR_CHECKED_OUT)
+
+
+def pr_branch(pr: PullRequest) -> GitBranchName:
+    branch = (
+        "gitzen/pr"
+        f"/{pr.author.value}"
+        f"/{pr.baseRefName.value}"
+        f"/{pr.zen_token.value}"
+    )
+    return GitBranchName(branch)
