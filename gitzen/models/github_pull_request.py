@@ -4,6 +4,7 @@ from gitzen.models.github_commit import GithubCommit
 from gitzen.types import (
     GitBranchName,
     GithubRepoId,
+    GithubUsername,
     PullRequestBody,
     PullRequestId,
     PullRequestMergeable,
@@ -18,6 +19,7 @@ class PullRequest:
     id: PullRequestId
     zen_token: ZenToken
     number: PullRequestNumber
+    author: GithubUsername
     title: PullRequestTitle
     body: PullRequestBody
     baseRefName: GitBranchName
@@ -32,6 +34,7 @@ class PullRequest:
         id: PullRequestId,
         zen_token: ZenToken,
         number: PullRequestNumber,
+        author: GithubUsername,
         title: PullRequestTitle,
         body: PullRequestBody,
         baseRefName: GitBranchName,
@@ -44,6 +47,7 @@ class PullRequest:
         self.id = id
         self.zen_token = zen_token
         self.number = number
+        self.author = author
         self.title = title
         self.body = body
         self.baseRefName = baseRefName
@@ -59,6 +63,7 @@ class PullRequest:
             and self.id == __o.id
             and self.zen_token == __o.zen_token
             and self.number == __o.number
+            and self.author == __o.author
             and self.title == __o.title
             and self.body == __o.body
             and self.baseRefName == __o.baseRefName
@@ -75,6 +80,7 @@ class PullRequest:
             f"id={self.id}, "
             f"zen_token={self.zen_token}, "
             f"number={self.number}, "
+            f"author={self.author}, "
             f"title={self.title}, "
             f"body={self.body}, "
             f"baseRefName={self.baseRefName}, "

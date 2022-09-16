@@ -26,6 +26,8 @@ from gitzen.types import (
     ZenToken,
 )
 
+from . import object_mother as om
+
 
 @mock.patch("subprocess.run")
 def test_fetch_info_invokes_command(mock_subproc_run) -> None:
@@ -277,19 +279,20 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         wip=CommitWipStatus(False),
     )
     pull_request_a = PullRequest(
-        id=PullRequestId("PR_kwDOEVHCd84vkAyI"),
-        zen_token=ZenToken("234ad5c1"),
-        number=PullRequestNumber("248"),
-        title=PullRequestTitle(
+        PullRequestId("PR_kwDOEVHCd84vkAyI"),
+        ZenToken("234ad5c1"),
+        PullRequestNumber("248"),
+        GithubUsername("kemitix"),
+        PullRequestTitle(
             "build(deps): bump microprofile from 4.1 to 5.0 with zentoken"
         ),
-        body=PullRequestBody("zen-token:234ad5c1"),
-        baseRefName=GitBranchName("master"),
-        headRefName=GitBranchName("gitzen/pr/kemitix/master/234ad5c1"),
-        mergeable=PullRequestMergeable("CONFLICTING"),
-        reviewDecision=PullRequestReviewDecision(""),
-        repoId=GithubRepoId("MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE="),
-        commits=[commit_a],
+        PullRequestBody("zen-token:234ad5c1"),
+        GitBranchName("master"),
+        GitBranchName("gitzen/pr/kemitix/master/234ad5c1"),
+        PullRequestMergeable("CONFLICTING"),
+        PullRequestReviewDecision(""),
+        GithubRepoId("MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE="),
+        [commit_a],
     )
     # when
     result = github.fetch_info(
@@ -318,16 +321,17 @@ def test_add_comment(mock_subproc_run) -> None:
     pr_number = PullRequestNumber(f"{fake.random_int(min=1, max=1000)}")
     comment = fake.text()
     pull_request = PullRequest(
-        id=PullRequestId(""),
-        zen_token=ZenToken(""),
-        number=pr_number,
-        title=PullRequestTitle(""),
-        body=PullRequestBody(""),
-        baseRefName=GitBranchName(""),
-        headRefName=GitBranchName(""),
-        mergeable=PullRequestMergeable(""),
-        reviewDecision=PullRequestReviewDecision(""),
-        repoId=GithubRepoId(""),
+        PullRequestId(""),
+        ZenToken(""),
+        pr_number,
+        om.gen_gh_username(),
+        PullRequestTitle(""),
+        PullRequestBody(""),
+        GitBranchName(""),
+        GitBranchName(""),
+        PullRequestMergeable(""),
+        PullRequestReviewDecision(""),
+        GithubRepoId(""),
         commits=[],
     )
     # when
@@ -355,16 +359,17 @@ def test_close_pull_request(mock_subproc_run) -> None:
     fake = Faker()
     pr_number = PullRequestNumber(fake.random_int(min=1, max=1000))
     pull_request = PullRequest(
-        id=PullRequestId(""),
-        zen_token=ZenToken(""),
-        number=pr_number,
-        title=PullRequestTitle(""),
-        body=PullRequestBody(""),
-        baseRefName=GitBranchName(""),
-        headRefName=GitBranchName(""),
-        mergeable=PullRequestMergeable(""),
-        reviewDecision=PullRequestReviewDecision(""),
-        repoId=GithubRepoId(""),
+        PullRequestId(""),
+        ZenToken(""),
+        pr_number,
+        om.gen_gh_username(),
+        PullRequestTitle(""),
+        PullRequestBody(""),
+        GitBranchName(""),
+        GitBranchName(""),
+        PullRequestMergeable(""),
+        PullRequestReviewDecision(""),
+        GithubRepoId(""),
         commits=[],
     )
     # when
@@ -391,16 +396,17 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
     pr_number = PullRequestNumber(fake.random_int(min=1, max=1000))
     comment = fake.text()
     pull_request = PullRequest(
-        id=PullRequestId(""),
-        zen_token=ZenToken(""),
-        number=pr_number,
-        title=PullRequestTitle(""),
-        body=PullRequestBody(""),
-        baseRefName=GitBranchName(""),
-        headRefName=GitBranchName(""),
-        mergeable=PullRequestMergeable(""),
-        reviewDecision=PullRequestReviewDecision(""),
-        repoId=GithubRepoId(""),
+        PullRequestId(""),
+        ZenToken(""),
+        pr_number,
+        om.gen_gh_username(),
+        PullRequestTitle(""),
+        PullRequestBody(""),
+        GitBranchName(""),
+        GitBranchName(""),
+        PullRequestMergeable(""),
+        PullRequestReviewDecision(""),
+        GithubRepoId(""),
         commits=[],
     )
     # when
