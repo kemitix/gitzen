@@ -72,6 +72,11 @@ class PullRequestId(StrWrapper):
         super().__init__(PullRequestId, value)
 
 
+class PullRequestAuthor(StrWrapper):
+    def __init__(self, value: str) -> None:
+        super().__init__(PullRequestAuthor, value)
+
+
 class PullRequestNumber(StrWrapper):
     def __init__(self, value: str) -> None:
         super().__init__(PullRequestNumber, value)

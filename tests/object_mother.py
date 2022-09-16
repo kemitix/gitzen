@@ -12,6 +12,7 @@ from gitzen.types import (
     CommitWipStatus,
     GitBranchName,
     GithubRepoId,
+    PullRequestAuthor,
     PullRequestBody,
     PullRequestId,
     PullRequestMergeable,
@@ -50,6 +51,10 @@ def gen_pr_body() -> PullRequestBody:
 
 def gen_git_branch_name() -> GitBranchName:
     return GitBranchName(fake.domain_word())
+
+
+def gen_pr_author() -> PullRequestAuthor:
+    return PullRequestAuthor(fake.slug())
 
 
 def gen_pr_mergeable() -> PullRequestMergeable:
