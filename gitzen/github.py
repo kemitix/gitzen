@@ -142,17 +142,18 @@ def fetch_info(
             continue
         prs.append(
             PullRequest(
-                id=PullRequestId(pr_node["id"]),
-                zen_token=token,
-                number=PullRequestNumber(f'{pr_node["number"]}'),
-                title=PullRequestTitle(pr_node["title"]),
-                body=body,
-                baseRefName=base_ref,
-                headRefName=head_ref,
-                mergeable=PullRequestMergeable(pr_node["mergeable"]),
-                reviewDecision=review_decision,
-                repoId=pr_repo_id,
-                commits=get_commits(pr_node),
+                PullRequestId(pr_node["id"]),
+                token,
+                PullRequestNumber(f'{pr_node["number"]}'),
+                GithubUsername(viewer["login"]),
+                PullRequestTitle(pr_node["title"]),
+                body,
+                base_ref,
+                head_ref,
+                PullRequestMergeable(pr_node["mergeable"]),
+                review_decision,
+                pr_repo_id,
+                get_commits(pr_node),
             )
         )
     say(console_env, f"Kept {len(prs)} prs")
