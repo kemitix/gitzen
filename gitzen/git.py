@@ -78,6 +78,15 @@ def branch_create(
     )
 
 
+def branch_exists(
+    env: GitEnv,
+    branch_name: GitBranchName,
+) -> bool:
+    lines = [line[2:] for line in branch(env)]
+    branches = [GitBranchName(name) for name in lines]
+    return branch_name in branches
+
+
 def cherry_pick(env: GitEnv, ref: GitBranchName) -> List[str]:
     return env.git(f"cherry-pick -x {ref.value}")
 

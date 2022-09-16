@@ -6,6 +6,8 @@ from faker import Faker
 from gitzen import git
 from gitzen.types import GitBranchName, GitRemoteName, GitRootDir
 
+from . import object_mother as om
+
 
 @mock.patch("subprocess.run")
 def test_branch(mock_subproc_run) -> None:
@@ -23,6 +25,43 @@ def test_branch(mock_subproc_run) -> None:
         ],
         stdout=PIPE,
     )
+
+
+@mock.patch("subprocess.run")
+def test_branch_exists_when_true(mock_subproc_run) -> None:
+    # given
+    branch = om.gen_git_branch_name()
+    branches = [
+        om.gen_git_branch_name(),
+        branch,
+        om.gen_git_branch_name(),
+    ]
+    lines = [f"  {branch.value}" for branch in branches]
+    mock_subproc_run.return_value = CompletedProcess(
+        "", 0, stdout="\n".join(lines).encode()
+    )
+    # when
+    result = git.branch_exists(git.RealGitEnv(), branch)
+    # then
+    assert result is True
+
+
+@mock.patch("subprocess.run")
+def test_branch_exists_when_false(mock_subproc_run) -> None:
+    # given
+    branch = om.gen_git_branch_name()
+    branches = [
+        om.gen_git_branch_name(),
+        om.gen_git_branch_name(),
+    ]
+    lines = [f"  {branch.value}" for branch in branches]
+    mock_subproc_run.return_value = CompletedProcess(
+        "", 0, stdout="\n".join(lines).encode()
+    )
+    # when
+    result = git.branch_exists(git.RealGitEnv(), branch)
+    # then
+    assert result is False
 
 
 @mock.patch("subprocess.run")
