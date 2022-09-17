@@ -77,7 +77,7 @@ def test_fetch_info_invokes_command(mock_subproc_run) -> None:
             "--no-color",
         ],
         stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     )
     mock_subproc_run.assert_has_calls(
         [
