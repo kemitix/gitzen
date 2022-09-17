@@ -39,6 +39,10 @@ def gitzen_patch_file(zen_token: ZenToken, root_dir: GitRootDir) -> str:
     return f"{gitzen_patches(root_dir)}/{zen_token.value}"
 
 
+def gitzen_patch_ref(zen_token: ZenToken) -> GitBranchName:
+    return GitBranchName(f"gitzen/patches/{zen_token.value}")
+
+
 # will exit the program if called from outside a git repo
 def root_dir(git_env: GitEnv) -> GitRootDir:
     output = rev_parse(git_env, "--show-toplevel")
