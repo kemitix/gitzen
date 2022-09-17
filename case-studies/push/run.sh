@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+set -ex
 
 DIR=$(mktemp -d)
 function cleanup() {
