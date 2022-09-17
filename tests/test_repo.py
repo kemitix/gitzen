@@ -32,7 +32,9 @@ def test_getLocalBranchName_calls_git_branch(mock_subproc_run) -> None:
     repo.get_local_branch_name(console_env, git.RealGitEnv())
     # then
     mock_subproc_run.assert_called_with(
-        ["git", "branch", "--no-color"], stdout=subprocess.PIPE
+        ["git", "branch", "--no-color"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
     )
 
 

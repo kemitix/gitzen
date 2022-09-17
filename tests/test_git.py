@@ -24,6 +24,7 @@ def test_branch(mock_subproc_run) -> None:
             "--no-color",
         ],
         stdout=PIPE,
+        stderr=PIPE,
     )
 
 
@@ -84,6 +85,7 @@ def test_branch_create(mock_subproc_run) -> None:
             source_branch_name.value,
         ],
         stdout=PIPE,
+        stderr=PIPE,
     )
 
 
@@ -101,6 +103,7 @@ def test_cherry_pick(mock_subproc_run) -> None:
     mock_subproc_run.assert_called_with(
         ["git", "cherry-pick", "-x", ref.value],
         stdout=PIPE,
+        stderr=PIPE,
     )
 
 
@@ -115,6 +118,7 @@ def test_cherry_pick_skip(mock_subproc_run) -> None:
     mock_subproc_run.assert_called_with(
         ["git", "cherry-pick", "--skip"],
         stdout=PIPE,
+        stderr=PIPE,
     )
 
 
@@ -129,7 +133,11 @@ def test_fetch(mock_subproc_run) -> None:
     git.fetch(git.RealGitEnv(), remote)
     # then
     gitFetch = ["git", "fetch", remote.value]
-    mock_subproc_run.assert_called_with(gitFetch, stdout=PIPE)
+    mock_subproc_run.assert_called_with(
+        gitFetch,
+        stdout=PIPE,
+        stderr=PIPE,
+    )
 
 
 @mock.patch("subprocess.run")
@@ -141,7 +149,11 @@ def test_log(mock_subproc_run) -> None:
     git.log(git.RealGitEnv(), "master..HEAD")
     # then
     gitFetch = ["git", "log", "--no-color", "master..HEAD"]
-    mock_subproc_run.assert_called_with(gitFetch, stdout=PIPE)
+    mock_subproc_run.assert_called_with(
+        gitFetch,
+        stdout=PIPE,
+        stderr=PIPE,
+    )
 
 
 @mock.patch("subprocess.run")
@@ -159,6 +171,7 @@ def test_remote(mock_subproc_run) -> None:
             "--verbose",
         ],
         stdout=PIPE,
+        stderr=PIPE,
     )
 
 
@@ -178,6 +191,7 @@ def test_rebase(mock_subproc_run) -> None:
             "--autostash",
         ],
         stdout=PIPE,
+        stderr=PIPE,
     )
 
 
@@ -190,7 +204,9 @@ def test_revParse(mock_subproc_run) -> None:
     git.rev_parse(git.RealGitEnv(), "--verify HEAD")
     # then
     mock_subproc_run.assert_called_with(
-        ["git", "rev-parse", "--verify", "HEAD"], stdout=PIPE
+        ["git", "rev-parse", "--verify", "HEAD"],
+        stdout=PIPE,
+        stderr=PIPE,
     )
 
 
@@ -226,6 +242,7 @@ def test_switch(mock_subproc_run) -> None:
             branch.value,
         ],
         stdout=PIPE,
+        stderr=PIPE,
     )
 
 
@@ -238,7 +255,11 @@ def test_root_dir(mock_subproc_run) -> None:
     git.root_dir(git.RealGitEnv())
     # then
     gitRevParse = ["git", "rev-parse", "--show-toplevel"]
-    mock_subproc_run.assert_called_with(gitRevParse, stdout=PIPE)
+    mock_subproc_run.assert_called_with(
+        gitRevParse,
+        stdout=PIPE,
+        stderr=PIPE,
+    )
 
 
 @mock.patch("subprocess.run")

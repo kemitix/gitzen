@@ -17,7 +17,9 @@ class RealGitEnv(GitEnv):
     def git(self, args: str) -> List[str]:
         git_command = f"git {args}"
         result: subprocess.CompletedProcess[bytes] = subprocess.run(
-            shlex.split(git_command), stdout=subprocess.PIPE
+            shlex.split(git_command),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
         )
         stdout = result.stdout
         if stdout:
