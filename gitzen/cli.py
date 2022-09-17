@@ -1,7 +1,7 @@
 from typing import List
 
 from gitzen import config, envs, git, github
-from gitzen.commands import hook, push, status
+from gitzen.commands import hook, init, push, status
 from gitzen.console import RealConsoleEnv
 
 
@@ -11,16 +11,16 @@ def main(args: List[str]) -> None:
     git_env: envs.GitEnv = git.RealGitEnv()
 
     # verify that we are in a git repo or exit
-    rootDir = git.root_dir(git_env)
+    root_dir = git.root_dir(git_env)
 
     github_env: envs.GithubEnv = github.RealGithubEnv()
-    cfg = config.load(console_env, rootDir)
+    cfg = config.load(console_env, root_dir)
 
     for i, arg in enumerate(args):
         if i != 1:
             continue
         if arg == "init":
-            pass  # install the commit_msg hook
+            init.install_hook(console_env, root_dir)
         if arg == "hook":
             hook.main(args[2:])
         if arg == "status":
