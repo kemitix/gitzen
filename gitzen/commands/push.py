@@ -79,10 +79,7 @@ def clean_up_deleted_commits(
 def update_patches(
     root_dir: GitRootDir,
     commits: List[GitCommit],
-) -> List[GitPatch]:
-    patches: List[GitPatch] = []
+) -> None:
     for commit in commits:
         patch = GitPatch(commit.zen_token, commit.hash)
         git.write_patch(patch, root_dir)
-        patches.append(patch)
-    return patches
