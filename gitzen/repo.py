@@ -73,7 +73,6 @@ def get_commit_stack(
     subject_index = 0
     for line in log:
         line_number += 1
-        say(console_env, f"{line_number}: {line}")
         commit_matches = re.search(patterns.commit_log_hash, line)
         if commit_matches:
             if have_hash:
