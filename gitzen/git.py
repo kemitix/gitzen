@@ -103,6 +103,19 @@ def fetch(env: GitEnv, remote: GitRemoteName) -> List[str]:
     return env.git(f"fetch {remote.value}")
 
 
+def init(env: GitEnv) -> List[str]:
+    return env.git("init")
+
+
+def add(env: GitEnv, files: List[str]) -> List[str]:
+    return env.git(f"add {' '.join(files)}")
+
+
+def commit(env: GitEnv, message: List[str]) -> List[str]:
+    log = "\n".join(message)
+    return env.git(f"commit -m'{log}'")
+
+
 def log(env: GitEnv, args: str = "") -> List[str]:
     return env.git(f"log --no-color {args}")
 
