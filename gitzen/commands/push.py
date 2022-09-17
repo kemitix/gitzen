@@ -76,62 +76,6 @@ def clean_up_deleted_commits(
     return kept
 
 
-def check_for_reordered_commits(
-    git_env: envs.GitEnv,
-    open_prs: List[PullRequest],
-    commits: List[GitCommit],
-) -> None:
-    if reordered(open_prs, commits):
-        for pr in open_prs:
-            pass
-            # rebase on target branch
-            git.switch(git_env, pr.headRefName)
-            git.rebase(git_env, pr.baseRefName)
-            # get remote branch name from repo as baseRefName (default master)
-            # if there was a previous commit
-            # - here there never is - but generic code might
-            # # get the baseRefName from that previous commit
-            # format body from list of pull requests
-            # title from commit
-            # github.update_pull_request
-            # # setting: baseRefName, title and body
-        # sync commit stack to github:
-        # # syncCommitStackToGitHub gets all local commits in the given branch
-        # # which are new (on top of remote branch) and creates a corresponding
-        # # branch on github for each commit.
-        # # - git status --porcelain --untracked-files=no
-        # # - if output is not blank then:
-        # # # git stash
-        # # # defer: git stash pop
-        # update all PRs
-
-
-def reordered(
-    open_prs: List[PullRequest],
-    commits: List[GitCommit],
-) -> bool:
-    for i, pr in enumerate(open_prs):
-        if pr.commits[0] != commits[i]:
-            return True
-    return False
-
-
-# # sync commit stack to github
-# # loop over each local commit
-#     # if it has a PR
-#         # add it to a PR update queue with a note of the previous commit
-#           (unless first commit)
-#     # if it has no PR
-#         # create as a new PR
-#         # add it to a PR update queue with a note of the previous commit
-#           (unless first commit)
-# # loop over the PR update queue
-#     # update the PR
-
-
-# # call: git zen status
-
-
 def update_patches(
     root_dir: GitRootDir,
     commits: List[GitCommit],
