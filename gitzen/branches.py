@@ -3,7 +3,7 @@ import re
 from gitzen import config, envs, exit_code, patterns
 from gitzen.console import say
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import GitBranchName
+from gitzen.types import GitBranchName, GithubUsername, ZenToken
 
 
 # look for the local branch name in the remote branches from config
@@ -47,10 +47,14 @@ def validate_not_remote_pr(
 
 
 def pr_branch(pr: PullRequest) -> GitBranchName:
-    branch = (
-        "gitzen/pr"
-        f"/{pr.author.value}"
-        f"/{pr.baseRefName.value}"
-        f"/{pr.zen_token.value}"
+    return pr_branch_planned(pr.author, pr.baseRefName, pr.zen_token)
+
+
+def pr_branch_planned(
+    author: GithubUsername,
+    base_ref_name: GitBranchName,
+    zen_token: ZenToken,
+) -> GitBranchName:
+    return GitBranchName(
+        f"gitzen/pr/{author.value}/{base_ref_name.value}/{zen_token.value}"
     )
-    return GitBranchName(branch)
