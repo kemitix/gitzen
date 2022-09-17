@@ -118,6 +118,10 @@ def commit(env: GitEnv, message: List[str]) -> List[str]:
     return env.git(f"commit -m'{log}'")
 
 
+def commit_amend_noedit(env: GitEnv) -> List[str]:
+    return env.git("commit --amend --no-edit")
+
+
 def log(env: GitEnv, args: str = "") -> List[str]:
     return env.git(f"log --no-color {args}")
 
