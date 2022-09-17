@@ -78,7 +78,6 @@ def load(
             remote_branches,
             GitRemoteName(gitzen_yml["remote"]),
         )
-    say(console_env, f"Using default config - no file: {config_file}")
     return default_config(root_dir)
 
 

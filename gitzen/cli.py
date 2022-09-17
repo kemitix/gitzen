@@ -2,12 +2,11 @@ from typing import List
 
 from gitzen import config, envs, git, github
 from gitzen.commands import hook, push, status
-from gitzen.console import RealConsoleEnv, say
+from gitzen.console import RealConsoleEnv
 
 
 def main(args: List[str]) -> None:
     console_env: envs.ConsoleEnv = RealConsoleEnv()
-    say(console_env, "`git zen` - prototype")
 
     git_env: envs.GitEnv = git.RealGitEnv()
 
