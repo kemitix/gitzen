@@ -120,6 +120,10 @@ def log(env: GitEnv, args: str = "") -> List[str]:
     return env.git(f"log --no-color {args}")
 
 
+def status(env: GitEnv) -> List[str]:
+    return env.git("status")
+
+
 def rebase(env: GitEnv, target: GitBranchName) -> List[str]:
     return env.git(f"rebase {target.value} --autostash")
 
