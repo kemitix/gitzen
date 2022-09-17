@@ -13,7 +13,7 @@ def push(
     console_env: envs.ConsoleEnv,
     git_env: envs.GitEnv,
     github_env: envs.GithubEnv,
-    config: config.Config,
+    cfg: config.Config,
 ) -> None:
     status = github.fetch_info(console_env, git_env, github_env)
     local_branch = status.local_branch
@@ -22,16 +22,16 @@ def push(
         console_env, local_branch, config
     )
     remote_target = GitBranchName(
-        f"remote branch: {config.remote.value}/{remote_branch.value}"
+        f"remote branch: {cfg.remote.value}/{remote_branch.value}"
     )
     say(console_env, remote_target.value)
-    git.fetch(git_env, config.remote)
+    git.fetch(git_env, cfg.remote)
     git.rebase(git_env, remote_target)
     branches.validate_not_remote_pr(console_env, local_branch)
     commits = repo.get_commit_stack(
         console_env,
         git_env,
-        config.remote,
+        cfg.remote,
         remote_branch,
     )
     say(console_env, repr(commits))
@@ -39,13 +39,13 @@ def push(
         github_env,
         status.pull_requests,
         commits,
-        config.root_dir,
+        cfg.root_dir,
     )
     pr_count = len(commit_stack)
     new_commits = [CommitPr(commit, None) for commit in commits[pr_count:]]
     commit_stack.extend(new_commits)
     # check_for_reordered_commits(git_env, open_prs, commits)
-    update_patches(config.root_dir, commits)
+    update_patches(cfg.root_dir, commits)
     # call git zen status
 
 
