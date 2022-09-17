@@ -34,7 +34,7 @@ from .fakes.repo_files import given_repo
 def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> None:
     # given
     root_dir = GitRootDir(f"{tmp_path}")
-    given_repo(root_dir)
+    given_repo(git.RealGitEnv(), root_dir)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
     pr_to_keep = om.gen_pr(zen_token)
@@ -62,7 +62,7 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
 def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> None:
     # given
     root_dir = GitRootDir(f"{tmp_path}")
-    given_repo(root_dir)
+    given_repo(git.RealGitEnv(), root_dir)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
     pr_to_keep = om.gen_pr(zen_token)
@@ -93,7 +93,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
 def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     # given
     root_dir = GitRootDir(f"{tmp_path}")
-    given_repo(root_dir)
+    given_repo(git.RealGitEnv(), root_dir)
     deleted_zen_token = om.gen_zen_token()
     pr_to_close: PullRequest = om.gen_pr(deleted_zen_token)
     deleted_commit = pr_to_close.commits[0]

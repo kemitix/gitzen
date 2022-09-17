@@ -3,7 +3,7 @@ from typing import List
 
 from faker import Faker
 
-from gitzen import config, file
+from gitzen import config, file, git
 from gitzen.commands.push import update_patches
 from gitzen.models.git_commit import GitCommit
 from gitzen.types import (
@@ -22,7 +22,7 @@ from .fakes.repo_files import given_repo
 def test_update_patches_creates_patches(tmp_path: PosixPath) -> None:
     # given
     root_dir = GitRootDir(f"{tmp_path}")
-    given_repo(root_dir)
+    given_repo(git.RealGitEnv(), root_dir)
     fake = Faker()
     commits: List[GitCommit] = [
         GitCommit(
