@@ -5,7 +5,7 @@ from gitzen import cli, file, patterns
 
 def test_handle_commit_message_with_empty_body(tmp_path) -> None:
     # given
-    filename = f"{tmp_path}/COMMIT_MSG"
+    filename = f"{tmp_path}/COMMIT_EDITMSG"
     file.write(filename, ["Initial commit"])
     # when
     cli.main(["", "hook", filename])
@@ -19,7 +19,7 @@ def test_handle_commit_message_with_empty_body(tmp_path) -> None:
 
 def test_handle_commit_message_with_a_body(tmp_path) -> None:
     # given
-    filename = f"{tmp_path}/COMMIT_MSG"
+    filename = f"{tmp_path}/COMMIT_EDITMSG"
     file.write(
         filename,
         [

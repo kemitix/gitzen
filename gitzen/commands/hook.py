@@ -7,7 +7,7 @@ from gitzen import file, patterns
 
 def main(args) -> None:
     filename = args[0]
-    if filename.endswith("COMMIT_MSG"):
+    if filename.endswith("COMMIT_EDITMSG"):
         handle_commit_message(filename)
     else:
         handle_interactive_rebase(filename)
