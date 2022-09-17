@@ -19,7 +19,7 @@ class RealGitEnv(GitEnv):
         result: subprocess.CompletedProcess[bytes] = subprocess.run(
             shlex.split(git_command),
             stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
         )
         stdout = result.stdout
         if stdout:

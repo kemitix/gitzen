@@ -1,4 +1,4 @@
-from subprocess import PIPE, CompletedProcess
+from subprocess import PIPE, STDOUT, CompletedProcess
 from unittest import mock
 
 from faker import Faker
@@ -24,7 +24,7 @@ def test_branch(mock_subproc_run) -> None:
             "--no-color",
         ],
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -85,7 +85,7 @@ def test_branch_create(mock_subproc_run) -> None:
             source_branch_name.value,
         ],
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -103,7 +103,7 @@ def test_cherry_pick(mock_subproc_run) -> None:
     mock_subproc_run.assert_called_with(
         ["git", "cherry-pick", "-x", ref.value],
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -118,7 +118,7 @@ def test_cherry_pick_skip(mock_subproc_run) -> None:
     mock_subproc_run.assert_called_with(
         ["git", "cherry-pick", "--skip"],
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -136,7 +136,7 @@ def test_fetch(mock_subproc_run) -> None:
     mock_subproc_run.assert_called_with(
         gitFetch,
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -152,7 +152,7 @@ def test_log(mock_subproc_run) -> None:
     mock_subproc_run.assert_called_with(
         gitFetch,
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -171,7 +171,7 @@ def test_remote(mock_subproc_run) -> None:
             "--verbose",
         ],
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -191,7 +191,7 @@ def test_rebase(mock_subproc_run) -> None:
             "--autostash",
         ],
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -206,7 +206,7 @@ def test_revParse(mock_subproc_run) -> None:
     mock_subproc_run.assert_called_with(
         ["git", "rev-parse", "--verify", "HEAD"],
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -242,7 +242,7 @@ def test_switch(mock_subproc_run) -> None:
             branch.value,
         ],
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -258,7 +258,7 @@ def test_root_dir(mock_subproc_run) -> None:
     mock_subproc_run.assert_called_with(
         gitRevParse,
         stdout=PIPE,
-        stderr=PIPE,
+        stderr=STDOUT,
     )
 
 
