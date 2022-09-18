@@ -7,7 +7,7 @@ from gitzen.models.commit_pr import CommitPr
 from gitzen.types import GitBranchName, GitRootDir
 
 from . import object_mother as om
-from .fakes.repo_files import given_repo
+from .fakes.repo_files import given_repo, show_status
 
 
 def test_when_no_branch_then_create(tmp_path) -> None:
@@ -26,21 +26,35 @@ def test_when_no_branch_then_create(tmp_path) -> None:
         cfg.remote,
         GitBranchName("master"),
     )
-    assert len(commits) == 1
-    commit = commits[0]
-    pr = om.gen_pr(token=commit.zen_token)
-    stack: List[CommitPr] = [CommitPr(commit, pr)]
-    update_patches(root_dir, [commit])
+    assert len(commits) == 2
+    author = om.gen_gh_username()
+    commit1 = commits[0]
+    commit2 = commits[1]
+    stack: List[CommitPr] = [CommitPr(commit1, None), CommitPr(commit2, None)]
+    update_patches(root_dir, [commit1, commit2])
+    show_status(git_env, root_dir)
     # when
-    update_pr_branches(git_env, stack, pr.author, cfg)
+    update_pr_branches(git_env, stack, author, cfg)
     # then
-    expected_branch = (
+    show_status(git_env, root_dir)
+    expected_branch1 = (
         "gitzen/pr"
-        f"/{pr.author.value}"
+        f"/{author.value}"
         f"/{cfg.default_remote_branch.value}"
-        f"/{commit.zen_token.value}"
+        f"/{commit1.zen_token.value}"
     )
-    assert git.branch_exists(git_env, GitBranchName(expected_branch)) is True
+    assert (
+        git.branch_exists(git_env, GitBranchName(expected_branch1)) is True
+    ), "first branch"
+    expected_branch2 = (
+        "gitzen/pr"
+        f"/{author.value}"
+        f"/{commit1.zen_token.value}"
+        f"/{commit2.zen_token.value}"
+    )
+    assert (
+        git.branch_exists(git_env, GitBranchName(expected_branch2)) is True
+    ), "second branch"
 
 
 def test_when_branch_and_change_then_update(tmp_path) -> None:
@@ -59,14 +73,13 @@ def test_when_branch_and_change_then_update(tmp_path) -> None:
         cfg.remote,
         GitBranchName("master"),
     )
-    assert len(commits) == 1
-    commit = commits[0]
-    pr = om.gen_pr(token=commit.zen_token)
-    stack: List[CommitPr] = [CommitPr(commit, pr)]
-    update_patches(root_dir, [commit])
+    assert len(commits) == 2
+    author = om.gen_gh_username()
+    stack: List[CommitPr] = [CommitPr(commit, None) for commit in commits]
+    update_patches(root_dir, commits)
     git.branch_create(
         git_env,
-        git.gitzen_patch_ref(commit.zen_token),
+        GitBranchName(commits[1].zen_token.value),
         GitBranchName("master"),
     )
     file.write("new-file", ["contents"])
@@ -85,15 +98,23 @@ def test_when_branch_and_change_then_update(tmp_path) -> None:
     assert hash_match
     assert expected_hash is not None
     # when
-    update_pr_branches(git_env, stack, pr.author, cfg)
+    update_pr_branches(git_env, stack, author, cfg)
     # then
-    expected_branch = (
+    expected_branch1 = (
         "gitzen/pr"
-        f"/{pr.author.value}"
+        f"/{author.value}"
         f"/{cfg.default_remote_branch.value}"
-        f"/{commit.zen_token.value}"
+        f"/{commits[0].zen_token.value}"
     )
-    [hash] = git.rev_parse(git_env, expected_branch)
+    [hash] = git.rev_parse(git_env, expected_branch1)
+    assert hash.startswith(expected_hash)
+    expected_branch2 = (
+        "gitzen/pr"
+        f"/{author.value}"
+        f"/{commits[0].zen_token.value}"
+        f"/{commits[1].zen_token.value}"
+    )
+    [hash] = git.rev_parse(git_env, expected_branch2)
     assert hash.startswith(expected_hash)
 
 
@@ -113,24 +134,33 @@ def test_when_branch_and_no_change_then_ignore(tmp_path) -> None:
         cfg.remote,
         GitBranchName("master"),
     )
-    assert len(commits) == 1
-    commit = commits[0]
-    pr = om.gen_pr(token=commit.zen_token)
-    stack: List[CommitPr] = [CommitPr(commit, pr)]
-    update_patches(root_dir, [commit])
-    git.branch_create(
-        git_env,
-        git.gitzen_patch_ref(commit.zen_token),
-        GitBranchName("master"),
-    )
+    assert len(commits) == 2
+    author = om.gen_gh_username()
+    commit1 = commits[0]
+    commit2 = commits[1]
+    stack: List[CommitPr] = [CommitPr(commit1, None), CommitPr(commit2, None)]
+    update_patches(root_dir, [commit1, commit2])
+    update_pr_branches(git_env, stack, author, cfg)
+    show_status(git_env, root_dir)
     # when
-    update_pr_branches(git_env, stack, pr.author, cfg)
+    update_pr_branches(git_env, stack, author, cfg)
     # then
-    expected_branch = (
+    show_status(git_env, root_dir)
+    expected_branch1 = (
         "gitzen/pr"
-        f"/{pr.author.value}"
+        f"/{author.value}"
         f"/{cfg.default_remote_branch.value}"
-        f"/{commit.zen_token.value}"
+        f"/{commit1.zen_token.value}"
     )
-    [hash] = git.rev_parse(git_env, expected_branch)
-    assert hash.startswith(commits[0].hash.value)
+    assert (
+        git.branch_exists(git_env, GitBranchName(expected_branch1)) is True
+    ), "first branch"
+    expected_branch2 = (
+        "gitzen/pr"
+        f"/{author.value}"
+        f"/{commit1.zen_token.value}"
+        f"/{commit2.zen_token.value}"
+    )
+    assert (
+        git.branch_exists(git_env, GitBranchName(expected_branch2)) is True
+    ), "second branch"

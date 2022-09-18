@@ -11,6 +11,7 @@ from gitzen.types import GitBranchName, GitRootDir
 
 def given_repo(git_env: envs.GitEnv, dir: GitRootDir) -> None:
     chdir(dir.value)
+    print(f"\ngiven_repo> BEGIN {dir.value}")
     git.init(git_env)
     # set author identity
     git_env.git('config user.email "you@example.com"')
@@ -43,12 +44,18 @@ def given_repo(git_env: envs.GitEnv, dir: GitRootDir) -> None:
         GitBranchName("origin/master"),
         GitBranchName("master"),
     )
-    # create commit to represent change on local HEAD
+    # create two commits to represent changes on local HEAD
     print("# create second commit master")
-    file.write("README.md", ["Test repo"])
-    git.add(git_env, ["README.md"])
-    git.commit(git_env, ["Second commit"])
+    file.write("ALPHA.md", ["alpha"])
+    git.add(git_env, ["ALPHA.md"])
+    git.commit(git_env, ["Add ALPHA.md"])
+
+    print("# create third commit master")
+    file.write("BETA.md", ["beta"])
+    git.add(git_env, ["BETA.md"])
+    git.commit(git_env, ["Add BETA.md"])
     show_status(git_env, dir)
+    print(f"given_repo> END {dir.value}\n")
 
 
 def show_status(git_env: GitEnv, dir) -> None:

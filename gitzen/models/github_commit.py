@@ -57,12 +57,12 @@ class GithubCommit:
             )
         return None
 
-
-def from_git_commit(self, git_commit: GitCommit) -> GithubCommit:
-    return GithubCommit(
-        git_commit.zen_token,
-        git_commit.hash,
-        git_commit.messageHeadline,
-        git_commit.messageBody,
-        git_commit.wip,
-    )
+    @staticmethod
+    def from_git_commit(git_commit: GitCommit) -> "GithubCommit":
+        return GithubCommit(
+            git_commit.zen_token,
+            git_commit.hash,
+            git_commit.messageHeadline,
+            git_commit.messageBody,
+            git_commit.wip,
+        )

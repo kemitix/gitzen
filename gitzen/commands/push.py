@@ -1,6 +1,7 @@
+import re
 from typing import Dict, List, Optional
 
-from gitzen import branches, config, envs, git, github, repo
+from gitzen import branches, config, envs, exit_code, git, github, repo
 from gitzen.console import say
 from gitzen.models.commit_pr import CommitPr
 from gitzen.models.git_commit import GitCommit
@@ -44,10 +45,8 @@ def push(
     pr_count = len(commit_stack)
     new_commits = [CommitPr(commit, None) for commit in commits[pr_count:]]
     commit_stack.extend(new_commits)
-    # check_for_reordered_commits(git_env, open_prs, commits)
     update_patches(cfg.root_dir, commits)
     update_pr_branches(git_env, commit_stack, status.username, cfg)
-    # call git zen status
 
 
 def clean_up_deleted_commits(
@@ -90,7 +89,7 @@ def update_pr_branches(
     git_env: envs.GitEnv,
     commit_stack: List[CommitPr],
     author: GithubUsername,
-    config: config.Config,
+    cfg: config.Config,
     last_pr: Optional[PullRequest] = None,
 ) -> None:
     commit_pr = commit_stack[0]
@@ -100,75 +99,95 @@ def update_pr_branches(
         branch = create_pr_branch(
             git_env,
             last_pr,
-            config,
+            cfg,
             author,
             commit.zen_token,
         )
-        cherry_pick_push_branch(git_env, commit.zen_token, branch)
+        cherry_pick_branch(git_env, commit.zen_token, branch)
+        pr = PullRequest.create_template(commit, author, cfg, branch)
     else:
-        update_pr_branch(git_env, pr, config, last_pr)
+        update_pr_branch(git_env, pr, cfg, last_pr)
     if len(commit_stack) > 1:
-        update_pr_branches(git_env, commit_stack[1:], author, config, pr)
+        update_pr_branches(git_env, commit_stack[1:], author, cfg, pr)
 
 
 def pr_source(
     last_pr: Optional[PullRequest],
-    config: config.Config,
+    cfg: config.Config,
 ) -> GitBranchName:
     if last_pr is None:
-        source = config.default_remote_branch
+        source = cfg.default_remote_branch
     else:
-        source = last_pr.headRefName
+        source = GitBranchName(last_pr.zen_token.value)
     return source
 
 
 def create_pr_branch(
     git_env: envs.GitEnv,
     last_pr: Optional[PullRequest],
-    config: config.Config,
+    cfg: config.Config,
     author: GithubUsername,
     zen_token: ZenToken,
 ) -> GitBranchName:
-    source = pr_source(last_pr, config)
+    source = pr_source(last_pr, cfg)
     branch = branches.pr_branch_planned(
         author,
         source,
         zen_token,
     )
-    git.branch_create(git_env, branch, source)
+    if last_pr is None:
+        source_branch = source
+    else:
+        source_branch = branches.pr_branch(last_pr)
+    git.branch_create(git_env, branch, source_branch)
     return branch
 
 
 def update_pr_branch(
     git_env: envs.GitEnv,
     pr: PullRequest,
-    config: config.Config,
+    cfg: config.Config,
     last_pr: Optional[PullRequest],
 ) -> None:
     branch_name = branches.pr_branch(pr)
     if git.branch_exists(git_env, branch_name):
-        cherry_pick_push_branch(git_env, pr.zen_token, branch_name)
+        cherry_pick_branch(git_env, pr.zen_token, branch_name)
     else:
         branch = create_pr_branch(
             git_env,
             last_pr,
-            config,
+            cfg,
             pr.author,
             pr.zen_token,
         )
-        cherry_pick_push_branch(git_env, pr.zen_token, branch)
+        cherry_pick_branch(git_env, pr.zen_token, branch)
 
 
-def cherry_pick_push_branch(
+def cherry_pick_branch(
     git_env: envs.GitEnv,
     zen_token: ZenToken,
     branch: GitBranchName,
 ) -> None:
     patch_ref = git.gitzen_patch_ref(zen_token)
     git.switch(git_env, branch)
+    git.status(git_env)
     status = git.cherry_pick(git_env, patch_ref)
-    if '  (all conflicts fixed: run "git cherry-pick --continue")' in status:
+    git.status(git_env)
+    empty_cherry_pick_message = (
+        "The previous cherry-pick is now empty, "
+        + "possibly due to conflict resolution."
+    )
+    if empty_cherry_pick_message in status:
         git.cherry_pick_skip(git_env)
+        git.status(git_env)
+    for line in status:
+        conflict_match = re.search(
+            r"^CONFLICT \(content\): Merge conflict in (?P<filename>.*)\s*$",
+            line,
+        )
+        if conflict_match:
+            print("Error: merge conflict preparing PR branch")
+            exit(exit_code.CONFLICT_PREPARING_PR_BRANCH)
 
 
 # TODO push PR branches to github

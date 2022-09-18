@@ -1,5 +1,7 @@
 from typing import List
 
+from gitzen import config
+from gitzen.models.git_commit import GitCommit
 from gitzen.models.github_commit import GithubCommit
 from gitzen.types import (
     CommitHash,
@@ -95,4 +97,27 @@ class PullRequest:
             f"reviewDecision={self.reviewDecision}, "
             f"repoId={self.repoId}, "
             f"commit={repr(self.commits)})"
+        )
+
+    @staticmethod
+    def create_template(
+        commit: GitCommit,
+        author: GithubUsername,
+        cfg: config.Config,
+        branch: GitBranchName,
+    ) -> "PullRequest":
+        return PullRequest(
+            PullRequestId(""),
+            commit.zen_token,
+            PullRequestNumber(""),
+            author,
+            PullRequestTitle(commit.messageHeadline.value),
+            PullRequestBody(commit.messageBody.value),
+            cfg.default_remote_branch,
+            branch,
+            commit.hash,
+            PullRequestMergeable(""),
+            PullRequestReviewDecision(""),
+            GithubRepoId(""),
+            commits=[GithubCommit.from_git_commit(commit)],
         )

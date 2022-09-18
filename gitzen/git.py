@@ -16,6 +16,7 @@ from gitzen.types import GitBranchName, GitRemoteName, GitRootDir, ZenToken
 class RealGitEnv(GitEnv):
     def git(self, args: str) -> List[str]:
         git_command = f"git {args}"
+        print(f"{git_command} >")
         result: subprocess.CompletedProcess[bytes] = subprocess.run(
             shlex.split(git_command),
             stdout=subprocess.PIPE,
@@ -24,8 +25,11 @@ class RealGitEnv(GitEnv):
         stdout = result.stdout
         if stdout:
             lines = stdout.decode().splitlines()
+            [print(f"| {line}") for line in lines]
+            print("\\------------------")
             return lines
         else:
+            print("\\------------------")
             return []
 
 
@@ -99,6 +103,10 @@ def cherry_pick(env: GitEnv, ref: GitBranchName) -> List[str]:
 
 def cherry_pick_skip(env: GitEnv) -> List[str]:
     return env.git("cherry-pick --skip")
+
+
+def cherry_pick_continue(env: GitEnv) -> List[str]:
+    return env.git("cherry-pick --continue")
 
 
 def fetch(env: GitEnv, remote: GitRemoteName) -> List[str]:
