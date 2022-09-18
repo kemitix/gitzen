@@ -1,24 +1,24 @@
 import re
+from pathlib import PosixPath
 from typing import List
 
 from gitzen import config, console, file, git, repo
 from gitzen.commands.push import update_patches, update_pr_branches
 from gitzen.models.commit_pr import CommitPr
-from gitzen.types import GitBranchName, GitRootDir
+from gitzen.types import GitBranchName
 
 from . import object_mother as om
-from .fakes.repo_files import given_repo, show_status
+from .fakes.repo_files import given_repo
 
 
-def test_when_no_branch_then_create(tmp_path) -> None:
+def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     """
     When there is no local pr branch to track the
     CommitPr, then a branch is created.
     """
     # given
-    root_dir = GitRootDir(tmp_path)
     git_env = git.RealGitEnv()
-    given_repo(git_env, root_dir)
+    root_dir = given_repo(git_env, tmp_path)
     cfg = config.default_config(root_dir)
     commits = repo.get_commit_stack(
         console.RealConsoleEnv(),
@@ -32,11 +32,9 @@ def test_when_no_branch_then_create(tmp_path) -> None:
     commit2 = commits[1]
     stack: List[CommitPr] = [CommitPr(commit1, None), CommitPr(commit2, None)]
     update_patches(root_dir, [commit1, commit2])
-    show_status(git_env, root_dir)
     # when
     update_pr_branches(git_env, stack, author, cfg)
     # then
-    show_status(git_env, root_dir)
     expected_branch1 = (
         "gitzen/pr"
         f"/{author.value}"
@@ -57,15 +55,14 @@ def test_when_no_branch_then_create(tmp_path) -> None:
     ), "second branch"
 
 
-def test_when_branch_and_change_then_update(tmp_path) -> None:
+def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     """
     When there is a local pr branch and the patch has been
     updated, then the branch is updated.
     """
     # given
-    root_dir = GitRootDir(tmp_path)
     git_env = git.RealGitEnv()
-    given_repo(git_env, root_dir)
+    root_dir = given_repo(git_env, tmp_path)
     cfg = config.default_config(root_dir)
     commits = repo.get_commit_stack(
         console.RealConsoleEnv(),
@@ -118,15 +115,14 @@ def test_when_branch_and_change_then_update(tmp_path) -> None:
     assert hash.startswith(expected_hash)
 
 
-def test_when_branch_and_no_change_then_ignore(tmp_path) -> None:
+def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     """
     When there is a local pr branch and the patch has not been
     updated, then ignore.
     """
     # given
-    root_dir = GitRootDir(tmp_path)
     git_env = git.RealGitEnv()
-    given_repo(git_env, root_dir)
+    root_dir = given_repo(git_env, tmp_path)
     cfg = config.default_config(root_dir)
     commits = repo.get_commit_stack(
         console.RealConsoleEnv(),
@@ -141,11 +137,9 @@ def test_when_branch_and_no_change_then_ignore(tmp_path) -> None:
     stack: List[CommitPr] = [CommitPr(commit1, None), CommitPr(commit2, None)]
     update_patches(root_dir, [commit1, commit2])
     update_pr_branches(git_env, stack, author, cfg)
-    show_status(git_env, root_dir)
     # when
     update_pr_branches(git_env, stack, author, cfg)
     # then
-    show_status(git_env, root_dir)
     expected_branch1 = (
         "gitzen/pr"
         f"/{author.value}"
