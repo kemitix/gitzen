@@ -176,3 +176,7 @@ def rev_parse(env: GitEnv, args: str = "") -> List[str]:
 
 def switch(env: GitEnv, branch: GitBranchName) -> List[str]:
     return env.git(f"switch {branch.value}")
+
+
+def log_graph(env: GitEnv) -> List[str]:
+    return env.git("log --oneline --graph --decorate --all")
