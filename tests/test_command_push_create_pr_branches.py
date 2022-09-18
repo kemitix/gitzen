@@ -131,11 +131,9 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
         GitBranchName("master"),
     )
     assert len(commits) == 2
+    stack: List[CommitPr] = [CommitPr(commit, None) for commit in commits]
     author = om.gen_gh_username()
-    commit1 = commits[0]
-    commit2 = commits[1]
-    stack: List[CommitPr] = [CommitPr(commit1, None), CommitPr(commit2, None)]
-    update_patches(root_dir, [commit1, commit2])
+    update_patches(root_dir, commits)
     update_pr_branches(git_env, stack, author, cfg)
     # when
     update_pr_branches(git_env, stack, author, cfg)
@@ -144,7 +142,7 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
         "gitzen/pr"
         f"/{author.value}"
         f"/{cfg.default_remote_branch.value}"
-        f"/{commit1.zen_token.value}"
+        f"/{commits[0].zen_token.value}"
     )
     assert (
         git.branch_exists(git_env, GitBranchName(expected_branch1)) is True
@@ -152,8 +150,8 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     expected_branch2 = (
         "gitzen/pr"
         f"/{author.value}"
-        f"/{commit1.zen_token.value}"
-        f"/{commit2.zen_token.value}"
+        f"/{commits[0].zen_token.value}"
+        f"/{commits[1].zen_token.value}"
     )
     assert (
         git.branch_exists(git_env, GitBranchName(expected_branch2)) is True
