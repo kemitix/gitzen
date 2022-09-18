@@ -2,6 +2,7 @@ from typing import List
 
 from gitzen.models.github_commit import GithubCommit
 from gitzen.types import (
+    CommitHash,
     GitBranchName,
     GithubRepoId,
     GithubUsername,
@@ -24,6 +25,7 @@ class PullRequest:
     body: PullRequestBody
     baseRefName: GitBranchName
     headRefName: GitBranchName
+    headHash: CommitHash
     mergeable: PullRequestMergeable
     reviewDecision: PullRequestReviewDecision
     repoId: GithubRepoId
@@ -39,6 +41,7 @@ class PullRequest:
         body: PullRequestBody,
         baseRefName: GitBranchName,
         headRefName: GitBranchName,
+        headHash: CommitHash,
         mergeable: PullRequestMergeable,
         reviewDecision: PullRequestReviewDecision,
         repoId: GithubRepoId,
@@ -52,6 +55,7 @@ class PullRequest:
         self.body = body
         self.baseRefName = baseRefName
         self.headRefName = headRefName
+        self.headHash = headHash
         self.mergeable = mergeable
         self.reviewDecision = reviewDecision
         self.repoId = repoId
@@ -68,6 +72,7 @@ class PullRequest:
             and self.body == __o.body
             and self.baseRefName == __o.baseRefName
             and self.headRefName == __o.headRefName
+            and self.headHash == __o.headHash
             and self.mergeable == __o.mergeable
             and self.reviewDecision == __o.reviewDecision
             and self.repoId == __o.repoId
@@ -85,6 +90,7 @@ class PullRequest:
             f"body={self.body}, "
             f"baseRefName={self.baseRefName}, "
             f"headRefName={self.baseRefName}, "
+            f"headHash={self.headHash}, "
             f"mergeable={self.mergeable}, "
             f"reviewDecision={self.reviewDecision}, "
             f"repoId={self.repoId}, "

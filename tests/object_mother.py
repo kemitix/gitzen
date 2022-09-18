@@ -123,6 +123,7 @@ def gen_pr(
         zen_token = gen_zen_token()
     else:
         zen_token = token
+    commit = gen_gh_commit(token, wip)
     return PullRequest(
         gen_pr_id(),
         zen_token,
@@ -132,8 +133,9 @@ def gen_pr(
         gen_pr_body(),
         gen_git_branch_name(),
         gen_git_branch_name(),
+        commit.hash,
         gen_pr_mergeable(),
         gen_pr_review_decision(),
         gen_gh_repo_id(),
-        commits=[gen_gh_commit(token, wip)],
+        commits=[commit],
     )

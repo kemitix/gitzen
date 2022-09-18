@@ -140,6 +140,7 @@ def fetch_info(
         token = zen_token.find_in_body(body)
         if token is None:
             continue
+        commits = get_commits(pr_node)
         prs.append(
             PullRequest(
                 PullRequestId(pr_node["id"]),
@@ -150,10 +151,11 @@ def fetch_info(
                 body,
                 base_ref,
                 head_ref,
+                commits[0].hash,
                 PullRequestMergeable(pr_node["mergeable"]),
                 review_decision,
                 pr_repo_id,
-                get_commits(pr_node),
+                commits,
             )
         )
     say(console_env, f"Kept {len(prs)} prs")
