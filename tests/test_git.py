@@ -157,6 +157,24 @@ def test_log(mock_subproc_run) -> None:
 
 
 @mock.patch("subprocess.run")
+def test_push(mock_subproc_run) -> None:
+    """
+    Test that the correct command is invoked
+    """
+    # given
+    remote = om.gen_remote_name()
+    branch = om.gen_git_branch_name()
+    # when
+    git.push(git.RealGitEnv(), remote, branch)
+    # then
+    mock_subproc_run.assert_called_with(
+        ["git", "push", remote.value, f"{branch.value}:{branch.value}"],
+        stdout=PIPE,
+        stderr=STDOUT,
+    )
+
+
+@mock.patch("subprocess.run")
 def test_remote(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
