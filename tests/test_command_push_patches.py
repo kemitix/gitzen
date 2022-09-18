@@ -6,14 +6,9 @@ from faker import Faker
 from gitzen import config, file, git
 from gitzen.commands.push import update_patches
 from gitzen.models.git_commit import GitCommit
-from gitzen.types import (
-    CommitBody,
-    CommitHash,
-    CommitTitle,
-    CommitWipStatus,
-    GitRootDir,
-    ZenToken,
-)
+
+# trunk-ignore(flake8/E501)
+from gitzen.types import CommitBody, CommitHash, CommitTitle, CommitWipStatus, ZenToken
 
 from .fakes.console_env import FakeConsoleEnv
 from .fakes.repo_files import given_repo
@@ -21,8 +16,8 @@ from .fakes.repo_files import given_repo
 
 def test_update_patches_creates_patches(tmp_path: PosixPath) -> None:
     # given
-    root_dir = GitRootDir(f"{tmp_path}")
-    given_repo(git.RealGitEnv(), root_dir)
+    git_env = git.RealGitEnv()
+    root_dir = given_repo(git_env, tmp_path)
     fake = Faker()
     commits: List[GitCommit] = [
         GitCommit(
@@ -45,9 +40,7 @@ def test_update_patches_creates_patches(tmp_path: PosixPath) -> None:
     # when
     update_patches(cfg.root_dir, commits)
     # then
-    assert file.read(
-        f"{tmp_path}/.git/refs/gitzen/patches/{commits[0].zen_token.value}"
-    ) == [commits[0].hash.value]
-    assert file.read(
-        f"{tmp_path}/.git/refs/gitzen/patches/{commits[1].zen_token.value}"
-    ) == [commits[1].hash.value]
+    commit1_patch_file = git.gitzen_patch_file(commits[0].zen_token, root_dir)
+    commit2_patch_file = git.gitzen_patch_file(commits[1].zen_token, root_dir)
+    assert file.read(commit1_patch_file) == [commits[0].hash.value]
+    assert file.read(commit2_patch_file) == [commits[1].hash.value]

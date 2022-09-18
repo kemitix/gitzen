@@ -6,7 +6,6 @@ from gitzen import envs, file, git
 from gitzen.commands import push
 from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import GitRootDir
 
 from . import object_mother as om
 from .fakes.github_env import FakeGithubEnv
@@ -16,8 +15,8 @@ from .fakes.repo_files import given_repo
 # trunk-ignore(flake8/E501)
 def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> None:
     # given
-    root_dir = GitRootDir(f"{tmp_path}")
-    given_repo(git.RealGitEnv(), root_dir)
+    git_env = git.RealGitEnv()
+    root_dir = given_repo(git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
     pr_to_keep = om.gen_pr(zen_token)
@@ -44,8 +43,8 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
 # trunk-ignore(flake8/E501)
 def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> None:
     # given
-    root_dir = GitRootDir(f"{tmp_path}")
-    given_repo(git.RealGitEnv(), root_dir)
+    git_env = git.RealGitEnv()
+    root_dir = given_repo(git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
     pr_to_keep = om.gen_pr(zen_token)
@@ -75,8 +74,8 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
 
 def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     # given
-    root_dir = GitRootDir(f"{tmp_path}")
-    given_repo(git.RealGitEnv(), root_dir)
+    git_env = git.RealGitEnv()
+    root_dir = given_repo(git_env, tmp_path)
     deleted_zen_token = om.gen_zen_token()
     pr_to_close: PullRequest = om.gen_pr(deleted_zen_token)
     deleted_commit = pr_to_close.commits[0]

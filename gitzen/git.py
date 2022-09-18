@@ -117,6 +117,14 @@ def init(env: GitEnv) -> List[str]:
     return env.git("init")
 
 
+def init_bare(env: GitEnv) -> List[str]:
+    return env.git("init --bare")
+
+
+def clone(env: GitEnv, remote_repo: str, local_dir: str) -> List[str]:
+    return env.git(f"clone {remote_repo} {local_dir}")
+
+
 def add(env: GitEnv, files: List[str]) -> List[str]:
     return env.git(f"add {' '.join(files)}")
 
@@ -152,6 +160,14 @@ def rebase(env: GitEnv, target: GitBranchName) -> List[str]:
 
 def remote(env: GitEnv) -> List[str]:
     return env.git("remote --verbose")
+
+
+def remote_add(
+    env: GitEnv,
+    remote_name: GitRemoteName,
+    root_dir: GitRootDir,
+) -> List[str]:
+    return env.git(f"remote add {remote_name.value} {root_dir.value}")
 
 
 def rev_parse(env: GitEnv, args: str = "") -> List[str]:
