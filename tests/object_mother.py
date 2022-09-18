@@ -13,6 +13,7 @@ from gitzen.types import (
     GitBranchName,
     GithubRepoId,
     GithubUsername,
+    GitRemoteName,
     PullRequestBody,
     PullRequestId,
     PullRequestMergeable,
@@ -51,6 +52,10 @@ def gen_pr_body() -> PullRequestBody:
 
 def gen_git_branch_name() -> GitBranchName:
     return GitBranchName(fake.domain_word())
+
+
+def gen_remote_name() -> GitRemoteName:
+    return GitRemoteName(fake.domain_word())
 
 
 def gen_gh_username() -> GithubUsername:

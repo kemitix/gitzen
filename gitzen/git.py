@@ -130,6 +130,14 @@ def status(env: GitEnv) -> List[str]:
     return env.git("status")
 
 
+def push(
+    git_env: GitEnv,
+    remote: GitRemoteName,
+    branch: GitBranchName,
+) -> List[str]:
+    return git_env.git(f"push {remote.value} {branch.value}:{branch.value}")
+
+
 def rebase(env: GitEnv, target: GitBranchName) -> List[str]:
     return env.git(f"rebase {target.value} --autostash")
 
