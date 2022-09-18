@@ -48,16 +48,16 @@ def given_repo(git_env: envs.GitEnv, dir: PosixPath) -> GitRootDir:
     )
     os.chmod(hook, os.stat(hook).st_mode | stat.S_IEXEC)
     subprocess.run(["cat", ".git/hooks/commit-msg"])
-    show_status(git_env, dir)
+    show_status(git_env, repo)
     # create commit to represent remote HEAD
     print("# create first commit origin/master")
     file.write("README.md", [])
     git.add(git_env, ["README.md"])
     git.commit(git_env, ["First commit"])
-    show_status(git_env, dir)
+    show_status(git_env, repo)
     # push first commit to origin/master
     git.push(git_env, origin, master)
-    show_status(git_env, dir)
+    show_status(git_env, repo)
     # create two commits to represent changes on local HEAD
     print("# create second commit master")
     file.write("ALPHA.md", ["alpha"])
@@ -68,21 +68,18 @@ def given_repo(git_env: envs.GitEnv, dir: PosixPath) -> GitRootDir:
     file.write("BETA.md", ["beta"])
     git.add(git_env, ["BETA.md"])
     git.commit(git_env, ["Add BETA.md"])
-    show_status(git_env, dir)
+    show_status(git_env, repo)
     print(f"given_repo> END {dir}\n")
     return repo
 
 
-def show_status(git_env: GitEnv, dir: PosixPath) -> None:
-    ls_project_root = subprocess.run(["ls", "-la", dir])
+def show_status(git_env: GitEnv, dir: GitRootDir) -> None:
+    ls_project_root = subprocess.run(["ls", "-la", dir.value])
     if ls_project_root.stdout:
         lines = ls_project_root.stdout
         [print(f"ls> {line}") for line in lines]
-    [print(f"git status> {line}") for line in git.status(git_env)]
-    [
-        print(f"git log> {line}")
-        for line in git_env.git("log --oneline --graph --decorate --all")
-    ]
+    git.status(git_env)
+    git.log_graph(git_env)
 
 
 def given_file(file: str, lines: List[str]) -> None:
