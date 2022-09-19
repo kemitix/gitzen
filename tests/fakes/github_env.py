@@ -5,7 +5,11 @@ from gitzen import envs
 
 
 class MuteFakeGuthubEnv(envs.GithubEnv):
-    requests: List[str] = []
+    requests: List[str]
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.requests = []
 
     def gh(self, args: str) -> List[str]:
         self.requests.append(args)

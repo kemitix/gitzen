@@ -302,7 +302,7 @@ def regenerate_prs(
         create_pr(github_env, pr_branch, base_branch, commit)
     else:
         pr_branch = branches.pr_branch(pr)
-        update_pr(github_env, base_branch, commit)
+        update_pr(github_env, pr_branch, base_branch, commit)
     regenerate_prs(
         github_env,
         commit_stack[1:],
@@ -323,7 +323,8 @@ def create_pr(
 
 def update_pr(
     github_env: envs.GithubEnv,
+    pr_branch: GitBranchName,
     base: GitBranchName,
     commit: GitCommit,
 ) -> None:
-    github.update_pull_request(github_env, base, commit)
+    github.update_pull_request(github_env, pr_branch, base, commit)

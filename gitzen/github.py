@@ -236,11 +236,12 @@ def create_pull_request(
 
 def update_pull_request(
     github_env: envs.GithubEnv,
+    pr_branch: GitBranchName,
     base: GitBranchName,
     commit: GitCommit,
 ) -> None:
     github_env.gh(
-        "pr edit "
+        f"pr edit {pr_branch.value} "
         f"--base {base.value} "
         f"--title '{commit.messageHeadline.value}' "
         f"--body '{commit.messageBody.value}'"
