@@ -26,6 +26,7 @@ def push(
         cfg,
     )
     publish_pr_branches(git_env, commit_stack, status.username, cfg)
+    regenerate_prs(github_env, commit_stack, status.username, cfg)
 
 
 def prepare_pr_branches(
@@ -273,6 +274,41 @@ def publish_pr_branches(
         author,
         cfg,
         GitBranchName(commit.zen_token.value),
+    )
+
+
+def regenerate_prs(
+    github_env: envs.GithubEnv,
+    commit_stack: List[CommitPr],
+    author: GithubUsername,
+    cfg: config.Config,
+    last_pr_branch: Optional[GitBranchName] = None,
+) -> None:
+    if len(commit_stack) == 0:
+        return
+    if last_pr_branch is None:
+        base_branch = cfg.default_remote_branch
+    else:
+        base_branch = last_pr_branch
+    commit_pr = commit_stack[0]
+    commit = commit_pr.git_commit
+    pr = commit_pr.pull_request
+    if pr is None:
+        pr_branch = branches.pr_branch_planned(
+            author,
+            base_branch,
+            commit.zen_token,
+        )
+        create_pr(github_env, pr_branch, base_branch, commit)
+    else:
+        pr_branch = branches.pr_branch(pr)
+        update_pr(github_env, base_branch, commit)
+    regenerate_prs(
+        github_env,
+        commit_stack[1:],
+        author,
+        cfg,
+        pr_branch,
     )
 
 
