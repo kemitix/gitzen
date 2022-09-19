@@ -82,13 +82,13 @@ def get_commit_stack(
                 )
                 exit(exit_code.ZEN_TOKENS_MISSING)
             hash = CommitHash(commit_matches.group(1))
-            say(console_env, f":: hash: {hash}")
+            say(console_env, f":: hash: {hash.value}")
             have_hash = True
             subject_index = line_number + 4
             continue
         token = zen_token.find_in_line(line[4:])
         if token is not None:
-            say(console_env, f":: zen-token: {token}")
+            say(console_env, f":: zen-token: {token.value}")
             say(console_env, f":: body: {body.strip()}")
             commits.append(
                 GitCommit(
