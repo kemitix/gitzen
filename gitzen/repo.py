@@ -2,7 +2,7 @@ import re
 from typing import List, Tuple
 
 from gitzen import envs, exit_code, git, patterns, zen_token
-from gitzen.console import say
+from gitzen.console import info
 from gitzen.models.git_commit import GitCommit
 from gitzen.types import (
     CommitBody,
@@ -23,7 +23,7 @@ def get_local_branch_name(
         # TODO detected detached HEAD
         if branch.startswith("* "):
             return GitBranchName(branch[2:])
-    say(console_env, "ERROR: Can't find local branch name")
+    info(console_env, "ERROR: Can't find local branch name")
     exit(exit_code.NO_LOCAL_BRANCH_FOUND)
 
 
@@ -76,20 +76,20 @@ def get_commit_stack(
         commit_matches = re.search(patterns.commit_log_hash, line)
         if commit_matches:
             if have_hash:
-                say(
+                info(
                     console_env,
                     "No zen-token found - is pre-commit hook installed?",
                 )
                 exit(exit_code.ZEN_TOKENS_MISSING)
             hash = CommitHash(commit_matches.group(1))
-            say(console_env, f":: hash: {hash.value}")
+            info(console_env, f":: hash: {hash.value}")
             have_hash = True
             subject_index = line_number + 4
             continue
         token = zen_token.find_in_line(line[4:])
         if token is not None:
-            say(console_env, f":: zen-token: {token.value}")
-            say(console_env, f":: body: {body.strip()}")
+            info(console_env, f":: zen-token: {token.value}")
+            info(console_env, f":: body: {body.strip()}")
             commits.append(
                 GitCommit(
                     zen_token=token,
@@ -105,7 +105,7 @@ def get_commit_stack(
         if have_hash:
             if line_number == subject_index:
                 headline = line.strip()
-                say(console_env, f":: title: {headline}")
+                info(console_env, f":: title: {headline}")
             elif line_number == (subject_index + 1) and line != "\n":
                 body += line.strip() + "\n"
             elif line_number > (subject_index + 1):

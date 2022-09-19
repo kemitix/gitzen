@@ -4,7 +4,7 @@ from gitzen.models.git_patch import GitPatch
 
 
 class ConsoleEnv:
-    def say(self, message: str) -> None:
+    def _print(self, message: str) -> None:
         pass
 
 

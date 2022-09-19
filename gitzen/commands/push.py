@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple
 
 from gitzen import branches, config, envs, exit_code, git, github, repo
 from gitzen.config import Config
-from gitzen.console import say
+from gitzen.console import info
 from gitzen.envs import ConsoleEnv, GitEnv, GithubEnv
 from gitzen.models.commit_pr import CommitPr
 from gitzen.models.git_commit import GitCommit
@@ -59,14 +59,14 @@ def prepare_patches(
 ) -> Tuple[GithubInfo, List[CommitPr]]:
     status = github.fetch_info(console_env, git_env, github_env)
     local_branch = status.local_branch
-    say(console_env, f"local branch: {local_branch.value}")
+    info(console_env, f"local branch: {local_branch.value}")
     remote_branch = branches.get_required_remote_branch(
         console_env,
         local_branch,
         cfg,
     )
     remote_target = GitBranchName(f"{cfg.remote.value}/{remote_branch.value}")
-    say(console_env, remote_target.value)
+    info(console_env, remote_target.value)
     git.fetch(git_env, cfg.remote)
     git.rebase(git_env, remote_target)
     branches.validate_not_remote_pr(console_env, local_branch)

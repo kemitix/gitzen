@@ -1,7 +1,7 @@
 import re
 
 from gitzen import config, envs, exit_code, patterns
-from gitzen.console import say
+from gitzen.console import info
 from gitzen.models.github_pull_request import PullRequest
 from gitzen.types import GitBranchName, GithubUsername, ZenToken
 
@@ -25,7 +25,7 @@ def get_required_remote_branch(
 ) -> GitBranchName:
     remote_branch = get_remote_branch(local_branch, cfg)
     if len(remote_branch.value) == 0:
-        say(console_env, "remote branch not found")
+        info(console_env, "remote branch not found")
         exit(exit_code.REMOTE_BRANCH_NOT_FOUND)
     return remote_branch
 
@@ -36,7 +36,7 @@ def validate_not_remote_pr(
 ) -> None:
     matches = re.search(patterns.remote_pr_branch, local_branch.value)
     if matches:
-        say(
+        info(
             console_env,
             "It looks like you've checked out the remote branch. "
             "You don't need to do that. "
