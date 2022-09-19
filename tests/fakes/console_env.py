@@ -6,5 +6,5 @@ class FakeConsoleEnv(envs.ConsoleEnv):
         super().__init__()
         self.std_out = []
 
-    def say(self, message: str) -> None:
+    def _print(self, message: str) -> None:
         self.std_out.append(message)

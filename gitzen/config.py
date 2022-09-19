@@ -4,7 +4,7 @@ from typing import List
 import yaml
 
 from gitzen import envs
-from gitzen.console import say
+from gitzen.console import info
 from gitzen.types import GitBranchName, GitRemoteName, GitRootDir
 
 
@@ -66,7 +66,7 @@ def load(
 ) -> Config:
     config_file = f"{root_dir.value}/.gitzen.yml"
     if exists(config_file):
-        say(console_env, f"Reading config from {config_file}")
+        info(console_env, f"Reading config from {config_file}")
         gitzen_yml = read_yaml(config_file)
         default_branch = GitBranchName(gitzen_yml["defaultRemoteBranch"])
         remote_branches = [

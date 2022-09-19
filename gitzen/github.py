@@ -5,7 +5,7 @@ import subprocess
 from typing import Any, Dict, List
 
 from gitzen import envs, patterns, repo, zen_token
-from gitzen.console import say
+from gitzen.console import info
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_info import GithubInfo
@@ -122,20 +122,20 @@ def fetch_info(
     viewer = data["viewer"]
     pr_nodes = viewer["repository"]["pullRequests"]["nodes"]
     prs: List[PullRequest] = []
-    say(console_env, f"Found {len(pr_nodes)} prs")
+    info(console_env, f"Found {len(pr_nodes)} prs")
     for pr_node in pr_nodes:
         pr_repo_id = GithubRepoId(pr_node["repository"]["id"])
         if repo_id != pr_repo_id:
             continue
         base_ref = GitBranchName(pr_node["baseRefName"])
         head_ref = GitBranchName(pr_node["headRefName"])
-        say(console_env, f"{base_ref.value} <- {head_ref.value}")
+        info(console_env, f"{base_ref.value} <- {head_ref.value}")
         match = re.search(patterns.remote_pr_branch, head_ref.value)
         if match is None:
             print("unknown head_ref: " + head_ref.value)
             continue
         if match.group("target_branch") != base_ref.value:
-            say(
+            info(
                 console_env,
                 "ignore prs that don't target expected base branch",
             )
@@ -166,7 +166,7 @@ def fetch_info(
                 commits,
             )
         )
-    say(console_env, f"Kept {len(prs)} prs")
+    info(console_env, f"Kept {len(prs)} prs")
     return GithubInfo(
         username=GithubUsername(viewer["login"]),
         repo_id=repo_id,

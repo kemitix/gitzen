@@ -1,5 +1,5 @@
 from gitzen import envs, file
-from gitzen.console import say
+from gitzen.console import info
 from gitzen.types import GitRootDir
 
 
@@ -12,4 +12,4 @@ def install_hook(console_env: envs.ConsoleEnv, root_dir: GitRootDir) -> None:
             "",
         ],
     )
-    say(console_env, "Installed git zen hook")
+    info(console_env, "Installed git zen hook")
