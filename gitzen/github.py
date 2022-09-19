@@ -6,6 +6,7 @@ from typing import Any, Dict, List
 
 from gitzen import envs, patterns, repo, zen_token
 from gitzen.console import say
+from gitzen.models.git_commit import GitCommit
 from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
@@ -47,7 +48,11 @@ class RealGithubEnv(envs.GithubEnv):
 
     def gh(self, args: str) -> List[str]:
         gh_command = shlex.split(f"gh {args}")
-        result = subprocess.run(gh_command, stdout=subprocess.PIPE)
+        result = subprocess.run(
+            gh_command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
         stdout = result.stdout
         if stdout:
             lines = stdout.decode().splitlines()
@@ -211,4 +216,19 @@ def close_pull_request_with_comment(
 ) -> None:
     github_env.gh(
         f"pr close {pull_request.number.value} --comment '{comment}'",
+    )
+
+
+def create_pull_request(
+    github_env: envs.GithubEnv,
+    head: GitBranchName,
+    base: GitBranchName,
+    commit: GitCommit,
+) -> None:
+    github_env.gh(
+        "pr create "
+        f"--head {head.value} "
+        f"--base {base.value} "
+        f"--title '{commit.messageHeadline.value}' "
+        f"--body '{commit.messageBody.value}'"
     )

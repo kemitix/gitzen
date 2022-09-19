@@ -1,6 +1,5 @@
 import json
-import subprocess
-from subprocess import PIPE, CompletedProcess
+from subprocess import PIPE, STDOUT, CompletedProcess
 from unittest import mock
 
 from faker import Faker
@@ -68,7 +67,7 @@ def test_fetch_info_invokes_command(mock_subproc_run) -> None:
             "-f",
             f"query={query}",
         ],
-        stdout=subprocess.PIPE,
+        stdout=PIPE,
     )
     gitBranch = mock.call(
         [
@@ -76,8 +75,8 @@ def test_fetch_info_invokes_command(mock_subproc_run) -> None:
             "branch",
             "--no-color",
         ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
+        stdout=PIPE,
+        stderr=STDOUT,
     )
     mock_subproc_run.assert_has_calls(
         [
@@ -350,6 +349,7 @@ def test_add_comment(mock_subproc_run) -> None:
             comment,
         ],
         stdout=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -387,6 +387,7 @@ def test_close_pull_request(mock_subproc_run) -> None:
             f"{pr_number.value}",
         ],
         stdout=PIPE,
+        stderr=STDOUT,
     )
 
 
@@ -429,4 +430,5 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
             comment,
         ],
         stdout=PIPE,
+        stderr=STDOUT,
     )
