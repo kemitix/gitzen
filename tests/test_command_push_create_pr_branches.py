@@ -3,11 +3,15 @@ from pathlib import PosixPath
 from typing import List
 
 from gitzen import config, console, file, git, repo
-from gitzen.commands.push import update_patches, update_pr_branches
+
+# trunk-ignore(flake8/E501)
+from gitzen.commands.push import prepare_pr_branches, update_patches, update_pr_branches
 from gitzen.models.commit_pr import CommitPr
+from gitzen.patterns import short_hash
 from gitzen.types import GitBranchName
 
 from . import object_mother as om
+from .fakes.github_env import FakeGithubEnv
 from .fakes.repo_files import given_repo
 
 
@@ -20,6 +24,7 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     git_env = git.RealGitEnv()
     root_dir = given_repo(git_env, tmp_path)
     cfg = config.default_config(root_dir)
+    console_env = console.RealConsoleEnv()
     commits = repo.get_commit_stack(
         console.RealConsoleEnv(),
         git_env,
@@ -33,7 +38,7 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     stack: List[CommitPr] = [CommitPr(commit1, None), CommitPr(commit2, None)]
     update_patches(root_dir, [commit1, commit2])
     # when
-    update_pr_branches(git_env, stack, author, cfg)
+    update_pr_branches(console_env, git_env, stack, author, cfg)
     # then
     expected_branch1 = (
         "gitzen/pr"
@@ -63,22 +68,48 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     # given
     git_env = git.RealGitEnv()
     root_dir = given_repo(git_env, tmp_path)
+    repo_id = om.gen_gh_repo_id()
+    login = om.gen_gh_username()
+    github_env = FakeGithubEnv(
+        gh_responses={},
+        gql_responses={
+            repr({"repo_owner": "{owner}", "repo_name": "{repo}"}): [
+                {
+                    "data": {
+                        "repository": {"id": repo_id.value},
+                        "viewer": {
+                            "login": login.value,
+                            "repository": {
+                                "pullRequests": {
+                                    "nodes": [],
+                                },
+                            },
+                        },
+                    }
+                },
+                {
+                    "data": {
+                        "repository": {"id": repo_id.value},
+                        "viewer": {
+                            "login": login.value,
+                            "repository": {
+                                "pullRequests": {
+                                    "nodes": [],
+                                },
+                            },
+                        },
+                    }
+                },
+            ]
+        },
+    )
+    console_env = console.RealConsoleEnv()
     cfg = config.default_config(root_dir)
-    commits = repo.get_commit_stack(
-        console.RealConsoleEnv(),
-        git_env,
-        cfg.remote,
-        GitBranchName("master"),
-    )
-    assert len(commits) == 2
-    author = om.gen_gh_username()
-    stack: List[CommitPr] = [CommitPr(commit, None) for commit in commits]
-    update_patches(root_dir, commits)
-    git.branch_create(
-        git_env,
-        GitBranchName(commits[1].zen_token.value),
-        GitBranchName("master"),
-    )
+
+    print("\n\n# prepare initial pr branches\n\n")
+    prepare_pr_branches(console_env, git_env, github_env, cfg)
+
+    print("\n\nAdd new-file\n\n")
     file.write("new-file", ["contents"])
     git.add(git_env, ["new-file"])
     output = git.commit_amend_noedit(git_env)
@@ -95,24 +126,46 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     assert hash_match
     assert expected_hash is not None
     # when
-    update_pr_branches(git_env, stack, author, cfg)
+    print("\n\nprepare new pr branches\n\n")
+    status, stack = prepare_pr_branches(console_env, git_env, github_env, cfg)
     # then
-    expected_branch1 = (
-        "gitzen/pr"
-        f"/{author.value}"
-        f"/{cfg.default_remote_branch.value}"
-        f"/{commits[0].zen_token.value}"
-    )
-    [hash] = git.rev_parse(git_env, expected_branch1)
-    assert hash.startswith(expected_hash)
-    expected_branch2 = (
-        "gitzen/pr"
-        f"/{author.value}"
-        f"/{commits[0].zen_token.value}"
-        f"/{commits[1].zen_token.value}"
-    )
-    [hash] = git.rev_parse(git_env, expected_branch2)
-    assert hash.startswith(expected_hash)
+    print("\n\nReview status\n\n")
+    log = git.log_graph(git_env)
+    assert len(log) == 7
+    if "HEAD" in log[0]:
+        patch_beta = 0
+        patch_alpha = 1
+        pull_beta = 2
+        pull_alpha = 4
+    else:
+        pull_beta = 0
+        pull_alpha = 2
+        patch_beta = 3
+        patch_alpha = 4
+    author = status.username.value
+    token_alpha = stack[0].git_commit.zen_token
+    token_beta = stack[1].git_commit.zen_token
+    ref_patch_alpha = f"refs/gitzen/patches/{token_alpha.value}"
+    ref_patch_beta = f"refs/gitzen/patches/{token_beta.value}"
+    pr_alpha = f"gitzen/pr/{author}/master/{token_alpha.value}"
+    pr_beta = f"gitzen/pr/{author}/{token_alpha.value}/{token_beta.value}"
+
+    assert re.search(
+        rf"\* {short_hash} \(HEAD -> master, {ref_patch_beta}\) Add BETA.md$",
+        log[patch_beta],
+    ), "Patch Beta"
+    assert re.search(
+        rf"\* {short_hash} \({ref_patch_alpha}\) Add ALPHA.md$",
+        log[patch_alpha],
+    ), "Patch Alpha"
+    assert re.search(
+        rf"\* {short_hash} \({pr_beta}\) Add BETA.md",
+        log[pull_beta],
+    ), "PR Beta"
+    assert re.search(
+        rf"\* {short_hash} \({pr_alpha}\) Add ALPHA.md",
+        log[pull_alpha],
+    ), "PR Alpha"
 
 
 def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
@@ -124,6 +177,7 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     git_env = git.RealGitEnv()
     root_dir = given_repo(git_env, tmp_path)
     cfg = config.default_config(root_dir)
+    console_env = console.RealConsoleEnv()
     commits = repo.get_commit_stack(
         console.RealConsoleEnv(),
         git_env,
@@ -134,9 +188,9 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     stack: List[CommitPr] = [CommitPr(commit, None) for commit in commits]
     author = om.gen_gh_username()
     update_patches(root_dir, commits)
-    update_pr_branches(git_env, stack, author, cfg)
+    update_pr_branches(console_env, git_env, stack, author, cfg)
     # when
-    update_pr_branches(git_env, stack, author, cfg)
+    update_pr_branches(console_env, git_env, stack, author, cfg)
     # then
     expected_branch1 = (
         "gitzen/pr"
