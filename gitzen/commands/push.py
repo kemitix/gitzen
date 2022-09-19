@@ -283,3 +283,11 @@ def create_pr(
     commit: GitCommit,
 ) -> None:
     github.create_pull_request(github_env, head, base, commit)
+
+
+def update_pr(
+    github_env: envs.GithubEnv,
+    base: GitBranchName,
+    commit: GitCommit,
+) -> None:
+    github.update_pull_request(github_env, base, commit)
