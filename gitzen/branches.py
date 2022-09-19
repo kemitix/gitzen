@@ -10,20 +10,20 @@ from gitzen.types import GitBranchName, GithubUsername, ZenToken
 # if found use that, otherwise, use the default branch from Config
 def get_remote_branch(
     local_branch: GitBranchName,
-    config: config.Config,
+    cfg: config.Config,
 ) -> GitBranchName:
-    for remote_branch in config.remote_branches:
+    for remote_branch in cfg.remote_branches:
         if remote_branch == local_branch:
             return remote_branch
-    return config.default_remote_branch
+    return cfg.default_remote_branch
 
 
 def get_required_remote_branch(
     console_env: envs.ConsoleEnv,
     local_branch: GitBranchName,
-    config: config.Config,
+    cfg: config.Config,
 ) -> GitBranchName:
-    remote_branch = get_remote_branch(local_branch, config)
+    remote_branch = get_remote_branch(local_branch, cfg)
     if len(remote_branch.value) == 0:
         say(console_env, "remote branch not found")
         exit(exit_code.REMOTE_BRANCH_NOT_FOUND)
