@@ -136,6 +136,8 @@ def update_pr_branches(
     cfg: config.Config,
     last_pr: Optional[PullRequest] = None,
 ) -> None:
+    if len(commit_stack) == 0:
+        return
     commit_pr = commit_stack[0]
     commit = commit_pr.git_commit
     pr = commit_pr.pull_request
@@ -151,15 +153,14 @@ def update_pr_branches(
         pr = PullRequest.create_template(commit, author, cfg, branch)
     else:
         update_pr_branch(console_env, git_env, pr, cfg, last_pr)
-    if len(commit_stack) > 1:
-        update_pr_branches(
-            console_env,
-            git_env,
-            commit_stack[1:],
-            author,
-            cfg,
-            pr,
-        )
+    update_pr_branches(
+        console_env,
+        git_env,
+        commit_stack[1:],
+        author,
+        cfg,
+        pr,
+    )
 
 
 def pr_source(
