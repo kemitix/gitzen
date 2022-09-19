@@ -41,8 +41,8 @@ def given_repo(git_env: envs.GitEnv, dir: PosixPath) -> GitRootDir:
         hook,
         [
             "#!/usr/bin/env bash",
-            "echo running gz hook",
-            f"{project_root}/gz hook $1",
+            "echo running git zen hook",
+            f"{project_root}/git-zen hook $1",
             "",
         ],
     )
