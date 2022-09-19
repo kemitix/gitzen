@@ -28,7 +28,7 @@ from gitzen.types import (
 
 
 class RealGithubEnv(envs.GithubEnv):
-    def graphql(
+    def _graphql(
         self,
         params: Dict[str, str],
         query: str,
@@ -46,7 +46,7 @@ class RealGithubEnv(envs.GithubEnv):
         else:
             return {}  # TODO return some error condition
 
-    def gh(self, args: str) -> List[str]:
+    def _gh(self, args: str) -> List[str]:
         gh_command = shlex.split(f"gh {args}")
         print(f"{gh_command}")
         result = subprocess.run(
@@ -111,7 +111,7 @@ def fetch_info(
     git_env: envs.GitEnv,
     github_env: envs.GithubEnv,
 ) -> GithubInfo:
-    data = github_env.graphql(
+    data = github_env._graphql(
         {
             "repo_owner": "{owner}",
             "repo_name": "{repo}",
@@ -202,14 +202,16 @@ def add_comment(
     pull_request: PullRequest,
     comment: str,
 ) -> None:
-    github_env.gh(f"pr comment {pull_request.number.value} --body '{comment}'")
+    github_env._gh(
+        f"pr comment {pull_request.number.value} --body '{comment}'",
+    )
 
 
 def close_pull_request(
     github_env: envs.GithubEnv,
     pull_request: PullRequest,
 ) -> None:
-    github_env.gh(f"pr close {pull_request.number.value}")
+    github_env._gh(f"pr close {pull_request.number.value}")
 
 
 def close_pull_request_with_comment(
@@ -217,7 +219,7 @@ def close_pull_request_with_comment(
     pull_request: PullRequest,
     comment: str,
 ) -> None:
-    github_env.gh(
+    github_env._gh(
         f"pr close {pull_request.number.value} --comment '{comment}'",
     )
 
@@ -228,7 +230,7 @@ def create_pull_request(
     base: GitBranchName,
     commit: GitCommit,
 ) -> None:
-    github_env.gh(
+    github_env._gh(
         "pr create "
         f"--head {head.value} "
         f"--base {base.value} "
@@ -243,7 +245,7 @@ def update_pull_request(
     base: GitBranchName,
     commit: GitCommit,
 ) -> None:
-    github_env.gh(
+    github_env._gh(
         f"pr edit {pr_branch.value} "
         f"--base {base.value} "
         f"--title '{commit.messageHeadline.value}' "
