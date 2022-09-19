@@ -48,6 +48,7 @@ class RealGithubEnv(envs.GithubEnv):
 
     def gh(self, args: str) -> List[str]:
         gh_command = shlex.split(f"gh {args}")
+        print(f"{gh_command}")
         result = subprocess.run(
             gh_command,
             stdout=subprocess.PIPE,
@@ -56,6 +57,8 @@ class RealGithubEnv(envs.GithubEnv):
         stdout = result.stdout
         if stdout:
             lines = stdout.decode().splitlines()
+            [print(f"| {line}") for line in lines]
+            print("\\------------------")
             return lines
         else:
             return []
