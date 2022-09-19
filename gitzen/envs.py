@@ -9,7 +9,7 @@ class ConsoleEnv:
 
 
 class GitEnv:
-    def git(self, args: str) -> List[str]:
+    def _git(self, args: str) -> List[str]:
         pass
 
     def write_patch(self, patch: GitPatch) -> None:

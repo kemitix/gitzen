@@ -13,7 +13,7 @@ class FakeGitEnv(envs.GitEnv):
         for args in responses:
             self.request_counters[args] = 0
 
-    def git(self, args: str) -> List[str]:
+    def _git(self, args: str) -> List[str]:
         print(f">FakeGit> {args}")
         self.requests.append(args)
         if args in self.responses:
