@@ -4,6 +4,14 @@ from typing import Any, Dict, List
 from gitzen import envs
 
 
+class MuteFakeGuthubEnv(envs.GithubEnv):
+    requests: List[str] = []
+
+    def gh(self, args: str) -> List[str]:
+        self.requests.append(args)
+        return []
+
+
 class FakeGithubEnv(envs.GithubEnv):
     gh_responses: Dict[str, List[List[str]]]
     gh_request_counters: Dict[str, int] = {}

@@ -274,3 +274,12 @@ def publish_pr_branches(
         cfg,
         GitBranchName(commit.zen_token.value),
     )
+
+
+def create_pr(
+    github_env: envs.GithubEnv,
+    head: GitBranchName,
+    base: GitBranchName,
+    commit: GitCommit,
+) -> None:
+    github.create_pull_request(github_env, head, base, commit)
