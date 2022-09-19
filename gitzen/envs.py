@@ -17,12 +17,12 @@ class GitEnv:
 
 
 class GithubEnv:
-    def graphql(
+    def _graphql(
         self,
         params: Dict[str, str],
         query: str,
     ) -> Dict[str, Any]:
         pass
 
-    def gh(self, args: str) -> List[str]:
+    def _gh(self, args: str) -> List[str]:
         pass

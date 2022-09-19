@@ -11,7 +11,7 @@ class MuteFakeGuthubEnv(envs.GithubEnv):
         super().__init__()
         self.requests = []
 
-    def gh(self, args: str) -> List[str]:
+    def _gh(self, args: str) -> List[str]:
         self.requests.append(args)
         return []
 
@@ -36,7 +36,7 @@ class FakeGithubEnv(envs.GithubEnv):
         for args in gql_responses:
             self.gql_request_counters[args] = 0
 
-    def gh(self, args: str) -> List[str]:
+    def _gh(self, args: str) -> List[str]:
         print(f">FakeGithub>GH> {args}")
         close_with_comment_matches = re.search(
             "pr close (?P<pr>\\d+) --comment '(?P<comment>.*)'",
@@ -61,7 +61,7 @@ class FakeGithubEnv(envs.GithubEnv):
             print(f"ERROR: no response for these args: {args}")
         exit(1)
 
-    def graphql(
+    def _graphql(
         self,
         params: Dict[str, str],
         query: str,
