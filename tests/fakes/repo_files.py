@@ -31,8 +31,8 @@ def given_repo(git_env: envs.GitEnv, dir: PosixPath) -> GitRootDir:
     origin = GitRemoteName("origin")
     master = GitBranchName("master")
     # set author identity
-    git_env.git('config user.email "you@example.com"')
-    git_env.git('config user.name "Your Name"')
+    git.config_set(git_env, "user.email", "you@example.com")
+    git.config_set(git_env, "user.name", "Your Name")
     # install hook
     print("# install hook")
     hook = f"{repo_dir}/.git/hooks/commit-msg"
