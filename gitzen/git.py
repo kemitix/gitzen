@@ -16,7 +16,7 @@ from gitzen.types import GitBranchName, GitRemoteName, GitRootDir, ZenToken
 class RealGitEnv(GitEnv):
     def git(self, args: str) -> List[str]:
         git_command = f"git {args}"
-        print(f"{git_command} >")
+        print(f"{git_command}")
         result: subprocess.CompletedProcess[bytes] = subprocess.run(
             shlex.split(git_command),
             stdout=subprocess.PIPE,
