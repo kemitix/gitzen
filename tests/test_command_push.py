@@ -2,7 +2,7 @@ from pathlib import PosixPath
 
 from genericpath import exists
 
-from gitzen import console, envs, file, git
+from gitzen import console, file, git
 from gitzen.commands import push
 from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_pull_request import PullRequest
@@ -27,7 +27,7 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
         "--comment 'Closing pull request: commit has gone away'"
     )
     console_env = console.RealConsoleEnv()
-    github_env: envs.GithubEnv = FakeGithubEnv(
+    github_env = FakeGithubEnv(
         gh_responses={close_args: [[]]},
         gql_responses={},
     )
@@ -62,7 +62,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
         "--comment 'Closing pull request: commit has gone away'"
     )
     console_env = console.RealConsoleEnv()
-    github_env: envs.GithubEnv = FakeGithubEnv(
+    github_env = FakeGithubEnv(
         gh_responses={close_args: [[]]},
         gql_responses={},
     )
@@ -102,7 +102,7 @@ def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
         "--comment 'Closing pull request: commit has gone away'"
     )
     console_env = console.RealConsoleEnv()
-    github_env: envs.GithubEnv = FakeGithubEnv(
+    github_env = FakeGithubEnv(
         gh_responses={close_args: [[]]},
         gql_responses={},
     )

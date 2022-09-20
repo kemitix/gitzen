@@ -1,11 +1,11 @@
-from gitzen import console, envs, git, github
+from gitzen import console, git, github
 from gitzen.console import info
 
 
 def status(
     console_env: console.Env,
     git_env: git.Env,
-    github_env: envs.GithubEnv,
+    github_env: github.Env,
 ) -> None:
     info(console_env, "Querying Github...")
     prs = github.fetch_info(console_env, git_env, github_env).pull_requests
