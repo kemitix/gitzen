@@ -47,7 +47,12 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
         f"/{commit1.zen_token.value}"
     )
     assert (
-        git.branch_exists(git_env, GitBranchName(expected_branch1)) is True
+        git.branch_exists(
+            console_env,
+            git_env,
+            GitBranchName(expected_branch1),
+        )
+        is True
     ), "first branch"
     expected_branch2 = (
         "gitzen/pr"
@@ -56,7 +61,12 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
         f"/{commit2.zen_token.value}"
     )
     assert (
-        git.branch_exists(git_env, GitBranchName(expected_branch2)) is True
+        git.branch_exists(
+            console_env,
+            git_env,
+            GitBranchName(expected_branch2),
+        )
+        is True
     ), "second branch"
 
 
@@ -106,13 +116,13 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     console_env = console.RealConsoleEnv()
     cfg = config.default_config(root_dir)
 
-    print("\n\n# prepare initial pr branches\n\n")
+    console.info(console_env, "prepare initial pr branches")
     prepare_pr_branches(console_env, git_env, github_env, cfg)
 
-    print("\n\nAdd new-file\n\n")
+    console.info(console_env, "Add new-file")
     file.write("new-file", ["contents"])
-    git.add(git_env, ["new-file"])
-    output = git.commit_amend_noedit(git_env)
+    git.add(console_env, git_env, ["new-file"])
+    output = git.commit_amend_noedit(console_env, git_env)
     hash_match = False
     expected_hash = None
     for line in output:
@@ -126,11 +136,11 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     assert hash_match
     assert expected_hash is not None
     # when
-    print("\n\nprepare new pr branches\n\n")
+    console.info(console_env, "prepare new pr branches")
     status, stack = prepare_pr_branches(console_env, git_env, github_env, cfg)
     # then
-    print("\n\nReview status\n\n")
-    log = git.log_graph(git_env)
+    console.info(console_env, "Review status")
+    log = git.log_graph(console_env, git_env)
     assert len(log) == 7
     if "HEAD" in log[0]:
         patch_beta = 0
@@ -199,7 +209,12 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
         f"/{commits[0].zen_token.value}"
     )
     assert (
-        git.branch_exists(git_env, GitBranchName(expected_branch1)) is True
+        git.branch_exists(
+            console_env,
+            git_env,
+            GitBranchName(expected_branch1),
+        )
+        is True
     ), "first branch"
     expected_branch2 = (
         "gitzen/pr"
@@ -208,5 +223,10 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
         f"/{commits[1].zen_token.value}"
     )
     assert (
-        git.branch_exists(git_env, GitBranchName(expected_branch2)) is True
+        git.branch_exists(
+            console_env,
+            git_env,
+            GitBranchName(expected_branch2),
+        )
+        is True
     ), "second branch"

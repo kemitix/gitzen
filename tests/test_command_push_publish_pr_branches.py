@@ -34,16 +34,16 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     update_patches(cfg.root_dir, commits)
     update_pr_branches(console_env, git_env, stack, author, cfg)
     # when
-    publish_pr_branches(git_env, stack, author, cfg)
+    publish_pr_branches(console_env, git_env, stack, author, cfg)
     # then
     token_alpha = commits[0].zen_token
     token_beta = commits[1].zen_token
     username = author.value
     pr_alpha = f"gitzen/pr/{username}/master/{token_alpha.value}"
     pr_beta = f"gitzen/pr/{username}/{token_alpha.value}/{token_beta.value}"
-    assert git.branch_exists(git_env, GitBranchName(pr_alpha))
-    assert git.branch_exists(git_env, GitBranchName(pr_beta))
-    log = git.log_graph(git_env)
+    assert git.branch_exists(console_env, git_env, GitBranchName(pr_alpha))
+    assert git.branch_exists(console_env, git_env, GitBranchName(pr_beta))
+    log = git.log_graph(console_env, git_env)
     assert len(log) == 6
     if "HEAD" in log[0]:
         patch_beta = 0

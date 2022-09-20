@@ -1,12 +1,12 @@
 import os
 import stat
 
-from gitzen import envs, file
+from gitzen import console, file
 from gitzen.console import info
 from gitzen.types import GitRootDir
 
 
-def install_hook(console_env: envs.ConsoleEnv, root_dir: GitRootDir) -> None:
+def install_hook(console_env: console.Env, root_dir: GitRootDir) -> None:
     hook = f"{root_dir.value}/.git/hooks/commit-msg"
     file.write(
         hook,

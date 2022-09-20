@@ -1,7 +1,7 @@
-from gitzen import envs
+from gitzen import console
 
 
-class FakeConsoleEnv(envs.ConsoleEnv):
+class FakeConsoleEnv(console.Env):
     def __init__(self) -> None:
         super().__init__()
         self.std_out = []

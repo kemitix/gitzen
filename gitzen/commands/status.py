@@ -1,9 +1,9 @@
-from gitzen import envs, github
+from gitzen import console, envs, github
 from gitzen.console import info
 
 
 def status(
-    console_env: envs.ConsoleEnv,
+    console_env: console.Env,
     git_env: envs.GitEnv,
     github_env: envs.GithubEnv,
 ) -> None:

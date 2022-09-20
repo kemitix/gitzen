@@ -1,7 +1,7 @@
 from subprocess import PIPE, STDOUT
 from unittest import mock
 
-from gitzen import github
+from gitzen import console, github
 
 from . import object_mother as om
 
@@ -13,8 +13,11 @@ def test_invokes_command(mock_subproc_run) -> None:
     base = om.gen_git_branch_name()
     commit = om.gen_commit(token=None)
     # when
+    console_env = console.RealConsoleEnv()
+    github_env = github.RealGithubEnv()
     github.update_pull_request(
-        github.RealGithubEnv(),
+        console_env,
+        github_env,
         pr_branch,
         base,
         commit,

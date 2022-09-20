@@ -1,6 +1,6 @@
 import re
 
-from gitzen import config, envs, exit_code, patterns
+from gitzen import config, console, exit_code, patterns
 from gitzen.console import info
 from gitzen.models.github_pull_request import PullRequest
 from gitzen.types import GitBranchName, GithubUsername, ZenToken
@@ -19,7 +19,7 @@ def get_remote_branch(
 
 
 def get_required_remote_branch(
-    console_env: envs.ConsoleEnv,
+    console_env: console.Env,
     local_branch: GitBranchName,
     cfg: config.Config,
 ) -> GitBranchName:
@@ -31,7 +31,7 @@ def get_required_remote_branch(
 
 
 def validate_not_remote_pr(
-    console_env: envs.ConsoleEnv,
+    console_env: console.Env,
     local_branch: GitBranchName,
 ) -> None:
     matches = re.search(patterns.remote_pr_branch, local_branch.value)
