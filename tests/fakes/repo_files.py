@@ -5,12 +5,11 @@ from os import chdir
 from pathlib import PosixPath
 from typing import List
 
-from gitzen import console, envs, file, git
-from gitzen.envs import GitEnv
+from gitzen import console, file, git
 from gitzen.types import GitBranchName, GitRemoteName, GitRootDir
 
 
-def given_repo(git_env: envs.GitEnv, dir: PosixPath) -> GitRootDir:
+def given_repo(git_env: git.Env, dir: PosixPath) -> GitRootDir:
     """
     Creates two git repos. One is bare and is included as the
     'origin' remote for the other.
@@ -75,7 +74,7 @@ def given_repo(git_env: envs.GitEnv, dir: PosixPath) -> GitRootDir:
 
 def show_status(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: git.Env,
     dir: GitRootDir,
 ) -> None:
     ls_project_root = subprocess.run(["ls", "-la", dir.value])

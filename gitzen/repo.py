@@ -1,7 +1,7 @@
 import re
 from typing import List, Tuple
 
-from gitzen import console, envs, exit_code, git, patterns, zen_token
+from gitzen import console, exit_code, git, patterns, zen_token
 from gitzen.console import info
 from gitzen.models.git_commit import GitCommit
 from gitzen.types import (
@@ -16,7 +16,7 @@ from gitzen.types import (
 
 def get_local_branch_name(
     console_env: console.Env,
-    git_env: git.GitEnv,
+    git_env: git.Env,
 ) -> GitBranchName:
     branches = git.branch(console_env, git_env)
     for branch in branches:
@@ -59,7 +59,7 @@ def get_repo_details_from_remote(remote: str) -> Tuple[str, str, str, bool]:
 
 def get_commit_stack(
     console_env: console.Env,
-    git_env: envs.GitEnv,
+    git_env: git.Env,
     remote: GitRemoteName,
     remote_branch: GitBranchName,
 ) -> List[GitCommit]:

@@ -4,7 +4,7 @@ import shlex
 import subprocess
 from typing import Any, Dict, List
 
-from gitzen import console, envs, patterns, repo, zen_token
+from gitzen import console, envs, git, patterns, repo, zen_token
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_info import GithubInfo
@@ -109,7 +109,7 @@ query_status = """query($repo_owner: String!, $repo_name: String!){
 
 def fetch_info(
     console_env: console.Env,
-    git_env: envs.GitEnv,
+    git_env: git.Env,
     github_env: envs.GithubEnv,
 ) -> GithubInfo:
     data = github_env._graphql(

@@ -5,7 +5,7 @@ from typing import Dict, List, Optional, Tuple
 from gitzen import branches, config, console, envs, exit_code, git, github, repo
 from gitzen.config import Config
 from gitzen.console import info
-from gitzen.envs import GitEnv, GithubEnv
+from gitzen.envs import GithubEnv
 from gitzen.models.commit_pr import CommitPr
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.git_patch import GitPatch
@@ -16,7 +16,7 @@ from gitzen.types import GitBranchName, GithubUsername, GitRootDir, ZenToken
 
 def push(
     console_env: console.Env,
-    git_env: envs.GitEnv,
+    git_env: git.Env,
     github_env: envs.GithubEnv,
     cfg: config.Config,
 ) -> None:
@@ -38,7 +38,7 @@ def push(
 
 def prepare_pr_branches(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: git.Env,
     github_env: GithubEnv,
     cfg: Config,
 ) -> Tuple[GithubInfo, List[CommitPr]]:
@@ -60,7 +60,7 @@ def prepare_pr_branches(
 
 def prepare_patches(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: git.Env,
     github_env: GithubEnv,
     cfg: Config,
 ) -> Tuple[GithubInfo, List[CommitPr]]:
@@ -139,7 +139,7 @@ def update_patches(
 
 def update_pr_branches(
     console_env: console.Env,
-    git_env: envs.GitEnv,
+    git_env: git.Env,
     commit_stack: List[CommitPr],
     author: GithubUsername,
     cfg: config.Config,
@@ -185,7 +185,7 @@ def pr_source(
 
 
 def create_pr_branch(
-    git_env: envs.GitEnv,
+    git_env: git.Env,
     console_env: console.Env,
     last_pr: Optional[PullRequest],
     cfg: config.Config,
@@ -210,7 +210,7 @@ def create_pr_branch(
 
 def update_pr_branch(
     console_env: console.Env,
-    git_env: envs.GitEnv,
+    git_env: git.Env,
     pr: PullRequest,
     cfg: config.Config,
     last_pr: Optional[PullRequest],
@@ -232,7 +232,7 @@ def update_pr_branch(
 
 def cherry_pick_branch(
     console_env: console.Env,
-    git_env: envs.GitEnv,
+    git_env: git.Env,
     zen_token: ZenToken,
     branch: GitBranchName,
 ) -> None:
@@ -265,7 +265,7 @@ def cherry_pick_branch(
 
 def publish_pr_branches(
     console_env: console.Env,
-    git_env: envs.GitEnv,
+    git_env: git.Env,
     commit_stack: List[CommitPr],
     author: GithubUsername,
     cfg: config.Config,

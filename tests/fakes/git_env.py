@@ -1,9 +1,9 @@
 from typing import Dict, List
 
-from gitzen import console, envs
+from gitzen import console, git
 
 
-class FakeGitEnv(envs.GitEnv):
+class FakeGitEnv(git.Env):
     requests: List[str] = []
     responses: Dict[str, List[List[str]]]
     request_counters: Dict[str, int] = {}

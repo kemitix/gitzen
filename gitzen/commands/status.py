@@ -1,10 +1,10 @@
-from gitzen import console, envs, github
+from gitzen import console, envs, git, github
 from gitzen.console import info
 
 
 def status(
     console_env: console.Env,
-    git_env: envs.GitEnv,
+    git_env: git.Env,
     github_env: envs.GithubEnv,
 ) -> None:
     info(console_env, "Querying Github...")

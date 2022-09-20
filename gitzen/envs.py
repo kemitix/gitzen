@@ -1,19 +1,6 @@
 from typing import Any, Dict, List
 
 from gitzen import console
-from gitzen.models.git_patch import GitPatch
-
-
-class GitEnv:
-    def _git(
-        self,
-        console_env: console.Env,
-        args: str,
-    ) -> List[str]:
-        pass
-
-    def write_patch(self, patch: GitPatch) -> None:
-        pass
 
 
 class GithubEnv:
