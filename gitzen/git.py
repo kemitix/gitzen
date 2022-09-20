@@ -8,12 +8,23 @@ from typing import List
 from genericpath import exists
 
 from gitzen import console, exit_code, file
-from gitzen.envs import GitEnv
 from gitzen.models.git_patch import GitPatch
 from gitzen.types import GitBranchName, GitRemoteName, GitRootDir, ZenToken
 
 
-class RealGitEnv(GitEnv):
+class Env:
+    def _git(
+        self,
+        console_env: console.Env,
+        args: str,
+    ) -> List[str]:
+        pass
+
+    def write_patch(self, patch: GitPatch) -> None:
+        pass
+
+
+class RealGitEnv(Env):
     def _git(self, console_env: console.Env, args: str) -> List[str]:
         git_command = f"git {args}"
         console.log(console_env, "git", f"{git_command}")
@@ -52,7 +63,7 @@ def gitzen_patch_ref(zen_token: ZenToken) -> GitBranchName:
 # will exit the program if called from outside a git repo
 def root_dir(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
 ) -> GitRootDir:
     output = rev_parse(console_env, git_env, "--show-toplevel")
     if output == "":
@@ -79,14 +90,14 @@ def delete_patch(zen_token: ZenToken, root_dir: GitRootDir) -> None:
 
 def branch(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
 ) -> List[str]:
     return git_env._git(console_env, "branch --no-color")
 
 
 def branch_create(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     new_branch_name: GitBranchName,
     source_branch_name: GitBranchName,
 ) -> List[str]:
@@ -98,7 +109,7 @@ def branch_create(
 
 def branch_exists(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     branch_name: GitBranchName,
 ) -> bool:
     lines = [line[2:] for line in branch(console_env, git_env)]
@@ -108,7 +119,7 @@ def branch_exists(
 
 def cherry_pick(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     ref: GitBranchName,
 ) -> List[str]:
     return git_env._git(console_env, f"cherry-pick -x {ref.value}")
@@ -116,21 +127,21 @@ def cherry_pick(
 
 def cherry_pick_skip(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
 ) -> List[str]:
     return git_env._git(console_env, "cherry-pick --skip")
 
 
 def cherry_pick_continue(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
 ) -> List[str]:
     return git_env._git(console_env, "cherry-pick --continue")
 
 
 def config_set(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     key: str,
     value: str,
 ) -> List[str]:
@@ -139,7 +150,7 @@ def config_set(
 
 def fetch(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     remote: GitRemoteName,
 ) -> List[str]:
     return git_env._git(console_env, f"fetch {remote.value}")
@@ -147,21 +158,21 @@ def fetch(
 
 def init(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
 ) -> List[str]:
     return git_env._git(console_env, "init")
 
 
 def init_bare(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
 ) -> List[str]:
     return git_env._git(console_env, "init --bare")
 
 
 def clone(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     remote_repo: str,
     local_dir: str,
 ) -> List[str]:
@@ -170,7 +181,7 @@ def clone(
 
 def add(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     files: List[str],
 ) -> List[str]:
     return git_env._git(console_env, f"add {' '.join(files)}")
@@ -178,7 +189,7 @@ def add(
 
 def commit(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     message: List[str],
 ) -> List[str]:
     log = "\n".join(message)
@@ -187,14 +198,14 @@ def commit(
 
 def commit_amend_noedit(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
 ) -> List[str]:
     return git_env._git(console_env, "commit --amend --no-edit")
 
 
 def log(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     args: str = "",
 ) -> List[str]:
     return git_env._git(console_env, f"log --no-color {args}")
@@ -202,14 +213,14 @@ def log(
 
 def status(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
 ) -> List[str]:
     return git_env._git(console_env, "status")
 
 
 def push(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     remote: GitRemoteName,
     branch: GitBranchName,
 ) -> List[str]:
@@ -220,7 +231,7 @@ def push(
 
 def rebase(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     target: GitBranchName,
 ) -> List[str]:
     return git_env._git(console_env, f"rebase {target.value} --autostash")
@@ -228,14 +239,14 @@ def rebase(
 
 def remote(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
 ) -> List[str]:
     return git_env._git(console_env, "remote --verbose")
 
 
 def remote_add(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     remote_name: GitRemoteName,
     root_dir: GitRootDir,
 ) -> List[str]:
@@ -247,7 +258,7 @@ def remote_add(
 
 def rev_parse(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     args: str = "",
 ) -> List[str]:
     return git_env._git(console_env, f"rev-parse {args}")
@@ -255,7 +266,7 @@ def rev_parse(
 
 def switch(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
     branch: GitBranchName,
 ) -> List[str]:
     return git_env._git(console_env, f"switch {branch.value}")
@@ -263,6 +274,6 @@ def switch(
 
 def log_graph(
     console_env: console.Env,
-    git_env: GitEnv,
+    git_env: Env,
 ) -> List[str]:
     return git_env._git(console_env, "log --oneline --graph --decorate --all")
