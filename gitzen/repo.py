@@ -1,7 +1,7 @@
 import re
 from typing import List, Tuple
 
-from gitzen import envs, exit_code, git, patterns, zen_token
+from gitzen import console, envs, exit_code, git, patterns, zen_token
 from gitzen.console import info
 from gitzen.models.git_commit import GitCommit
 from gitzen.types import (
@@ -15,10 +15,10 @@ from gitzen.types import (
 
 
 def get_local_branch_name(
-    console_env: envs.ConsoleEnv,
+    console_env: console.Env,
     git_env: git.GitEnv,
 ) -> GitBranchName:
-    branches = git.branch(git_env)
+    branches = git.branch(console_env, git_env)
     for branch in branches:
         # TODO detected detached HEAD
         if branch.startswith("* "):
@@ -58,12 +58,16 @@ def get_repo_details_from_remote(remote: str) -> Tuple[str, str, str, bool]:
 
 
 def get_commit_stack(
-    console_env: envs.ConsoleEnv,
+    console_env: console.Env,
     git_env: envs.GitEnv,
     remote: GitRemoteName,
     remote_branch: GitBranchName,
 ) -> List[GitCommit]:
-    log = git.log(git_env, f"{remote.value}/{remote_branch.value}..HEAD")
+    log = git.log(
+        console_env,
+        git_env,
+        f"{remote.value}/{remote_branch.value}..HEAD",
+    )
     have_hash = False
     commits: List[GitCommit] = []
     hash = CommitHash("")

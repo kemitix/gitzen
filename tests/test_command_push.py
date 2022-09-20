@@ -2,7 +2,7 @@ from pathlib import PosixPath
 
 from genericpath import exists
 
-from gitzen import envs, file, git
+from gitzen import console, envs, file, git
 from gitzen.commands import push
 from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_pull_request import PullRequest
@@ -26,12 +26,19 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
         f"pr close {pr_to_close.number.value} "
         "--comment 'Closing pull request: commit has gone away'"
     )
+    console_env = console.RealConsoleEnv()
     github_env: envs.GithubEnv = FakeGithubEnv(
         gh_responses={close_args: [[]]},
         gql_responses={},
     )
     # when
-    push.clean_up_deleted_commits(github_env, prs, git_commits, root_dir)
+    push.clean_up_deleted_commits(
+        console_env,
+        github_env,
+        prs,
+        git_commits,
+        root_dir,
+    )
     # then
     assert pr_to_close.number.value in github_env.closed_with_comment
     assert (
@@ -54,12 +61,14 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
         f"pr close {pr_to_close.number.value} "
         "--comment 'Closing pull request: commit has gone away'"
     )
+    console_env = console.RealConsoleEnv()
     github_env: envs.GithubEnv = FakeGithubEnv(
         gh_responses={close_args: [[]]},
         gql_responses={},
     )
     # when
     result = push.clean_up_deleted_commits(
+        console_env,
         github_env,
         prs,
         git_commits,
@@ -92,11 +101,18 @@ def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
         f"pr close {pr_to_close.number.value} "
         "--comment 'Closing pull request: commit has gone away'"
     )
+    console_env = console.RealConsoleEnv()
     github_env: envs.GithubEnv = FakeGithubEnv(
         gh_responses={close_args: [[]]},
         gql_responses={},
     )
     # when
-    push.clean_up_deleted_commits(github_env, prs, git_commits, root_dir)
+    push.clean_up_deleted_commits(
+        console_env,
+        github_env,
+        prs,
+        git_commits,
+        root_dir,
+    )
     # then
     assert not exists(patch_file)

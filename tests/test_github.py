@@ -336,8 +336,10 @@ def test_add_comment(mock_subproc_run) -> None:
         GithubRepoId(""),
         commits=[],
     )
+    console_env = console.RealConsoleEnv()
+    github_env = github.RealGithubEnv()
     # when
-    github.add_comment(github.RealGithubEnv(), pull_request, comment)
+    github.add_comment(console_env, github_env, pull_request, comment)
     # then
     mock_subproc_run.assert_called_with(
         [
@@ -377,7 +379,9 @@ def test_close_pull_request(mock_subproc_run) -> None:
         commits=[],
     )
     # when
-    github.close_pull_request(github.RealGithubEnv(), pull_request)
+    console_env = console.RealConsoleEnv()
+    github_env = github.RealGithubEnv()
+    github.close_pull_request(console_env, github_env, pull_request)
     # then
     mock_subproc_run.assert_called_with(
         [
@@ -416,8 +420,10 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
         commits=[],
     )
     # when
+    console_env = console.RealConsoleEnv()
+    github_env = github.RealGithubEnv()
     github.close_pull_request_with_comment(
-        github.RealGithubEnv(), pull_request, comment
+        console_env, github_env, pull_request, comment
     )
     # then
     mock_subproc_run.assert_called_with(

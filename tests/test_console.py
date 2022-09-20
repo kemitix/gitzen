@@ -2,15 +2,14 @@ from unittest.mock import patch
 
 from faker import Faker
 
-from gitzen.console import RealConsoleEnv, info
+from gitzen import console
 
 
 @patch("builtins.print")
-def test_console_say_prints(mock_print) -> None:
+def test_console_info_prints(mock_print) -> None:
     # given
-    console = RealConsoleEnv()
     message = Faker().word()
     # when
-    info(console, message)
+    console.info(console.RealConsoleEnv(), message)
     # then
     mock_print.assert_called_with(message)

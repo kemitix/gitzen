@@ -70,7 +70,10 @@ def test_command_status_fetches_info_with_pr() -> None:
     # when
     status.status(console_env, git_env, github_env)
     # then
-    assert console_env.std_out == [
+    stdout = list(
+        filter(lambda line: not line.startswith("Fake"), console_env.std_out),
+    )
+    assert stdout == [
         "Querying Github...",
         "Found 1 prs",
         f"{base_ref_name} <- {head_ref_name}",
@@ -99,7 +102,7 @@ def test_command_status_fetches_info_with_no_pr() -> None:
     login = fake.word()
     zen_token = "1234abcd"
     base_ref_name = branch_name
-    head_ref_name = f"non-gitzen/pr/user/{base_ref_name}/{zen_token}"
+    head_ref_name = "non-gitzen/pr/123"
     commit = {
         "commit": {
             "oid": "commit-hash",
@@ -142,10 +145,14 @@ def test_command_status_fetches_info_with_no_pr() -> None:
     # when
     status.status(console_env, git_env, github_env)
     # then
-    assert console_env.std_out == [
+    stdout = list(
+        filter(lambda line: not line.startswith("Fake"), console_env.std_out),
+    )
+    assert stdout == [
         "Querying Github...",
         "Found 1 prs",
         f"{base_ref_name} <- {head_ref_name}",
+        "github.fetch_info> unknown head_ref: non-gitzen/pr/123",
         "Kept 0 prs",
         "Stack is empty - no PRs found",
     ]

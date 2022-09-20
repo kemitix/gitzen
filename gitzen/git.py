@@ -7,16 +7,16 @@ from typing import List
 
 from genericpath import exists
 
-from gitzen import exit_code, file
+from gitzen import console, exit_code, file
 from gitzen.envs import GitEnv
 from gitzen.models.git_patch import GitPatch
 from gitzen.types import GitBranchName, GitRemoteName, GitRootDir, ZenToken
 
 
 class RealGitEnv(GitEnv):
-    def _git(self, args: str) -> List[str]:
+    def _git(self, console_env: console.Env, args: str) -> List[str]:
         git_command = f"git {args}"
-        print(f"{git_command}")
+        console.log(console_env, "git", f"{git_command}")
         result: subprocess.CompletedProcess[bytes] = subprocess.run(
             shlex.split(git_command),
             stdout=subprocess.PIPE,
@@ -25,11 +25,11 @@ class RealGitEnv(GitEnv):
         stdout = result.stdout
         if stdout:
             lines = stdout.decode().splitlines()
-            [print(f"| {line}") for line in lines]
-            print("\\------------------")
+            [console.log(console_env, "git", f"| {line}") for line in lines]
+            console.log(console_env, "git", "\\------------------")
             return lines
         else:
-            print("\\------------------")
+            console.log(console_env, "git", "\\------------------")
             return []
 
 
@@ -50,8 +50,11 @@ def gitzen_patch_ref(zen_token: ZenToken) -> GitBranchName:
 
 
 # will exit the program if called from outside a git repo
-def root_dir(git_env: GitEnv) -> GitRootDir:
-    output = rev_parse(git_env, "--show-toplevel")
+def root_dir(
+    console_env: console.Env,
+    git_env: GitEnv,
+) -> GitRootDir:
+    output = rev_parse(console_env, git_env, "--show-toplevel")
     if output == "":
         exit(exit_code.NOT_IN_GIT_REPO)
     return GitRootDir(output[0])
@@ -74,113 +77,192 @@ def delete_patch(zen_token: ZenToken, root_dir: GitRootDir) -> None:
         os.remove(patch_file)
 
 
-def branch(env: GitEnv) -> List[str]:
-    return env._git("branch --no-color")
+def branch(
+    console_env: console.Env,
+    git_env: GitEnv,
+) -> List[str]:
+    return git_env._git(console_env, "branch --no-color")
 
 
 def branch_create(
-    env: GitEnv,
+    console_env: console.Env,
+    git_env: GitEnv,
     new_branch_name: GitBranchName,
     source_branch_name: GitBranchName,
 ) -> List[str]:
-    return env._git(
+    return git_env._git(
+        console_env,
         f"branch {new_branch_name.value} {source_branch_name.value}",
     )
 
 
 def branch_exists(
-    env: GitEnv,
+    console_env: console.Env,
+    git_env: GitEnv,
     branch_name: GitBranchName,
 ) -> bool:
-    lines = [line[2:] for line in branch(env)]
+    lines = [line[2:] for line in branch(console_env, git_env)]
     branches = [GitBranchName(name) for name in lines]
     return branch_name in branches
 
 
-def cherry_pick(env: GitEnv, ref: GitBranchName) -> List[str]:
-    return env._git(f"cherry-pick -x {ref.value}")
+def cherry_pick(
+    console_env: console.Env,
+    git_env: GitEnv,
+    ref: GitBranchName,
+) -> List[str]:
+    return git_env._git(console_env, f"cherry-pick -x {ref.value}")
 
 
-def cherry_pick_skip(env: GitEnv) -> List[str]:
-    return env._git("cherry-pick --skip")
+def cherry_pick_skip(
+    console_env: console.Env,
+    git_env: GitEnv,
+) -> List[str]:
+    return git_env._git(console_env, "cherry-pick --skip")
 
 
-def cherry_pick_continue(env: GitEnv) -> List[str]:
-    return env._git("cherry-pick --continue")
+def cherry_pick_continue(
+    console_env: console.Env,
+    git_env: GitEnv,
+) -> List[str]:
+    return git_env._git(console_env, "cherry-pick --continue")
 
 
-def config_set(env: GitEnv, key: str, value: str) -> List[str]:
-    return env._git(f"config {key} '{value}'")
+def config_set(
+    console_env: console.Env,
+    git_env: GitEnv,
+    key: str,
+    value: str,
+) -> List[str]:
+    return git_env._git(console_env, f"config {key} '{value}'")
 
 
-def fetch(env: GitEnv, remote: GitRemoteName) -> List[str]:
-    return env._git(f"fetch {remote.value}")
+def fetch(
+    console_env: console.Env,
+    git_env: GitEnv,
+    remote: GitRemoteName,
+) -> List[str]:
+    return git_env._git(console_env, f"fetch {remote.value}")
 
 
-def init(env: GitEnv) -> List[str]:
-    return env._git("init")
+def init(
+    console_env: console.Env,
+    git_env: GitEnv,
+) -> List[str]:
+    return git_env._git(console_env, "init")
 
 
-def init_bare(env: GitEnv) -> List[str]:
-    return env._git("init --bare")
+def init_bare(
+    console_env: console.Env,
+    git_env: GitEnv,
+) -> List[str]:
+    return git_env._git(console_env, "init --bare")
 
 
-def clone(env: GitEnv, remote_repo: str, local_dir: str) -> List[str]:
-    return env._git(f"clone {remote_repo} {local_dir}")
+def clone(
+    console_env: console.Env,
+    git_env: GitEnv,
+    remote_repo: str,
+    local_dir: str,
+) -> List[str]:
+    return git_env._git(console_env, f"clone {remote_repo} {local_dir}")
 
 
-def add(env: GitEnv, files: List[str]) -> List[str]:
-    return env._git(f"add {' '.join(files)}")
+def add(
+    console_env: console.Env,
+    git_env: GitEnv,
+    files: List[str],
+) -> List[str]:
+    return git_env._git(console_env, f"add {' '.join(files)}")
 
 
-def commit(env: GitEnv, message: List[str]) -> List[str]:
+def commit(
+    console_env: console.Env,
+    git_env: GitEnv,
+    message: List[str],
+) -> List[str]:
     log = "\n".join(message)
-    return env._git(f"commit -m'{log}'")
+    return git_env._git(console_env, f"commit -m'{log}'")
 
 
-def commit_amend_noedit(env: GitEnv) -> List[str]:
-    return env._git("commit --amend --no-edit")
+def commit_amend_noedit(
+    console_env: console.Env,
+    git_env: GitEnv,
+) -> List[str]:
+    return git_env._git(console_env, "commit --amend --no-edit")
 
 
-def log(env: GitEnv, args: str = "") -> List[str]:
-    return env._git(f"log --no-color {args}")
+def log(
+    console_env: console.Env,
+    git_env: GitEnv,
+    args: str = "",
+) -> List[str]:
+    return git_env._git(console_env, f"log --no-color {args}")
 
 
-def status(env: GitEnv) -> List[str]:
-    return env._git("status")
+def status(
+    console_env: console.Env,
+    git_env: GitEnv,
+) -> List[str]:
+    return git_env._git(console_env, "status")
 
 
 def push(
+    console_env: console.Env,
     git_env: GitEnv,
     remote: GitRemoteName,
     branch: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"push {remote.value} {branch.value}:{branch.value}")
+    return git_env._git(
+        console_env, f"push {remote.value} {branch.value}:{branch.value}"
+    )
 
 
-def rebase(env: GitEnv, target: GitBranchName) -> List[str]:
-    return env._git(f"rebase {target.value} --autostash")
+def rebase(
+    console_env: console.Env,
+    git_env: GitEnv,
+    target: GitBranchName,
+) -> List[str]:
+    return git_env._git(console_env, f"rebase {target.value} --autostash")
 
 
-def remote(env: GitEnv) -> List[str]:
-    return env._git("remote --verbose")
+def remote(
+    console_env: console.Env,
+    git_env: GitEnv,
+) -> List[str]:
+    return git_env._git(console_env, "remote --verbose")
 
 
 def remote_add(
-    env: GitEnv,
+    console_env: console.Env,
+    git_env: GitEnv,
     remote_name: GitRemoteName,
     root_dir: GitRootDir,
 ) -> List[str]:
-    return env._git(f"remote add {remote_name.value} {root_dir.value}")
+    return git_env._git(
+        console_env,
+        f"remote add {remote_name.value} {root_dir.value}",
+    )
 
 
-def rev_parse(env: GitEnv, args: str = "") -> List[str]:
-    return env._git(f"rev-parse {args}")
+def rev_parse(
+    console_env: console.Env,
+    git_env: GitEnv,
+    args: str = "",
+) -> List[str]:
+    return git_env._git(console_env, f"rev-parse {args}")
 
 
-def switch(env: GitEnv, branch: GitBranchName) -> List[str]:
-    return env._git(f"switch {branch.value}")
+def switch(
+    console_env: console.Env,
+    git_env: GitEnv,
+    branch: GitBranchName,
+) -> List[str]:
+    return git_env._git(console_env, f"switch {branch.value}")
 
 
-def log_graph(env: GitEnv) -> List[str]:
-    return env._git("log --oneline --graph --decorate --all")
+def log_graph(
+    console_env: console.Env,
+    git_env: GitEnv,
+) -> List[str]:
+    return git_env._git(console_env, "log --oneline --graph --decorate --all")
