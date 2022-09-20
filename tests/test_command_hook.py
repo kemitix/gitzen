@@ -6,11 +6,12 @@ from gitzen import cli, file, patterns
 def test_handle_commit_message_with_empty_body(tmp_path) -> None:
     # given
     filename = f"{tmp_path}/COMMIT_EDITMSG"
-    file.write(filename, ["Initial commit"])
+    file_env = file.RealEnv()
+    file.write(file_env, filename, ["Initial commit"])
     # when
     cli.main(["", "hook", filename])
     # then
-    contents = file.read(filename)
+    contents = file.read(file_env, filename)
     assert contents[0] == "Initial commit"
     assert contents[1] == ""
     assert re.search(patterns.commit_body_zen_token, contents[2]) is not None
@@ -20,7 +21,9 @@ def test_handle_commit_message_with_empty_body(tmp_path) -> None:
 def test_handle_commit_message_with_a_body(tmp_path) -> None:
     # given
     filename = f"{tmp_path}/COMMIT_EDITMSG"
+    file_env = file.RealEnv()
     file.write(
+        file_env,
         filename,
         [
             "Initial commit",
@@ -33,7 +36,7 @@ def test_handle_commit_message_with_a_body(tmp_path) -> None:
     # when
     cli.main(["", "hook", filename])
     # then
-    contents = file.read(filename)
+    contents = file.read(file_env, filename)
     assert contents[0] == "Initial commit"
     assert contents[1] == ""
     assert contents[2] == "This does stuff."
@@ -47,11 +50,16 @@ def test_handle_commit_message_with_a_body(tmp_path) -> None:
 def test_handle_commit_message_with_empty_body_and_token(tmp_path) -> None:
     # given
     filename = f"{tmp_path}/COMMIT_MSG"
-    file.write(filename, ["Initial commit", "", "zen-token:1234abcd"])
+    file_env = file.RealEnv()
+    file.write(
+        file_env,
+        filename,
+        ["Initial commit", "", "zen-token:1234abcd"],
+    )
     # when
     cli.main(["", "hook", filename])
     # then
-    contents = file.read(filename)
+    contents = file.read(file_env, filename)
     assert contents[0] == "Initial commit"
     assert contents[1] == ""
     assert contents[2] == "zen-token:1234abcd"
@@ -61,7 +69,9 @@ def test_handle_commit_message_with_empty_body_and_token(tmp_path) -> None:
 def test_handle_commit_message_with_a_body_and_token(tmp_path) -> None:
     # given
     filename = f"{tmp_path}/COMMIT_MSG"
+    file_env = file.RealEnv()
     file.write(
+        file_env,
         filename,
         [
             "Initial commit",
@@ -76,7 +86,7 @@ def test_handle_commit_message_with_a_body_and_token(tmp_path) -> None:
     # when
     cli.main(["", "hook", filename])
     # then
-    contents = file.read(filename)
+    contents = file.read(file_env, filename)
     assert contents[0] == "Initial commit"
     assert contents[1] == ""
     assert contents[2] == "This does stuff."
@@ -90,7 +100,9 @@ def test_handle_commit_message_with_a_body_and_token(tmp_path) -> None:
 def test_handle_interactive_rebase(tmp_path) -> None:
     # given
     filename = f"{tmp_path}/PLAN"
+    file_env = file.RealEnv()
     file.write(
+        file_env,
         filename,
         [
             "pick 1234567 log message 1",
@@ -103,7 +115,7 @@ def test_handle_interactive_rebase(tmp_path) -> None:
     # when
     cli.main(["", "hook", filename])
     # then
-    contents = file.read(filename)
+    contents = file.read(file_env, filename)
     assert contents[0] == "reword 1234567 log message 1"
     assert contents[1] == "reword 890abcd log message 2"
     assert contents[2] == "reword ef12345 log message 3"

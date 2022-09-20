@@ -71,12 +71,17 @@ def root_dir(
     return GitRootDir(output[0])
 
 
-def write_patch(patch: GitPatch, root_dir: GitRootDir) -> None:
+def write_patch(
+    file_env: file.Env,
+    patch: GitPatch,
+    root_dir: GitRootDir,
+) -> None:
     patches_dir = gitzen_patches(root_dir)
     if not isdir(patches_dir):
         mkdir(gitzen_refs(root_dir))
         mkdir(patches_dir)
     file.write(
+        file_env,
         gitzen_patch_file(patch.zen_token, root_dir),
         [patch.hash.value],
     )

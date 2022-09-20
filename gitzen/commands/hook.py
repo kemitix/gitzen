@@ -5,16 +5,16 @@ from string import hexdigits
 from gitzen import file, patterns
 
 
-def main(args) -> None:
+def main(file_env: file.Env, args) -> None:
     filename = args[0]
     if filename.endswith("COMMIT_EDITMSG"):
-        handle_commit_message(filename)
+        handle_commit_message(file_env, filename)
     else:
-        handle_interactive_rebase(filename)
+        handle_interactive_rebase(file_env, filename)
 
 
-def handle_commit_message(filename: str) -> None:
-    message = file.read(filename)
+def handle_commit_message(file_env: file.Env, filename: str) -> None:
+    message = file.read(file_env, filename)
     for line in message:
         if re.search(patterns.commit_body_zen_token, line):
             # already has a zen token
@@ -22,7 +22,7 @@ def handle_commit_message(filename: str) -> None:
     message.append("")
     zen_token = gen_zen_token()
     message.append(f"zen-token:{zen_token}")
-    file.write(filename, message)
+    file.write(file_env, filename, message)
 
 
 # This is the only place we should be creating a zen_token value
@@ -32,8 +32,8 @@ def gen_zen_token() -> str:
     return "".join(choice(hexdigits) for i in range(8)).lower()
 
 
-def handle_interactive_rebase(filename: str) -> None:
-    plan = file.read(filename)
+def handle_interactive_rebase(file_env: file.Env, filename: str) -> None:
+    plan = file.read(file_env, filename)
     update = []
     for line in plan:
         matches = re.search(patterns.rebase_pick, line)
@@ -43,4 +43,4 @@ def handle_interactive_rebase(filename: str) -> None:
             update.append(f"reword {hash} {log}")
         else:
             update.append(line)
-    file.write(filename, update)
+    file.write(file_env, filename, update)

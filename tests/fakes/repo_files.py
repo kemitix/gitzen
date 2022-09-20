@@ -9,7 +9,11 @@ from gitzen import console, file, git
 from gitzen.types import GitBranchName, GitRemoteName, GitRootDir
 
 
-def given_repo(git_env: git.Env, dir: PosixPath) -> GitRootDir:
+def given_repo(
+    file_env: file.Env,
+    git_env: git.Env,
+    dir: PosixPath,
+) -> GitRootDir:
     """
     Creates two git repos. One is bare and is included as the
     'origin' remote for the other.
@@ -38,6 +42,7 @@ def given_repo(git_env: git.Env, dir: PosixPath) -> GitRootDir:
     hook = f"{repo_dir}/.git/hooks/commit-msg"
     project_root = os.path.realpath(os.path.dirname(__file__ + "/../../../.."))
     file.write(
+        file_env,
         hook,
         [
             "#!/usr/bin/env bash",
@@ -51,7 +56,7 @@ def given_repo(git_env: git.Env, dir: PosixPath) -> GitRootDir:
     show_status(console_env, git_env, repo)
     # create commit to represent remote HEAD
     console.log(console_env, "given_repo", "create first commit origin/master")
-    file.write("README.md", [])
+    file.write(file_env, "README.md", [])
     git.add(console_env, git_env, ["README.md"])
     git.commit(console_env, git_env, ["First commit"])
     show_status(console_env, git_env, repo)
@@ -60,11 +65,11 @@ def given_repo(git_env: git.Env, dir: PosixPath) -> GitRootDir:
     show_status(console_env, git_env, repo)
     # create two commits to represent changes on local HEAD
     console.log(console_env, "given_repo", "create second commit master")
-    file.write("ALPHA.md", ["alpha"])
+    file.write(file_env, "ALPHA.md", ["alpha"])
     git.add(console_env, git_env, ["ALPHA.md"])
     git.commit(console_env, git_env, ["Add ALPHA.md"])
     console.log(console_env, "given_repo", "create third commit master")
-    file.write("BETA.md", ["beta"])
+    file.write(file_env, "BETA.md", ["beta"])
     git.add(console_env, git_env, ["BETA.md"])
     git.commit(console_env, git_env, ["Add BETA.md"])
     show_status(console_env, git_env, repo)
@@ -85,7 +90,6 @@ def show_status(
     git.log_graph(console_env, git_env)
 
 
-def given_file(file: str, lines: List[str]) -> None:
-    with open(file, "w") as fp:
-        contents = "\n".join(lines)
-        fp.write(contents)
+def given_file(file_env: file.Env, filename: str, lines: List[str]) -> None:
+    with file.io_write(file_env, filename) as f:
+        f.write("\n".join(lines))

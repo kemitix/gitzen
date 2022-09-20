@@ -6,9 +6,14 @@ from gitzen.console import info
 from gitzen.types import GitRootDir
 
 
-def install_hook(console_env: console.Env, root_dir: GitRootDir) -> None:
+def install_hook(
+    console_env: console.Env,
+    file_env: file.Env,
+    root_dir: GitRootDir,
+) -> None:
     hook = f"{root_dir.value}/.git/hooks/commit-msg"
     file.write(
+        file_env,
         hook,
         [
             "#!/usr/bin/env bash",
