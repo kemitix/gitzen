@@ -1,7 +1,8 @@
 import re
 from typing import Dict, List, Optional, Tuple
 
-from gitzen import branches, config, console, exit_code, git, github, repo
+# trunk-ignore(flake8/E501)
+from gitzen import branches, config, console, exit_code, file, git, github, repo
 from gitzen.config import Config
 from gitzen.console import info
 from gitzen.models.commit_pr import CommitPr
@@ -14,12 +15,14 @@ from gitzen.types import GitBranchName, GithubUsername, GitRootDir, ZenToken
 
 def push(
     console_env: console.Env,
+    file_env: file.Env,
     git_env: git.Env,
     github_env: github.Env,
     cfg: config.Config,
 ) -> None:
     status, commit_stack = prepare_pr_branches(
         console_env,
+        file_env,
         git_env,
         github_env,
         cfg,
@@ -36,12 +39,14 @@ def push(
 
 def prepare_pr_branches(
     console_env: console.Env,
+    file_env: file.Env,
     git_env: git.Env,
     github_env: github.Env,
     cfg: Config,
 ) -> Tuple[GithubInfo, List[CommitPr]]:
     status, commit_stack = prepare_patches(
         console_env,
+        file_env,
         git_env,
         github_env,
         cfg,
@@ -58,6 +63,7 @@ def prepare_pr_branches(
 
 def prepare_patches(
     console_env: console.Env,
+    file_env: file.Env,
     git_env: git.Env,
     github_env: github.Env,
     cfg: Config,
@@ -91,7 +97,7 @@ def prepare_patches(
     pr_count = len(commit_stack)
     new_commits = [CommitPr(commit, None) for commit in commits[pr_count:]]
     commit_stack.extend(new_commits)
-    update_patches(cfg.root_dir, commits)
+    update_patches(file_env, cfg.root_dir, commits)
     return status, commit_stack
 
 
@@ -127,12 +133,13 @@ def clean_up_deleted_commits(
 
 
 def update_patches(
+    file_env: file.Env,
     root_dir: GitRootDir,
     commits: List[GitCommit],
 ) -> None:
     for commit in commits:
         patch = GitPatch(commit.zen_token, commit.hash)
-        git.write_patch(patch, root_dir)
+        git.write_patch(file_env, patch, root_dir)
 
 
 def update_pr_branches(

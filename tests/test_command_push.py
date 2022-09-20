@@ -15,8 +15,9 @@ from .fakes.repo_files import given_repo
 # trunk-ignore(flake8/E501)
 def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> None:
     # given
+    file_env = file.RealEnv()
     git_env = git.RealGitEnv()
-    root_dir = given_repo(git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
     pr_to_keep = om.gen_pr(zen_token)
@@ -50,8 +51,9 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
 # trunk-ignore(flake8/E501)
 def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> None:
     # given
+    file_env = file.RealEnv()
     git_env = git.RealGitEnv()
-    root_dir = given_repo(git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
     pr_to_keep = om.gen_pr(zen_token)
@@ -83,8 +85,9 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
 
 def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     # given
+    file_env = file.RealEnv()
     git_env = git.RealGitEnv()
-    root_dir = given_repo(git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     deleted_zen_token = om.gen_zen_token()
     pr_to_close: PullRequest = om.gen_pr(deleted_zen_token)
     deleted_commit = pr_to_close.commits[0]
@@ -93,10 +96,10 @@ def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     prs = [pr_to_close, pr_to_keep]
     git_commits = [om.gen_commit(zen_token)]
     patch = GitPatch(deleted_zen_token, deleted_commit.hash)
-    git.write_patch(patch, root_dir)
+    git.write_patch(file_env, patch, root_dir)
     patch_file = f"{git.gitzen_patches(root_dir)}/{patch.zen_token.value}"
     assert exists(patch_file)
-    assert file.read(patch_file) == [deleted_commit.hash.value]
+    assert file.read(file_env, patch_file) == [deleted_commit.hash.value]
     close_args = (
         f"pr close {pr_to_close.number.value} "
         "--comment 'Closing pull request: commit has gone away'"

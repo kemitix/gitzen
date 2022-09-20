@@ -12,18 +12,19 @@ from .fakes.repo_files import given_repo
 
 def test_update_patches_creates_patches(tmp_path: PosixPath) -> None:
     # given
+    file_env = file.RealEnv()
     git_env = git.RealGitEnv()
-    root_dir = given_repo(git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     commits: List[GitCommit] = [
         om.gen_commit(token=None),
         om.gen_commit(token=None),
     ]
     console_env = FakeConsoleEnv()
-    cfg = config.load(console_env, root_dir)
+    cfg = config.load(console_env, file_env, root_dir)
     # when
-    update_patches(cfg.root_dir, commits)
+    update_patches(file_env, cfg.root_dir, commits)
     # then
     commit1_patch_file = git.gitzen_patch_file(commits[0].zen_token, root_dir)
     commit2_patch_file = git.gitzen_patch_file(commits[1].zen_token, root_dir)
-    assert file.read(commit1_patch_file) == [commits[0].hash.value]
-    assert file.read(commit2_patch_file) == [commits[1].hash.value]
+    assert file.read(file_env, commit1_patch_file) == [commits[0].hash.value]
+    assert file.read(file_env, commit2_patch_file) == [commits[1].hash.value]

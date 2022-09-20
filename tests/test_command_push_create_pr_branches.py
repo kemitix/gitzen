@@ -21,8 +21,9 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     CommitPr, then a branch is created.
     """
     # given
+    file_env = file.RealEnv()
     git_env = git.RealGitEnv()
-    root_dir = given_repo(git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
     console_env = console.RealConsoleEnv()
     commits = repo.get_commit_stack(
@@ -36,7 +37,7 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     commit1 = commits[0]
     commit2 = commits[1]
     stack: List[CommitPr] = [CommitPr(commit1, None), CommitPr(commit2, None)]
-    update_patches(root_dir, [commit1, commit2])
+    update_patches(file_env, root_dir, [commit1, commit2])
     # when
     update_pr_branches(console_env, git_env, stack, author, cfg)
     # then
@@ -76,8 +77,9 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     updated, then the branch is updated.
     """
     # given
+    file_env = file.RealEnv()
     git_env = git.RealGitEnv()
-    root_dir = given_repo(git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     repo_id = om.gen_gh_repo_id()
     login = om.gen_gh_username()
     github_env = FakeGithubEnv(
@@ -117,10 +119,10 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     cfg = config.default_config(root_dir)
 
     console.info(console_env, "prepare initial pr branches")
-    prepare_pr_branches(console_env, git_env, github_env, cfg)
+    prepare_pr_branches(console_env, file_env, git_env, github_env, cfg)
 
     console.info(console_env, "Add new-file")
-    file.write("new-file", ["contents"])
+    file.write(file_env, "new-file", ["contents"])
     git.add(console_env, git_env, ["new-file"])
     output = git.commit_amend_noedit(console_env, git_env)
     hash_match = False
@@ -137,7 +139,13 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     assert expected_hash is not None
     # when
     console.info(console_env, "prepare new pr branches")
-    status, stack = prepare_pr_branches(console_env, git_env, github_env, cfg)
+    status, stack = prepare_pr_branches(
+        console_env,
+        file_env,
+        git_env,
+        github_env,
+        cfg,
+    )
     # then
     console.info(console_env, "Review status")
     log = git.log_graph(console_env, git_env)
@@ -184,8 +192,9 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     updated, then ignore.
     """
     # given
+    file_env = file.RealEnv()
     git_env = git.RealGitEnv()
-    root_dir = given_repo(git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
     console_env = console.RealConsoleEnv()
     commits = repo.get_commit_stack(
@@ -197,7 +206,7 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     assert len(commits) == 2
     stack: List[CommitPr] = [CommitPr(commit, None) for commit in commits]
     author = om.gen_gh_username()
-    update_patches(root_dir, commits)
+    update_patches(file_env, root_dir, commits)
     update_pr_branches(console_env, git_env, stack, author, cfg)
     # when
     update_pr_branches(console_env, git_env, stack, author, cfg)

@@ -2,7 +2,7 @@ import re
 from pathlib import PosixPath
 from typing import List
 
-from gitzen import config, console, git, repo
+from gitzen import config, console, file, git, repo
 
 # trunk-ignore(flake8/E501)
 from gitzen.commands.push import publish_pr_branches, update_patches, update_pr_branches
@@ -18,8 +18,9 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     tmp_path: PosixPath,
 ) -> None:
     # given
+    file_env = file.RealEnv()
     git_env = git.RealGitEnv()
-    root_dir = given_repo(git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
     console_env = console.RealConsoleEnv()
     commits = repo.get_commit_stack(
@@ -31,7 +32,7 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     assert len(commits) == 2
     stack: List[CommitPr] = [CommitPr(commit, None) for commit in commits]
     author = om.gen_gh_username()
-    update_patches(cfg.root_dir, commits)
+    update_patches(file_env, cfg.root_dir, commits)
     update_pr_branches(console_env, git_env, stack, author, cfg)
     # when
     publish_pr_branches(console_env, git_env, stack, author, cfg)
