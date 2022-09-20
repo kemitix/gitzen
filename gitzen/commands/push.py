@@ -1,11 +1,9 @@
 import re
 from typing import Dict, List, Optional, Tuple
 
-# trunk-ignore(flake8/E501)
-from gitzen import branches, config, console, envs, exit_code, git, github, repo
+from gitzen import branches, config, console, exit_code, git, github, repo
 from gitzen.config import Config
 from gitzen.console import info
-from gitzen.envs import GithubEnv
 from gitzen.models.commit_pr import CommitPr
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.git_patch import GitPatch
@@ -17,7 +15,7 @@ from gitzen.types import GitBranchName, GithubUsername, GitRootDir, ZenToken
 def push(
     console_env: console.Env,
     git_env: git.Env,
-    github_env: envs.GithubEnv,
+    github_env: github.Env,
     cfg: config.Config,
 ) -> None:
     status, commit_stack = prepare_pr_branches(
@@ -39,7 +37,7 @@ def push(
 def prepare_pr_branches(
     console_env: console.Env,
     git_env: git.Env,
-    github_env: GithubEnv,
+    github_env: github.Env,
     cfg: Config,
 ) -> Tuple[GithubInfo, List[CommitPr]]:
     status, commit_stack = prepare_patches(
@@ -61,7 +59,7 @@ def prepare_pr_branches(
 def prepare_patches(
     console_env: console.Env,
     git_env: git.Env,
-    github_env: GithubEnv,
+    github_env: github.Env,
     cfg: Config,
 ) -> Tuple[GithubInfo, List[CommitPr]]:
     status = github.fetch_info(console_env, git_env, github_env)
@@ -99,7 +97,7 @@ def prepare_patches(
 
 def clean_up_deleted_commits(
     console_env: console.Env,
-    github_env: envs.GithubEnv,
+    github_env: github.Env,
     pull_requests: List[PullRequest],
     commits: List[GitCommit],
     root_dir: GitRootDir,
@@ -297,7 +295,7 @@ def publish_pr_branches(
 
 def regenerate_prs(
     console_env: console.Env,
-    github_env: envs.GithubEnv,
+    github_env: github.Env,
     commit_stack: List[CommitPr],
     author: GithubUsername,
     cfg: config.Config,
@@ -334,7 +332,7 @@ def regenerate_prs(
 
 def create_pr(
     console_env: console.Env,
-    github_env: envs.GithubEnv,
+    github_env: github.Env,
     head: GitBranchName,
     base: GitBranchName,
     commit: GitCommit,
@@ -344,7 +342,7 @@ def create_pr(
 
 def update_pr(
     console_env: console.Env,
-    github_env: envs.GithubEnv,
+    github_env: github.Env,
     pr_branch: GitBranchName,
     base: GitBranchName,
     commit: GitCommit,

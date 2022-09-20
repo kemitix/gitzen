@@ -4,7 +4,7 @@ import shlex
 import subprocess
 from typing import Any, Dict, List
 
-from gitzen import console, envs, git, patterns, repo, zen_token
+from gitzen import console, git, github, patterns, repo, zen_token
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_info import GithubInfo
@@ -26,7 +26,24 @@ from gitzen.types import (
 )
 
 
-class RealGithubEnv(envs.GithubEnv):
+class Env:
+    def _graphql(
+        self,
+        console_env: console.Env,
+        params: Dict[str, str],
+        query: str,
+    ) -> Dict[str, Any]:
+        pass
+
+    def _gh(
+        self,
+        console_env: console.Env,
+        args: str,
+    ) -> List[str]:
+        pass
+
+
+class RealGithubEnv(github.Env):
     def _graphql(
         self,
         console_env: console.Env,
@@ -110,7 +127,7 @@ query_status = """query($repo_owner: String!, $repo_name: String!){
 def fetch_info(
     console_env: console.Env,
     git_env: git.Env,
-    github_env: envs.GithubEnv,
+    github_env: Env,
 ) -> GithubInfo:
     data = github_env._graphql(
         console_env,
@@ -205,7 +222,7 @@ def get_commits(pr_node) -> List[GithubCommit]:
 
 def add_comment(
     console_env: console.Env,
-    github_env: envs.GithubEnv,
+    github_env: Env,
     pull_request: PullRequest,
     comment: str,
 ) -> None:
@@ -217,7 +234,7 @@ def add_comment(
 
 def close_pull_request(
     console_env: console.Env,
-    github_env: envs.GithubEnv,
+    github_env: Env,
     pull_request: PullRequest,
 ) -> None:
     github_env._gh(console_env, f"pr close {pull_request.number.value}")
@@ -225,7 +242,7 @@ def close_pull_request(
 
 def close_pull_request_with_comment(
     console_env: console.Env,
-    github_env: envs.GithubEnv,
+    github_env: Env,
     pull_request: PullRequest,
     comment: str,
 ) -> None:
@@ -237,7 +254,7 @@ def close_pull_request_with_comment(
 
 def create_pull_request(
     console_env: console.Env,
-    github_env: envs.GithubEnv,
+    github_env: Env,
     head: GitBranchName,
     base: GitBranchName,
     commit: GitCommit,
@@ -254,7 +271,7 @@ def create_pull_request(
 
 def update_pull_request(
     console_env: console.Env,
-    github_env: envs.GithubEnv,
+    github_env: Env,
     pr_branch: GitBranchName,
     base: GitBranchName,
     commit: GitCommit,

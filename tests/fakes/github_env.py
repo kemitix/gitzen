@@ -1,10 +1,10 @@
 import re
 from typing import Any, Dict, List
 
-from gitzen import console, envs
+from gitzen import console, github
 
 
-class MuteFakeGuthubEnv(envs.GithubEnv):
+class MuteFakeGuthubEnv(github.Env):
     requests: List[str]
 
     def __init__(self) -> None:
@@ -16,7 +16,7 @@ class MuteFakeGuthubEnv(envs.GithubEnv):
         return []
 
 
-class FakeGithubEnv(envs.GithubEnv):
+class FakeGithubEnv(github.Env):
     gh_responses: Dict[str, List[List[str]]]
     gh_request_counters: Dict[str, int] = {}
     gql_responses: Dict[str, List[Any]]
