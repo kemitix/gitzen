@@ -2,17 +2,16 @@ from typing import List
 
 from gitzen import config, console, file, git, github
 from gitzen.commands import hook, init, push, status
-from gitzen.console import RealConsoleEnv
 
 
 def main(args: List[str]) -> None:
-    console_env: console.Env = RealConsoleEnv()
-    git_env = git.RealGitEnv()
+    console_env = console.RealEnv()
+    git_env = git.RealEnv()
     # verify that we are in a git repo or exit
     root_dir = git.root_dir(console_env, git_env)
     file_env = file.RealEnv()
     cfg = config.load(console_env, file_env, root_dir)
-    github_env = github.RealGithubEnv()
+    github_env = github.RealEnv()
     file_env = file.RealEnv()
     arg = args[1]
     if arg == "init":

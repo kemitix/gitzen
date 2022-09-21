@@ -47,7 +47,7 @@ def test_get_remote_branch_name_when_second_remote_matches() -> None:
 
 def test_validate_not_remote_pr_when_not_remote_pr() -> None:
     # given
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     # when
     branches.validate_not_remote_pr(console_env, GitBranchName("foo"))
     # then
@@ -56,7 +56,7 @@ def test_validate_not_remote_pr_when_not_remote_pr() -> None:
 
 def test_validate_not_remote_pr_when_is_remote_pr() -> None:
     # given
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     # when
     with pytest.raises(SystemExit) as system_exit:
         branches.validate_not_remote_pr(
@@ -76,7 +76,7 @@ def test_get_required_remote_branch_when_present_in_default_branch() -> None:
         remote=GitRemoteName("origin"),
         remote_branches=[],
     )
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     # when
     result = branches.get_required_remote_branch(
         console_env,
@@ -96,7 +96,7 @@ def test_get_required_remote_branch_when_present_in_remote_branches() -> None:
         remote=GitRemoteName("origin"),
         remote_branches=[local_branch],
     )
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     # when
     result = branches.get_required_remote_branch(
         console_env,
@@ -116,7 +116,7 @@ def test_get_required_remote_branch_when_not_present() -> None:
         remote=GitRemoteName("origin"),
         remote_branches=[],
     )
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     # when
     with pytest.raises(SystemExit) as system_exit:
         branches.get_required_remote_branch(console_env, local_branch, cfg)

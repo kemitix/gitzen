@@ -10,6 +10,6 @@ def test_console_info_prints(mock_print) -> None:
     # given
     message = Faker().word()
     # when
-    console.info(console.RealConsoleEnv(), message)
+    console.info(console.RealEnv(), message)
     # then
     mock_print.assert_called_with(message)

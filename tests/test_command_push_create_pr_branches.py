@@ -22,12 +22,12 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     """
     # given
     file_env = file.RealEnv()
-    git_env = git.RealGitEnv()
+    git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     commits = repo.get_commit_stack(
-        console.RealConsoleEnv(),
+        console.RealEnv(),
         git_env,
         cfg.remote,
         GitBranchName("master"),
@@ -78,7 +78,7 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     """
     # given
     file_env = file.RealEnv()
-    git_env = git.RealGitEnv()
+    git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     repo_id = om.gen_gh_repo_id()
     login = om.gen_gh_username()
@@ -115,7 +115,7 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
             ]
         },
     )
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     cfg = config.default_config(root_dir)
 
     console.info(console_env, "prepare initial pr branches")
@@ -193,12 +193,12 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     """
     # given
     file_env = file.RealEnv()
-    git_env = git.RealGitEnv()
+    git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     commits = repo.get_commit_stack(
-        console.RealConsoleEnv(),
+        console.RealEnv(),
         git_env,
         cfg.remote,
         GitBranchName("master"),
