@@ -5,8 +5,7 @@ from string import hexdigits
 from gitzen import file, patterns
 
 
-def main(file_env: file.Env, args) -> None:
-    filename = args[0]
+def main(file_env: file.Env, filename: str) -> None:
     if filename.endswith("COMMIT_EDITMSG"):
         handle_commit_message(file_env, filename)
     else:

@@ -1,24 +1,42 @@
-from typing import List
+from typing import List, Tuple
 
 from gitzen import config, console, file, git, github
 from gitzen.commands import hook, init, push, status
 
 
 def main(args: List[str]) -> None:
-    console_env = console.RealEnv()
-    git_env = git.RealEnv()
-    # verify that we are in a git repo or exit
-    root_dir = git.root_dir(console_env, git_env)
-    file_env = file.RealEnv()
-    cfg = config.load(console_env, file_env, root_dir)
-    github_env = github.RealEnv()
-    file_env = file.RealEnv()
-    arg = args[1]
-    if arg == "init":
-        init.install_hook(console_env, file_env, root_dir)
-    if arg == "hook":
-        hook.main(file_env, args[2:])
-    if arg == "status":
-        status.status(console_env, git_env, github_env)
-    if arg == "push":
-        push.push(console_env, file_env, git_env, github_env, cfg)
+    logs: List[str] = []
+    args.pop(0)  # remove commands own name
+    while len(args) > 0:
+        arg = args[0]
+        args.pop(0)
+        if arg == "--log":
+            logs.extend(args[0].split(","))
+        if arg == "init":
+            (console_env, file_env, git_env, _) = environments(logs)
+            root_dir = git.root_dir(console_env, git_env)
+            init.install_hook(console_env, file_env, root_dir)
+        if arg == "hook":
+            (_, file_env, _, _) = environments(logs)
+            hook.main(file_env, args[0])
+        if arg == "status":
+            (console_env, _, git_env, github_env) = environments(logs)
+            status.status(console_env, git_env, github_env)
+        if arg == "push":
+            (console_env, file_env, git_env, github_env) = environments(logs)
+            root_dir = git.root_dir(console_env, git_env)
+            cfg = config.load(console_env, file_env, root_dir)
+            push.push(console_env, file_env, git_env, github_env, cfg)
+
+
+def environments(
+    log_sections: List[str],
+) -> Tuple[console.Env, file.Env, git.Env, github.Env]:
+    if "all" in log_sections:
+        log_sections = ["git", "github", "file"]
+    return (
+        console.RealEnv(log_sections),
+        file.RealEnv(),
+        git.RealEnv(),
+        github.RealEnv(),
+    )

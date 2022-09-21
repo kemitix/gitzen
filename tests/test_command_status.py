@@ -152,7 +152,6 @@ def test_command_status_fetches_info_with_no_pr() -> None:
         "Querying Github...",
         "Found 1 prs",
         f"{base_ref_name} <- {head_ref_name}",
-        "github.fetch_info> unknown head_ref: non-gitzen/pr/123",
         "Kept 0 prs",
         "Stack is empty - no PRs found",
     ]
