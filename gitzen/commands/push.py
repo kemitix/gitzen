@@ -88,7 +88,6 @@ def prepare_patches(
         remote_branch,
     )
     commit_stack = clean_up_deleted_commits(
-        console_env,
         github_env,
         status.pull_requests,
         commits,
@@ -102,7 +101,6 @@ def prepare_patches(
 
 
 def clean_up_deleted_commits(
-    console_env: console.Env,
     github_env: github.Env,
     pull_requests: List[PullRequest],
     commits: List[GitCommit],
@@ -120,7 +118,6 @@ def clean_up_deleted_commits(
     for pr in pull_requests:
         if pr.zen_token not in zen_tokens:
             github.close_pull_request_with_comment(
-                console_env,
                 github_env,
                 pr,
                 "Closing pull request: commit has gone away",
@@ -323,10 +320,10 @@ def regenerate_prs(
             base_branch,
             commit.zen_token,
         )
-        create_pr(console_env, github_env, pr_branch, base_branch, commit)
+        create_pr(github_env, pr_branch, base_branch, commit)
     else:
         pr_branch = branches.pr_branch(pr)
-        update_pr(console_env, github_env, pr_branch, base_branch, commit)
+        update_pr(github_env, pr_branch, base_branch, commit)
     regenerate_prs(
         console_env,
         github_env,
@@ -338,24 +335,21 @@ def regenerate_prs(
 
 
 def create_pr(
-    console_env: console.Env,
     github_env: github.Env,
     head: GitBranchName,
     base: GitBranchName,
     commit: GitCommit,
 ) -> None:
-    github.create_pull_request(console_env, github_env, head, base, commit)
+    github.create_pull_request(github_env, head, base, commit)
 
 
 def update_pr(
-    console_env: console.Env,
     github_env: github.Env,
     pr_branch: GitBranchName,
     base: GitBranchName,
     commit: GitCommit,
 ) -> None:
     github.update_pull_request(
-        console_env,
         github_env,
         pr_branch,
         base,

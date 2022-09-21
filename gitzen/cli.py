@@ -37,5 +37,5 @@ def environments(
         console.RealEnv(log_sections),
         file.RealEnv(logger_env),
         git.RealEnv(logger_env),
-        github.RealEnv(),
+        github.RealEnv(logger_env),
     )
