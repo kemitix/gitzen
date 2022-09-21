@@ -19,12 +19,12 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
 ) -> None:
     # given
     file_env = file.RealEnv()
-    git_env = git.RealGitEnv()
+    git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     commits = repo.get_commit_stack(
-        console.RealConsoleEnv(),
+        console.RealEnv(),
         git_env,
         cfg.remote,
         GitBranchName("master"),

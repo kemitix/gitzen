@@ -49,9 +49,9 @@ def test_fetch_info_invokes_command(mock_subproc_run) -> None:
     ]
     # when
     github.fetch_info(
-        console.RealConsoleEnv(),
-        git.RealGitEnv(),
-        github.RealGithubEnv(),
+        console.RealEnv(),
+        git.RealEnv(),
+        github.RealEnv(),
     )
     # then
     query = github.query_status
@@ -297,9 +297,9 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     )
     # when
     result = github.fetch_info(
-        console.RealConsoleEnv(),
-        git.RealGitEnv(),
-        github.RealGithubEnv(),
+        console.RealEnv(),
+        git.RealEnv(),
+        github.RealEnv(),
     )
     # then
     assert len(result.pull_requests) == 1
@@ -336,8 +336,8 @@ def test_add_comment(mock_subproc_run) -> None:
         GithubRepoId(""),
         commits=[],
     )
-    console_env = console.RealConsoleEnv()
-    github_env = github.RealGithubEnv()
+    console_env = console.RealEnv()
+    github_env = github.RealEnv()
     # when
     github.add_comment(console_env, github_env, pull_request, comment)
     # then
@@ -379,8 +379,8 @@ def test_close_pull_request(mock_subproc_run) -> None:
         commits=[],
     )
     # when
-    console_env = console.RealConsoleEnv()
-    github_env = github.RealGithubEnv()
+    console_env = console.RealEnv()
+    github_env = github.RealEnv()
     github.close_pull_request(console_env, github_env, pull_request)
     # then
     mock_subproc_run.assert_called_with(
@@ -420,8 +420,8 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
         commits=[],
     )
     # when
-    console_env = console.RealConsoleEnv()
-    github_env = github.RealGithubEnv()
+    console_env = console.RealEnv()
+    github_env = github.RealEnv()
     github.close_pull_request_with_comment(
         console_env, github_env, pull_request, comment
     )

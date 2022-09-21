@@ -43,7 +43,7 @@ class Env:
         pass
 
 
-class RealGithubEnv(github.Env):
+class RealEnv(github.Env):
     def _graphql(
         self,
         console_env: console.Env,

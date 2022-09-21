@@ -16,7 +16,7 @@ from .fakes.repo_files import given_repo
 def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> None:
     # given
     file_env = file.RealEnv()
-    git_env = git.RealGitEnv()
+    git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
@@ -27,7 +27,7 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
         f"pr close {pr_to_close.number.value} "
         "--comment 'Closing pull request: commit has gone away'"
     )
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     github_env = FakeGithubEnv(
         gh_responses={close_args: [[]]},
         gql_responses={},
@@ -52,7 +52,7 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
 def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> None:
     # given
     file_env = file.RealEnv()
-    git_env = git.RealGitEnv()
+    git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
@@ -63,7 +63,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
         f"pr close {pr_to_close.number.value} "
         "--comment 'Closing pull request: commit has gone away'"
     )
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     github_env = FakeGithubEnv(
         gh_responses={close_args: [[]]},
         gql_responses={},
@@ -86,7 +86,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
 def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     # given
     file_env = file.RealEnv()
-    git_env = git.RealGitEnv()
+    git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     deleted_zen_token = om.gen_zen_token()
     pr_to_close: PullRequest = om.gen_pr(deleted_zen_token)
@@ -104,7 +104,7 @@ def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
         f"pr close {pr_to_close.number.value} "
         "--comment 'Closing pull request: commit has gone away'"
     )
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     github_env = FakeGithubEnv(
         gh_responses={close_args: [[]]},
         gql_responses={},

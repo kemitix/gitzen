@@ -10,9 +10,9 @@ def test_load_when_file_not_found(tmp_path: PosixPath) -> None:
     # given
     # a repo with no config file
     file_env = file.RealEnv()
-    git_env = git.RealGitEnv()
+    git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     # when
     result = config.load(console_env, file_env, root_dir)
     # then
@@ -23,7 +23,7 @@ def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
     # given
     # a repo with a config file
     file_env = file.RealEnv()
-    git_env = git.RealGitEnv()
+    git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     configFile = f"{root_dir.value}/.gitzen.yml"
     given_file(
@@ -35,7 +35,7 @@ def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
             "remote: other",
         ],
     )
-    console_env = console.RealConsoleEnv()
+    console_env = console.RealEnv()
     # when
     result = config.load(console_env, file_env, root_dir)
     # then

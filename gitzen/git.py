@@ -24,7 +24,7 @@ class Env:
         pass
 
 
-class RealGitEnv(Env):
+class RealEnv(Env):
     def _git(self, console_env: console.Env, args: str) -> List[str]:
         git_command = f"git {args}"
         console.log(console_env, "git", f"{git_command}")

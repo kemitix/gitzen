@@ -3,7 +3,7 @@ class Env:
         pass
 
 
-class RealConsoleEnv(Env):
+class RealEnv(Env):
     def _print(self, message: str) -> None:
         print(message)
 

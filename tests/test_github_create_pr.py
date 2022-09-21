@@ -13,8 +13,8 @@ def test_invokes_command(mock_subproc_run) -> None:
     base = om.gen_git_branch_name()
     commit = om.gen_commit(token=None)
     # when
-    console_env = console.RealConsoleEnv()
-    github_env = github.RealGithubEnv()
+    console_env = console.RealEnv()
+    github_env = github.RealEnv()
     github.create_pull_request(console_env, github_env, head, base, commit)
     # then
     mock_subproc_run.assert_called_with(
