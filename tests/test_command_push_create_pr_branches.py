@@ -2,7 +2,7 @@ import re
 from pathlib import PosixPath
 from typing import List
 
-from gitzen import config, console, file, git, repo
+from gitzen import config, console, file, git, logger, repo
 
 # trunk-ignore(flake8/E501)
 from gitzen.commands.push import prepare_pr_branches, update_patches, update_pr_branches
@@ -21,7 +21,7 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     CommitPr, then a branch is created.
     """
     # given
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
@@ -77,7 +77,7 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     updated, then the branch is updated.
     """
     # given
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     repo_id = om.gen_gh_repo_id()
@@ -192,7 +192,7 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     updated, then ignore.
     """
     # given
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)

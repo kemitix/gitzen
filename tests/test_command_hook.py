@@ -1,12 +1,12 @@
 import re
 
-from gitzen import cli, file, patterns
+from gitzen import cli, file, logger, patterns
 
 
 def test_handle_commit_message_with_empty_body(tmp_path) -> None:
     # given
     filename = f"{tmp_path}/COMMIT_EDITMSG"
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     file.write(file_env, filename, ["Initial commit"])
     # when
     cli.main(["", "hook", filename])
@@ -21,7 +21,7 @@ def test_handle_commit_message_with_empty_body(tmp_path) -> None:
 def test_handle_commit_message_with_a_body(tmp_path) -> None:
     # given
     filename = f"{tmp_path}/COMMIT_EDITMSG"
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     file.write(
         file_env,
         filename,
@@ -50,7 +50,7 @@ def test_handle_commit_message_with_a_body(tmp_path) -> None:
 def test_handle_commit_message_with_empty_body_and_token(tmp_path) -> None:
     # given
     filename = f"{tmp_path}/COMMIT_MSG"
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     file.write(
         file_env,
         filename,
@@ -69,7 +69,7 @@ def test_handle_commit_message_with_empty_body_and_token(tmp_path) -> None:
 def test_handle_commit_message_with_a_body_and_token(tmp_path) -> None:
     # given
     filename = f"{tmp_path}/COMMIT_MSG"
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     file.write(
         file_env,
         filename,
@@ -100,7 +100,7 @@ def test_handle_commit_message_with_a_body_and_token(tmp_path) -> None:
 def test_handle_interactive_rebase(tmp_path) -> None:
     # given
     filename = f"{tmp_path}/PLAN"
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     file.write(
         file_env,
         filename,

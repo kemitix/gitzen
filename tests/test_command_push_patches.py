@@ -1,7 +1,7 @@
 from pathlib import PosixPath
 from typing import List
 
-from gitzen import config, file, git
+from gitzen import config, file, git, logger
 from gitzen.commands.push import update_patches
 from gitzen.models.git_commit import GitCommit
 
@@ -12,7 +12,7 @@ from .fakes.repo_files import given_repo
 
 def test_update_patches_creates_patches(tmp_path: PosixPath) -> None:
     # given
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     commits: List[GitCommit] = [

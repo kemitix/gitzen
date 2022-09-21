@@ -1,6 +1,6 @@
 from typing import List, Tuple
 
-from gitzen import config, console, file, git, github
+from gitzen import config, console, file, git, github, logger
 from gitzen.commands import hook, init, push, status
 
 
@@ -32,11 +32,10 @@ def main(args: List[str]) -> None:
 def environments(
     log_sections: List[str],
 ) -> Tuple[console.Env, file.Env, git.Env, github.Env]:
-    if "all" in log_sections:
-        log_sections = ["git", "github", "file"]
+    logger_env = logger.RealEnv(log_sections)
     return (
         console.RealEnv(log_sections),
-        file.RealEnv(),
+        file.RealEnv(logger_env),
         git.RealEnv(),
         github.RealEnv(),
     )

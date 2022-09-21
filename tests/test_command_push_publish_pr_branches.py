@@ -2,7 +2,7 @@ import re
 from pathlib import PosixPath
 from typing import List
 
-from gitzen import config, console, file, git, repo
+from gitzen import config, console, file, git, logger, repo
 
 # trunk-ignore(flake8/E501)
 from gitzen.commands.push import publish_pr_branches, update_patches, update_pr_branches
@@ -18,7 +18,7 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     tmp_path: PosixPath,
 ) -> None:
     # given
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
