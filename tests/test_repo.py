@@ -3,7 +3,7 @@ from subprocess import CompletedProcess
 from typing import List
 from unittest import mock
 
-from gitzen import console, git, repo
+from gitzen import console, git, logger, repo
 from gitzen.models.git_commit import GitCommit
 from gitzen.types import (
     CommitBody,
@@ -29,7 +29,7 @@ def test_getLocalBranchName_calls_git_branch(mock_subproc_run) -> None:
     )
     console_env = console.RealEnv()
     # when
-    repo.get_local_branch_name(console_env, git.RealEnv())
+    repo.get_local_branch_name(console_env, git.RealEnv(logger.RealEnv()))
     # then
     mock_subproc_run.assert_called_with(
         ["git", "branch", "--no-color"],
@@ -50,7 +50,10 @@ def test_getLocalBranchName_returns_correct_branch(mock_subproc_run) -> None:
     )
     console_env = console.RealEnv()
     # when
-    result = repo.get_local_branch_name(console_env, git.RealEnv())
+    result = repo.get_local_branch_name(
+        console_env,
+        git.RealEnv(logger.RealEnv()),
+    )
     # then
     assert result == GitBranchName("me")
 
@@ -196,7 +199,9 @@ def test_getRepoDetailsFromRemoteV() -> None:
 
 def test_git_commit_stack() -> None:
     # given
+    logger_env = logger.RealEnv()
     git_env = FakeGitEnv(
+        logger_env,
         responses={
             "log --no-color origin/remote-branch..HEAD": [
                 """
@@ -251,7 +256,7 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
     zen-token:d6cdc6ed
 """.splitlines()
             ]
-        }
+        },
     )
     remote = GitRemoteName("origin")
     remote_branch = GitBranchName("remote-branch")

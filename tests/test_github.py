@@ -4,7 +4,7 @@ from unittest import mock
 
 from faker import Faker
 
-from gitzen import console, git, github
+from gitzen import console, git, github, logger
 from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
@@ -50,7 +50,7 @@ def test_fetch_info_invokes_command(mock_subproc_run) -> None:
     # when
     github.fetch_info(
         console.RealEnv(),
-        git.RealEnv(),
+        git.RealEnv(logger.RealEnv()),
         github.RealEnv(),
     )
     # then
@@ -298,7 +298,7 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
     # when
     result = github.fetch_info(
         console.RealEnv(),
-        git.RealEnv(),
+        git.RealEnv(logger.RealEnv()),
         github.RealEnv(),
     )
     # then

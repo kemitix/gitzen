@@ -21,8 +21,9 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     CommitPr, then a branch is created.
     """
     # given
-    file_env = file.RealEnv(logger.RealEnv())
-    git_env = git.RealEnv()
+    logger_env = logger.RealEnv()
+    file_env = file.RealEnv(logger_env)
+    git_env = git.RealEnv(logger_env)
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
     console_env = console.RealEnv()
@@ -49,7 +50,6 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     )
     assert (
         git.branch_exists(
-            console_env,
             git_env,
             GitBranchName(expected_branch1),
         )
@@ -63,7 +63,6 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     )
     assert (
         git.branch_exists(
-            console_env,
             git_env,
             GitBranchName(expected_branch2),
         )
@@ -77,8 +76,9 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     updated, then the branch is updated.
     """
     # given
-    file_env = file.RealEnv(logger.RealEnv())
-    git_env = git.RealEnv()
+    logger_env = logger.RealEnv()
+    file_env = file.RealEnv(logger_env)
+    git_env = git.RealEnv(logger_env)
     root_dir = given_repo(file_env, git_env, tmp_path)
     repo_id = om.gen_gh_repo_id()
     login = om.gen_gh_username()
@@ -123,8 +123,8 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
 
     console.info(console_env, "Add new-file")
     file.write(file_env, "new-file", ["contents"])
-    git.add(console_env, git_env, ["new-file"])
-    output = git.commit_amend_noedit(console_env, git_env)
+    git.add(git_env, ["new-file"])
+    output = git.commit_amend_noedit(git_env)
     hash_match = False
     expected_hash = None
     for line in output:
@@ -148,7 +148,7 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     )
     # then
     console.info(console_env, "Review status")
-    log = git.log_graph(console_env, git_env)
+    log = git.log_graph(git_env)
     assert len(log) == 7
     if "HEAD" in log[0]:
         patch_beta = 0
@@ -192,8 +192,9 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     updated, then ignore.
     """
     # given
-    file_env = file.RealEnv(logger.RealEnv())
-    git_env = git.RealEnv()
+    logger_env = logger.RealEnv()
+    file_env = file.RealEnv(logger_env)
+    git_env = git.RealEnv(logger_env)
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
     console_env = console.RealEnv()
@@ -219,7 +220,6 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     )
     assert (
         git.branch_exists(
-            console_env,
             git_env,
             GitBranchName(expected_branch1),
         )
@@ -233,7 +233,6 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     )
     assert (
         git.branch_exists(
-            console_env,
             git_env,
             GitBranchName(expected_branch2),
         )

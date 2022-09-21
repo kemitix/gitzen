@@ -15,8 +15,9 @@ from .fakes.repo_files import given_repo
 # trunk-ignore(flake8/E501)
 def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> None:
     # given
-    file_env = file.RealEnv(logger.RealEnv())
-    git_env = git.RealEnv()
+    logger_env = logger.RealEnv()
+    file_env = file.RealEnv(logger_env)
+    git_env = git.RealEnv(logger_env)
     root_dir = given_repo(file_env, git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
@@ -51,8 +52,9 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
 # trunk-ignore(flake8/E501)
 def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> None:
     # given
-    file_env = file.RealEnv(logger.RealEnv())
-    git_env = git.RealEnv()
+    logger_env = logger.RealEnv()
+    file_env = file.RealEnv(logger_env)
+    git_env = git.RealEnv(logger_env)
     root_dir = given_repo(file_env, git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
@@ -85,8 +87,9 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
 
 def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     # given
-    file_env = file.RealEnv(logger.RealEnv())
-    git_env = git.RealEnv()
+    logger_env = logger.RealEnv()
+    file_env = file.RealEnv(logger_env)
+    git_env = git.RealEnv(logger_env)
     root_dir = given_repo(file_env, git_env, tmp_path)
     deleted_zen_token = om.gen_zen_token()
     pr_to_close: PullRequest = om.gen_pr(deleted_zen_token)

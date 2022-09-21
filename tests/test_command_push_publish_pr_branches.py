@@ -18,8 +18,9 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     tmp_path: PosixPath,
 ) -> None:
     # given
-    file_env = file.RealEnv(logger.RealEnv())
-    git_env = git.RealEnv()
+    logger_env = logger.RealEnv()
+    file_env = file.RealEnv(logger_env)
+    git_env = git.RealEnv(logger_env)
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
     console_env = console.RealEnv()
@@ -42,9 +43,9 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     username = author.value
     pr_alpha = f"gitzen/pr/{username}/master/{token_alpha.value}"
     pr_beta = f"gitzen/pr/{username}/{token_alpha.value}/{token_beta.value}"
-    assert git.branch_exists(console_env, git_env, GitBranchName(pr_alpha))
-    assert git.branch_exists(console_env, git_env, GitBranchName(pr_beta))
-    log = git.log_graph(console_env, git_env)
+    assert git.branch_exists(git_env, GitBranchName(pr_alpha))
+    assert git.branch_exists(git_env, GitBranchName(pr_beta))
+    log = git.log_graph(git_env)
     assert len(log) == 6
     if "HEAD" in log[0]:
         patch_beta = 0

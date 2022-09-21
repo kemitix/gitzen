@@ -78,8 +78,8 @@ def prepare_patches(
     )
     remote_target = GitBranchName(f"{cfg.remote.value}/{remote_branch.value}")
     info(console_env, remote_target.value)
-    git.fetch(console_env, git_env, cfg.remote)
-    git.rebase(console_env, git_env, remote_target)
+    git.fetch(git_env, cfg.remote)
+    git.rebase(git_env, remote_target)
     branches.validate_not_remote_pr(console_env, local_branch)
     commits = repo.get_commit_stack(
         console_env,
@@ -209,7 +209,7 @@ def create_pr_branch(
         )
     else:
         source_branch = branches.pr_branch(last_pr)
-    git.branch_create(console_env, git_env, branch, source_branch)
+    git.branch_create(git_env, branch, source_branch)
     return branch
 
 
@@ -221,7 +221,7 @@ def update_pr_branch(
     last_pr: Optional[PullRequest],
 ) -> None:
     branch_name = branches.pr_branch(pr)
-    if git.branch_exists(console_env, git_env, branch_name):
+    if git.branch_exists(git_env, branch_name):
         cherry_pick_branch(console_env, git_env, pr.zen_token, branch_name)
     else:
         branch = create_pr_branch(
@@ -243,17 +243,17 @@ def cherry_pick_branch(
 ) -> None:
     patch_ref = git.gitzen_patch_ref(zen_token)
     original_branch = repo.get_local_branch_name(console_env, git_env)
-    git.switch(console_env, git_env, branch)
-    git.status(console_env, git_env)
-    status = git.cherry_pick(console_env, git_env, patch_ref)
-    git.status(console_env, git_env)
+    git.switch(git_env, branch)
+    git.status(git_env)
+    status = git.cherry_pick(git_env, patch_ref)
+    git.status(git_env)
     empty_cherry_pick_message = (
         "The previous cherry-pick is now empty, "
         + "possibly due to conflict resolution."
     )
     if empty_cherry_pick_message in status:
-        git.cherry_pick_skip(console_env, git_env)
-        git.status(console_env, git_env)
+        git.cherry_pick_skip(git_env)
+        git.status(git_env)
     for line in status:
         conflict_match = re.search(
             r"^CONFLICT \(content\): Merge conflict in (?P<filename>.*)\s*$",
@@ -265,7 +265,7 @@ def cherry_pick_branch(
                 "Error: merge conflict preparing PR branch",
             )
             exit(exit_code.CONFLICT_PREPARING_PR_BRANCH)
-    git.switch(console_env, git_env, original_branch)
+    git.switch(git_env, original_branch)
 
 
 def publish_pr_branches(
@@ -289,7 +289,7 @@ def publish_pr_branches(
         base_branch,
         commit.zen_token,
     )
-    git.push(console_env, git_env, cfg.remote, pr_branch)
+    git.push(git_env, cfg.remote, pr_branch)
     publish_pr_branches(
         console_env,
         git_env,

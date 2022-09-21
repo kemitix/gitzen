@@ -193,13 +193,10 @@ def fetch_info(
         )
     console.info(console_env, f"Kept {len(prs)} prs")
     return GithubInfo(
-        username=GithubUsername(viewer["login"]),
-        repo_id=repo_id,
-        local_branch=repo.get_local_branch_name(
-            console_env,
-            git_env,
-        ),
-        pull_requests=prs,
+        GithubUsername(viewer["login"]),
+        repo_id,
+        repo.get_local_branch_name(console_env, git_env),
+        prs,
     )
 
 
