@@ -19,7 +19,7 @@ def given_repo(
     'origin' remote for the other.
     Returns the GitRootDir for the non-bare repo.
     """
-    console_env = console.RealEnv()
+    console_env = console.RealEnv(["file", "git", "given_repo"])
     console.log(console_env, "given_repo", f"BEGIN: {dir}")
     # create origin bare repo
     origin_dir = f"{dir}/origin"

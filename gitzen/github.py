@@ -50,7 +50,9 @@ class RealEnv(github.Env):
         params: Dict[str, str],
         query: str,
     ) -> Dict[str, Any]:
-        args = shlex.split("gh api graphql")
+        cmd = "gh api graphql"
+        args = shlex.split(cmd)
+        console.log(console_env, "github", f"{cmd} ...")
         for pair in params:
             args.append("-F")
             args.append(f"{pair}=" + params[pair])
