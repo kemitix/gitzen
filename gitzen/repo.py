@@ -18,9 +18,9 @@ def get_local_branch_name(
     console_env: console.Env,
     git_env: git.Env,
 ) -> GitBranchName:
-    branches = git.branch(console_env, git_env)
+    branches = git.branch(git_env)
     for branch in branches:
-        # TODO detected detached HEAD
+        # TODO detect detached HEAD
         if branch.startswith("* "):
             return GitBranchName(branch[2:])
     info(console_env, "ERROR: Can't find local branch name")
@@ -63,11 +63,7 @@ def get_commit_stack(
     remote: GitRemoteName,
     remote_branch: GitBranchName,
 ) -> List[GitCommit]:
-    log = git.log(
-        console_env,
-        git_env,
-        f"{remote.value}/{remote_branch.value}..HEAD",
-    )
+    log = git.log(git_env, f"{remote.value}/{remote_branch.value}..HEAD")
     have_hash = False
     commits: List[GitCommit] = []
     hash = CommitHash("")

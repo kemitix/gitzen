@@ -14,7 +14,7 @@ def main(args: List[str]) -> None:
             logs.extend(args[0].split(","))
         if arg == "init":
             (console_env, file_env, git_env, _) = environments(logs)
-            root_dir = git.root_dir(console_env, git_env)
+            root_dir = git.root_dir(git_env)
             init.install_hook(console_env, file_env, root_dir)
         if arg == "hook":
             (_, file_env, _, _) = environments(logs)
@@ -24,7 +24,7 @@ def main(args: List[str]) -> None:
             status.status(console_env, git_env, github_env)
         if arg == "push":
             (console_env, file_env, git_env, github_env) = environments(logs)
-            root_dir = git.root_dir(console_env, git_env)
+            root_dir = git.root_dir(git_env)
             cfg = config.load(console_env, file_env, root_dir)
             push.push(console_env, file_env, git_env, github_env, cfg)
 
@@ -36,6 +36,6 @@ def environments(
     return (
         console.RealEnv(log_sections),
         file.RealEnv(logger_env),
-        git.RealEnv(),
+        git.RealEnv(logger_env),
         github.RealEnv(),
     )

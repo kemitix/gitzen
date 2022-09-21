@@ -1,7 +1,8 @@
-from faker import Faker
-
+from gitzen import logger
 from gitzen.commands import status
+from gitzen.types import GitBranchName
 
+from . import object_mother as om
 from .fakes.console_env import FakeConsoleEnv
 from .fakes.git_env import FakeGitEnv
 from .fakes.github_env import FakeGithubEnv
@@ -9,25 +10,28 @@ from .fakes.github_env import FakeGithubEnv
 
 def test_command_status_fetches_info_with_pr() -> None:
     # given
-    fake = Faker()
+    logger_env = logger.RealEnv()
     console_env = FakeConsoleEnv()
-    branch_name = fake.word()
-    other_branch_name = fake.word()
+    branch_name = om.gen_git_branch_name()
+    other_branch_name = om.gen_git_branch_name()
     git_env = FakeGitEnv(
+        logger_env,
         {
             "branch --no-color": [
                 [
-                    f"* {branch_name}",
-                    f"  {other_branch_name}",
+                    f"* {branch_name.value}",
+                    f"  {other_branch_name.value}",
                 ]
             ]
-        }
+        },
     )
-    repo_id = fake.word()
-    login = fake.word()
-    zen_token = "1234abcd"
+    repo_id = om.gen_gh_repo_id()
+    login = om.gen_gh_username()
+    zen_token = om.gen_zen_token()
     base_ref_name = branch_name
-    head_ref_name = f"gitzen/pr/user/{base_ref_name}/{zen_token}"
+    head_ref_name = GitBranchName(
+        f"gitzen/pr/user/{base_ref_name.value}/{zen_token.value}"
+    )
     commit = {
         "commit": {
             "oid": "commit-hash",
@@ -39,11 +43,11 @@ def test_command_status_fetches_info_with_pr() -> None:
         "id": "pr-id",
         "number": "123",
         "title": "pr-title",
-        "repository": {"id": repo_id},
-        "baseRefName": base_ref_name,
-        "headRefName": head_ref_name,
+        "repository": {"id": repo_id.value},
+        "baseRefName": base_ref_name.value,
+        "headRefName": head_ref_name.value,
         "reviewDecision": "review-descision",
-        "body": f"body\n\nzen-token:{zen_token}",
+        "body": f"body\n\nzen-token:{zen_token.value}",
         "mergeable": "MERGEABLE",
         "commits": {"nodes": [commit]},
     }
@@ -53,9 +57,9 @@ def test_command_status_fetches_info_with_pr() -> None:
             repr({"repo_owner": "{owner}", "repo_name": "{repo}"}): [
                 {
                     "data": {
-                        "repository": {"id": repo_id},
+                        "repository": {"id": repo_id.value},
                         "viewer": {
-                            "login": login,
+                            "login": login.value,
                             "repository": {
                                 "pullRequests": {
                                     "nodes": [pull_request],
@@ -76,7 +80,7 @@ def test_command_status_fetches_info_with_pr() -> None:
     assert stdout == [
         "Querying Github...",
         "Found 1 prs",
-        f"{base_ref_name} <- {head_ref_name}",
+        f"{base_ref_name.value} <- {head_ref_name.value}",
         "Kept 1 prs",
         "PR-123 - MERGEABLE - pr-title",
     ]
@@ -84,25 +88,26 @@ def test_command_status_fetches_info_with_pr() -> None:
 
 def test_command_status_fetches_info_with_no_pr() -> None:
     # given
-    fake = Faker()
+    logger_env = logger.RealEnv()
     console_env = FakeConsoleEnv()
-    branch_name = fake.word()
-    other_branch_name = fake.word()
+    branch_name = om.gen_git_branch_name()
+    other_branch_name = om.gen_git_branch_name()
     git_env = FakeGitEnv(
+        logger_env,
         {
             "branch --no-color": [
                 [
-                    f"* {branch_name}",
-                    f"  {other_branch_name}",
+                    f"* {branch_name.value}",
+                    f"  {other_branch_name.value}",
                 ]
             ]
-        }
+        },
     )
-    repo_id = fake.word()
-    login = fake.word()
-    zen_token = "1234abcd"
+    repo_id = om.gen_gh_repo_id()
+    login = om.gen_gh_username()
+    zen_token = om.gen_zen_token()
     base_ref_name = branch_name
-    head_ref_name = "non-gitzen/pr/123"
+    head_ref_name = om.gen_git_branch_name()
     commit = {
         "commit": {
             "oid": "commit-hash",
@@ -114,11 +119,11 @@ def test_command_status_fetches_info_with_no_pr() -> None:
         "id": "pr-id",
         "number": "123",
         "title": "pr-title",
-        "repository": {"id": repo_id},
-        "baseRefName": base_ref_name,
-        "headRefName": head_ref_name,
+        "repository": {"id": repo_id.value},
+        "baseRefName": base_ref_name.value,
+        "headRefName": head_ref_name.value,
         "reviewDecision": "review-descision",
-        "body": f"body\n\nzen-token:{zen_token}",
+        "body": f"body\n\nzen-token:{zen_token.value}",
         "mergeable": "MERGEABLE",
         "commits": {"nodes": [commit]},
     }
@@ -128,9 +133,9 @@ def test_command_status_fetches_info_with_no_pr() -> None:
             repr({"repo_owner": "{owner}", "repo_name": "{repo}"}): [
                 {
                     "data": {
-                        "repository": {"id": repo_id},
+                        "repository": {"id": repo_id.value},
                         "viewer": {
-                            "login": login,
+                            "login": login.value,
                             "repository": {
                                 "pullRequests": {
                                     "nodes": [pull_request],
@@ -151,7 +156,7 @@ def test_command_status_fetches_info_with_no_pr() -> None:
     assert stdout == [
         "Querying Github...",
         "Found 1 prs",
-        f"{base_ref_name} <- {head_ref_name}",
+        f"{base_ref_name.value} <- {head_ref_name.value}",
         "Kept 0 prs",
         "Stack is empty - no PRs found",
     ]

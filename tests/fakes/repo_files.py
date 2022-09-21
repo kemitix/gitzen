@@ -25,18 +25,18 @@ def given_repo(
     origin_dir = f"{dir}/origin"
     os.mkdir(origin_dir)
     chdir(origin_dir)
-    git.init_bare(console_env, git_env)
+    git.init_bare(git_env)
     # create main repo
     repo_dir = f"{dir}/repo"
     chdir(dir)
-    git.clone(console_env, git_env, origin_dir, "repo")
+    git.clone(git_env, origin_dir, "repo")
     repo = GitRootDir(repo_dir)
     chdir(repo_dir)
     origin = GitRemoteName("origin")
     master = GitBranchName("master")
     # set author identity
-    git.config_set(console_env, git_env, "user.email", "you@example.com")
-    git.config_set(console_env, git_env, "user.name", "Your Name")
+    git.config_set(git_env, "user.email", "you@example.com")
+    git.config_set(git_env, "user.name", "Your Name")
     # install hook
     console.log(console_env, "given_repo", "install hook")
     hook = f"{repo_dir}/.git/hooks/commit-msg"
@@ -57,21 +57,21 @@ def given_repo(
     # create commit to represent remote HEAD
     console.log(console_env, "given_repo", "create first commit origin/master")
     file.write(file_env, "README.md", [])
-    git.add(console_env, git_env, ["README.md"])
-    git.commit(console_env, git_env, ["First commit"])
+    git.add(git_env, ["README.md"])
+    git.commit(git_env, ["First commit"])
     show_status(console_env, git_env, repo)
     # push first commit to origin/master
-    git.push(console_env, git_env, origin, master)
+    git.push(git_env, origin, master)
     show_status(console_env, git_env, repo)
     # create two commits to represent changes on local HEAD
     console.log(console_env, "given_repo", "create second commit master")
     file.write(file_env, "ALPHA.md", ["alpha"])
-    git.add(console_env, git_env, ["ALPHA.md"])
-    git.commit(console_env, git_env, ["Add ALPHA.md"])
+    git.add(git_env, ["ALPHA.md"])
+    git.commit(git_env, ["Add ALPHA.md"])
     console.log(console_env, "given_repo", "create third commit master")
     file.write(file_env, "BETA.md", ["beta"])
-    git.add(console_env, git_env, ["BETA.md"])
-    git.commit(console_env, git_env, ["Add BETA.md"])
+    git.add(git_env, ["BETA.md"])
+    git.commit(git_env, ["Add BETA.md"])
     show_status(console_env, git_env, repo)
     console.log(console_env, "given_repo", f"END: {dir}")
     return repo
@@ -86,8 +86,8 @@ def show_status(
     if ls_project_root.stdout:
         lines = ls_project_root.stdout.decode().splitlines()
         [console.log(console_env, "ls>", line) for line in lines]
-    git.status(console_env, git_env)
-    git.log_graph(console_env, git_env)
+    git.status(git_env)
+    git.log_graph(git_env)
 
 
 def given_file(file_env: file.Env, filename: str, lines: List[str]) -> None:

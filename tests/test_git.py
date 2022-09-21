@@ -3,7 +3,7 @@ from unittest import mock
 
 from faker import Faker
 
-from gitzen import console, git
+from gitzen import git, logger
 from gitzen.types import GitBranchName, GitRemoteName, GitRootDir
 
 from . import object_mother as om
@@ -15,7 +15,7 @@ def test_branch(mock_subproc_run) -> None:
     Test that the correct command is invoked
     """
     # when
-    git.branch(console.RealEnv(), git.RealEnv())
+    git.branch(git.RealEnv(logger.RealEnv()))
     # then
     mock_subproc_run.assert_called_with(
         [
@@ -43,8 +43,7 @@ def test_branch_exists_when_true(mock_subproc_run) -> None:
     )
     # when
     result = git.branch_exists(
-        console.RealEnv(),
-        git.RealEnv(),
+        git.RealEnv(logger.RealEnv()),
         branch,
     )
     # then
@@ -65,8 +64,7 @@ def test_branch_exists_when_false(mock_subproc_run) -> None:
     )
     # when
     result = git.branch_exists(
-        console.RealEnv(),
-        git.RealEnv(),
+        git.RealEnv(logger.RealEnv()),
         branch,
     )
     # then
@@ -84,8 +82,7 @@ def test_branch_create(mock_subproc_run) -> None:
     source_branch_name = GitBranchName(fake.word())
     # when
     git.branch_create(
-        console.RealEnv(),
-        git.RealEnv(),
+        git.RealEnv(logger.RealEnv()),
         new_branch_name,
         source_branch_name,
     )
@@ -111,7 +108,7 @@ def test_cherry_pick(mock_subproc_run) -> None:
     fake = Faker()
     ref = GitBranchName(fake.hexify("^^^^^^^"))
     # when
-    git.cherry_pick(console.RealEnv(), git.RealEnv(), ref)
+    git.cherry_pick(git.RealEnv(logger.RealEnv()), ref)
     # then
     mock_subproc_run.assert_called_with(
         ["git", "cherry-pick", "-x", ref.value],
@@ -126,7 +123,7 @@ def test_cherry_pick_skip(mock_subproc_run) -> None:
     Test that the correct command is invoked
     """
     # when
-    git.cherry_pick_skip(console.RealEnv(), git.RealEnv())
+    git.cherry_pick_skip(git.RealEnv(logger.RealEnv()))
     # then
     mock_subproc_run.assert_called_with(
         ["git", "cherry-pick", "--skip"],
@@ -143,7 +140,7 @@ def test_fetch(mock_subproc_run) -> None:
     # given
     remote = GitRemoteName(Faker().word())
     # when
-    git.fetch(console.RealEnv(), git.RealEnv(), remote)
+    git.fetch(git.RealEnv(logger.RealEnv()), remote)
     # then
     gitFetch = ["git", "fetch", remote.value]
     mock_subproc_run.assert_called_with(
@@ -159,7 +156,7 @@ def test_log(mock_subproc_run) -> None:
     Test that the correct command is invoked
     """
     # when
-    git.log(console.RealEnv(), git.RealEnv(), "master..HEAD")
+    git.log(git.RealEnv(logger.RealEnv()), "master..HEAD")
     # then
     gitFetch = ["git", "log", "--no-color", "master..HEAD"]
     mock_subproc_run.assert_called_with(
@@ -178,7 +175,7 @@ def test_push(mock_subproc_run) -> None:
     remote = om.gen_remote_name()
     branch = om.gen_git_branch_name()
     # when
-    git.push(console.RealEnv(), git.RealEnv(), remote, branch)
+    git.push(git.RealEnv(logger.RealEnv()), remote, branch)
     # then
     mock_subproc_run.assert_called_with(
         ["git", "push", remote.value, f"{branch.value}:{branch.value}"],
@@ -193,7 +190,7 @@ def test_remote(mock_subproc_run) -> None:
     Test that the correct command is invoked
     """
     # when
-    git.remote(console.RealEnv(), git.RealEnv())
+    git.remote(git.RealEnv(logger.RealEnv()))
     # then
     mock_subproc_run.assert_called_with(
         [
@@ -213,8 +210,7 @@ def test_rebase(mock_subproc_run) -> None:
     """
     # when
     git.rebase(
-        console.RealEnv(),
-        git.RealEnv(),
+        git.RealEnv(logger.RealEnv()),
         GitBranchName("target/branch"),
     )
     # then
@@ -236,7 +232,7 @@ def test_revParse(mock_subproc_run) -> None:
     Test that the correct command is invoked
     """
     # when
-    git.rev_parse(console.RealEnv(), git.RealEnv(), "--verify HEAD")
+    git.rev_parse(git.RealEnv(logger.RealEnv()), "--verify HEAD")
     # then
     mock_subproc_run.assert_called_with(
         ["git", "rev-parse", "--verify", "HEAD"],
@@ -255,7 +251,7 @@ def test_revParse_returns_value(mock_subproc_run) -> None:
         "", 0, stdout="688881f74786d59ff397ef81efe1c137167f46b2".encode()
     )
     # when
-    result = git.rev_parse(console.RealEnv(), git.RealEnv())
+    result = git.rev_parse(git.RealEnv(logger.RealEnv()))
     # then
     assert result == ["688881f74786d59ff397ef81efe1c137167f46b2"]
 
@@ -268,7 +264,7 @@ def test_switch(mock_subproc_run) -> None:
     # given
     branch = GitBranchName(Faker().word())
     # when
-    git.switch(console.RealEnv(), git.RealEnv(), branch)
+    git.switch(git.RealEnv(logger.RealEnv()), branch)
     # then
     mock_subproc_run.assert_called_with(
         [
@@ -287,7 +283,7 @@ def test_root_dir(mock_subproc_run) -> None:
     Test that the correct command is invoked
     """
     # when
-    git.root_dir(console.RealEnv(), git.RealEnv())
+    git.root_dir(git.RealEnv(logger.RealEnv()))
     # then
     gitRevParse = ["git", "rev-parse", "--show-toplevel"]
     mock_subproc_run.assert_called_with(
@@ -307,6 +303,6 @@ def test_root_dir_returns_path(mock_subproc_run) -> None:
         "", 0, stdout="test-root-dir".encode()
     )
     # when
-    result = git.root_dir(console.RealEnv(), git.RealEnv())
+    result = git.root_dir(git.RealEnv(logger.RealEnv()))
     # then
     assert result == GitRootDir("test-root-dir")
