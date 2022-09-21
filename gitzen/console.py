@@ -20,7 +20,7 @@ class RealEnv(Env):
         print(message)
 
     def _print_log(self, section: str, message: str) -> None:
-        if section in self.log_sections:
+        if "all" in self.log_sections or section in self.log_sections:
             log_line = f"{section}> {message}"
             self._print(log_line)
 

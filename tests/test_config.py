@@ -1,6 +1,6 @@
 from pathlib import PosixPath
 
-from gitzen import config, console, file, git
+from gitzen import config, console, file, git, logger
 from gitzen.types import GitBranchName, GitRemoteName
 
 from .fakes.repo_files import given_file, given_repo
@@ -9,7 +9,7 @@ from .fakes.repo_files import given_file, given_repo
 def test_load_when_file_not_found(tmp_path: PosixPath) -> None:
     # given
     # a repo with no config file
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     console_env = console.RealEnv()
@@ -22,7 +22,7 @@ def test_load_when_file_not_found(tmp_path: PosixPath) -> None:
 def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
     # given
     # a repo with a config file
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     configFile = f"{root_dir.value}/.gitzen.yml"

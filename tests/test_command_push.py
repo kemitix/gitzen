@@ -2,7 +2,7 @@ from pathlib import PosixPath
 
 from genericpath import exists
 
-from gitzen import console, file, git
+from gitzen import console, file, git, logger
 from gitzen.commands import push
 from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_pull_request import PullRequest
@@ -15,7 +15,7 @@ from .fakes.repo_files import given_repo
 # trunk-ignore(flake8/E501)
 def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> None:
     # given
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
@@ -51,7 +51,7 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
 # trunk-ignore(flake8/E501)
 def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> None:
     # given
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
@@ -85,7 +85,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
 
 def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     # given
-    file_env = file.RealEnv()
+    file_env = file.RealEnv(logger.RealEnv())
     git_env = git.RealEnv()
     root_dir = given_repo(file_env, git_env, tmp_path)
     deleted_zen_token = om.gen_zen_token()
