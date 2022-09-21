@@ -1,4 +1,3 @@
-from gitzen import console
 from gitzen.commands.push import update_pr
 
 from . import object_mother as om
@@ -10,10 +9,9 @@ def test_invokes_command() -> None:
     pr_branch = om.gen_git_branch_name()
     base = om.gen_git_branch_name()
     commit = om.gen_commit(token=None)
-    console_env = console.RealEnv()
     github_env = MuteFakeGuthubEnv()
     # when
-    update_pr(console_env, github_env, pr_branch, base, commit)
+    update_pr(github_env, pr_branch, base, commit)
     # then
     # assert len(github_env.requests) == 1
     assert github_env.requests == [

@@ -1,7 +1,7 @@
 from subprocess import PIPE, STDOUT
 from unittest import mock
 
-from gitzen import console, github
+from gitzen import github, logger
 
 from . import object_mother as om
 
@@ -13,9 +13,9 @@ def test_invokes_command(mock_subproc_run) -> None:
     base = om.gen_git_branch_name()
     commit = om.gen_commit(token=None)
     # when
-    console_env = console.RealEnv()
-    github_env = github.RealEnv()
-    github.create_pull_request(console_env, github_env, head, base, commit)
+    logger_env = logger.RealEnv()
+    github_env = github.RealEnv(logger_env)
+    github.create_pull_request(github_env, head, base, commit)
     # then
     mock_subproc_run.assert_called_with(
         [

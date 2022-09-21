@@ -4,7 +4,7 @@ import shlex
 import subprocess
 from typing import Any, Dict, List
 
-from gitzen import console, git, github, patterns, repo, zen_token
+from gitzen import console, git, github, logger, patterns, repo, zen_token
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_info import GithubInfo
@@ -29,7 +29,6 @@ from gitzen.types import (
 class Env:
     def _graphql(
         self,
-        console_env: console.Env,
         params: Dict[str, str],
         query: str,
     ) -> Dict[str, Any]:
@@ -37,22 +36,29 @@ class Env:
 
     def _gh(
         self,
-        console_env: console.Env,
         args: str,
     ) -> List[str]:
         pass
 
 
 class RealEnv(github.Env):
+    logger_env: logger.Env
+
+    def __init__(self, logger_env: logger.Env) -> None:
+        super().__init__()
+        self.logger_env = logger_env
+
+    def _log(self, message: str) -> None:
+        logger.log(self.logger_env, "github", message)
+
     def _graphql(
         self,
-        console_env: console.Env,
         params: Dict[str, str],
         query: str,
     ) -> Dict[str, Any]:
         cmd = "gh api graphql"
         args = shlex.split(cmd)
-        console.log(console_env, "github", f"{cmd} ...")
+        self._log(f"{cmd} ...")
         for pair in params:
             args.append("-F")
             args.append(f"{pair}=" + params[pair])
@@ -65,8 +71,11 @@ class RealEnv(github.Env):
         else:
             return {}  # TODO return some error condition
 
-    def _gh(self, console_env: console.Env, args: str) -> List[str]:
-        console.log(console_env, "github", args)
+    def _gh(
+        self,
+        args: str,
+    ) -> List[str]:
+        self._log(args)
         gh_command = shlex.split(f"gh {args}")
         result = subprocess.run(
             gh_command,
@@ -76,11 +85,11 @@ class RealEnv(github.Env):
         stdout = result.stdout
         if stdout:
             lines = stdout.decode().splitlines()
-            [console.log(console_env, "github", f"| {line}") for line in lines]
-            console.log(console_env, "github", "\\------------------")
+            [self._log(f"| {line}") for line in lines]
+            self._log("\\------------------")
             return lines
         else:
-            console.log(console_env, "github", "\\------------------")
+            self._log("\\------------------")
             return []
 
 
@@ -132,7 +141,6 @@ def fetch_info(
     github_env: Env,
 ) -> GithubInfo:
     data = github_env._graphql(
-        console_env,
         {
             "repo_owner": "{owner}",
             "repo_name": "{repo}",
@@ -220,46 +228,39 @@ def get_commits(pr_node) -> List[GithubCommit]:
 
 
 def add_comment(
-    console_env: console.Env,
     github_env: Env,
     pull_request: PullRequest,
     comment: str,
 ) -> None:
     github_env._gh(
-        console_env,
         f"pr comment {pull_request.number.value} --body '{comment}'",
     )
 
 
 def close_pull_request(
-    console_env: console.Env,
     github_env: Env,
     pull_request: PullRequest,
 ) -> None:
-    github_env._gh(console_env, f"pr close {pull_request.number.value}")
+    github_env._gh(f"pr close {pull_request.number.value}")
 
 
 def close_pull_request_with_comment(
-    console_env: console.Env,
     github_env: Env,
     pull_request: PullRequest,
     comment: str,
 ) -> None:
     github_env._gh(
-        console_env,
         f"pr close {pull_request.number.value} --comment '{comment}'",
     )
 
 
 def create_pull_request(
-    console_env: console.Env,
     github_env: Env,
     head: GitBranchName,
     base: GitBranchName,
     commit: GitCommit,
 ) -> None:
     github_env._gh(
-        console_env,
         "pr create "
         f"--head {head.value} "
         f"--base {base.value} "
@@ -269,14 +270,12 @@ def create_pull_request(
 
 
 def update_pull_request(
-    console_env: console.Env,
     github_env: Env,
     pr_branch: GitBranchName,
     base: GitBranchName,
     commit: GitCommit,
 ) -> None:
     github_env._gh(
-        console_env,
         f"pr edit {pr_branch.value} "
         f"--base {base.value} "
         f"--title '{commit.messageHeadline.value}' "

@@ -47,11 +47,12 @@ def test_fetch_info_invokes_command(mock_subproc_run) -> None:
         CompletedProcess("", 0, stdout=expected),
         CompletedProcess("", 0, stdout="* branch-name".encode()),
     ]
+    logger_env = logger.RealEnv()
     # when
     github.fetch_info(
         console.RealEnv(),
-        git.RealEnv(logger.RealEnv()),
-        github.RealEnv(),
+        git.RealEnv(logger_env),
+        github.RealEnv(logger_env),
     )
     # then
     query = github.query_status
@@ -295,11 +296,12 @@ def test_fetch_info_returns_github_info(mock_subproc_run) -> None:
         GithubRepoId("MDEwOlJlcG9zaXRvcnkyOTA1NzA4NzE="),
         [commit_a],
     )
+    logger_env = logger.RealEnv()
     # when
     result = github.fetch_info(
         console.RealEnv(),
-        git.RealEnv(logger.RealEnv()),
-        github.RealEnv(),
+        git.RealEnv(logger_env),
+        github.RealEnv(logger_env),
     )
     # then
     assert len(result.pull_requests) == 1
@@ -336,10 +338,10 @@ def test_add_comment(mock_subproc_run) -> None:
         GithubRepoId(""),
         commits=[],
     )
-    console_env = console.RealEnv()
-    github_env = github.RealEnv()
+    logger_env = logger.RealEnv()
+    github_env = github.RealEnv(logger_env)
     # when
-    github.add_comment(console_env, github_env, pull_request, comment)
+    github.add_comment(github_env, pull_request, comment)
     # then
     mock_subproc_run.assert_called_with(
         [
@@ -379,9 +381,9 @@ def test_close_pull_request(mock_subproc_run) -> None:
         commits=[],
     )
     # when
-    console_env = console.RealEnv()
-    github_env = github.RealEnv()
-    github.close_pull_request(console_env, github_env, pull_request)
+    logger_env = logger.RealEnv()
+    github_env = github.RealEnv(logger_env)
+    github.close_pull_request(github_env, pull_request)
     # then
     mock_subproc_run.assert_called_with(
         [
@@ -420,11 +422,9 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
         commits=[],
     )
     # when
-    console_env = console.RealEnv()
-    github_env = github.RealEnv()
-    github.close_pull_request_with_comment(
-        console_env, github_env, pull_request, comment
-    )
+    logger_env = logger.RealEnv()
+    github_env = github.RealEnv(logger_env)
+    github.close_pull_request_with_comment(github_env, pull_request, comment)
     # then
     mock_subproc_run.assert_called_with(
         [
