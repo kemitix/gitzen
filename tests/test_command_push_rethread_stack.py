@@ -1,6 +1,7 @@
 from typing import List
 
 from gitzen.commands.push import rethread_stack
+from gitzen.models.commit_branches import CommitBranches
 from gitzen.models.commit_pr import CommitPr
 from gitzen.types import GitBranchName
 
@@ -20,15 +21,14 @@ def test_rethread_empty() -> None:
 def test_rethread_three() -> None:
     # given
     stack: List[CommitPr] = [
-        om.gen_commit_pr(),
-        om.gen_commit_pr(),
-        om.gen_commit_pr(),
+        CommitPr(om.gen_commit(token=None), pr=None),
+        CommitPr(om.gen_commit(token=None), pr=None),
+        CommitPr(om.gen_commit(token=None), pr=None),
     ]
     author = om.gen_gh_username()
-    expected: List[CommitPr] = [
-        CommitPr(
+    expected: List[CommitBranches] = [
+        CommitBranches(
             stack[0].git_commit,
-            stack[0].pull_request,
             GitBranchName("master"),
             GitBranchName(
                 (
@@ -36,10 +36,10 @@ def test_rethread_three() -> None:
                     f"/master/{stack[0].git_commit.zen_token.value}"
                 )
             ),
+            remote_target=GitBranchName("origin/master"),
         ),
-        CommitPr(
+        CommitBranches(
             stack[1].git_commit,
-            stack[1].pull_request,
             GitBranchName(
                 (
                     f"gitzen/pr/{author.value}"
@@ -54,9 +54,8 @@ def test_rethread_three() -> None:
                 )
             ),
         ),
-        CommitPr(
+        CommitBranches(
             stack[2].git_commit,
-            stack[2].pull_request,
             GitBranchName(
                 (
                     f"gitzen/pr/{author.value}"
@@ -74,6 +73,11 @@ def test_rethread_three() -> None:
         ),
     ]
     # when
-    result = rethread_stack(author, stack, GitBranchName("master"))
+    result = rethread_stack(
+        author,
+        stack,
+        GitBranchName("master"),
+        remote_target=GitBranchName("origin/master"),
+    )
     # then
     assert result == expected

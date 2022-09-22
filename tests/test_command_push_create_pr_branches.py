@@ -1,12 +1,8 @@
 import re
 from pathlib import PosixPath
-from typing import List
 
 from gitzen import config, console, file, git, logger, repo
-
-# trunk-ignore(flake8/E501)
-from gitzen.commands.push import prepare_pr_branches, update_patches, update_pr_branches
-from gitzen.models.commit_pr import CommitPr
+from gitzen.commands.push import prepare_pr_branches, update_pr_branches
 from gitzen.patterns import short_hash
 from gitzen.types import GitBranchName
 
@@ -26,6 +22,41 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     git_env = git.RealEnv(logger_env)
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
+    repo_id = om.gen_gh_repo_id()
+    login = om.gen_gh_username()
+    github_env = FakeGithubEnv(
+        gh_responses={},
+        gql_responses={
+            repr({"repo_owner": "{owner}", "repo_name": "{repo}"}): [
+                {
+                    "data": {
+                        "repository": {"id": repo_id.value},
+                        "viewer": {
+                            "login": login.value,
+                            "repository": {
+                                "pullRequests": {
+                                    "nodes": [],
+                                },
+                            },
+                        },
+                    }
+                },
+                {
+                    "data": {
+                        "repository": {"id": repo_id.value},
+                        "viewer": {
+                            "login": login.value,
+                            "repository": {
+                                "pullRequests": {
+                                    "nodes": [],
+                                },
+                            },
+                        },
+                    }
+                },
+            ]
+        },
+    )
     console_env = console.RealEnv()
     commits = repo.get_commit_stack(
         console.RealEnv(),
@@ -34,37 +65,31 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
         GitBranchName("master"),
     )
     assert len(commits) == 2
-    author = om.gen_gh_username()
-    commit1 = commits[0]
-    commit2 = commits[1]
-    stack: List[CommitPr] = [CommitPr(commit1, None), CommitPr(commit2, None)]
-    update_patches(console_env, file_env, root_dir, [commit1, commit2])
-    # when
-    update_pr_branches(console_env, git_env, stack, author, cfg)
-    # then
-    expected_branch1 = (
-        "gitzen/pr"
-        f"/{author.value}"
-        f"/{cfg.default_remote_branch.value}"
-        f"/{commit1.zen_token.value}"
+    token1 = commits[0].zen_token
+    token2 = commits[1].zen_token
+    (_, stack) = prepare_pr_branches(
+        console_env,
+        file_env,
+        git_env,
+        github_env,
+        cfg,
     )
+    # when
+    update_pr_branches(console_env, git_env, stack)
+    # then
     assert (
         git.branch_exists(
             git_env,
-            GitBranchName(expected_branch1),
+            GitBranchName(f"gitzen/pr/{login.value}/master/{token1.value}"),
         )
         is True
     ), "first branch"
-    expected_branch2 = (
-        "gitzen/pr"
-        f"/{author.value}"
-        f"/{commit1.zen_token.value}"
-        f"/{commit2.zen_token.value}"
-    )
     assert (
         git.branch_exists(
             git_env,
-            GitBranchName(expected_branch2),
+            GitBranchName(
+                f"gitzen/pr/{login.value}/{token1.value}/{token2.value}",
+            ),
         )
         is True
     ), "second branch"
@@ -197,6 +222,41 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     git_env = git.RealEnv(logger_env)
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
+    repo_id = om.gen_gh_repo_id()
+    login = om.gen_gh_username()
+    github_env = FakeGithubEnv(
+        gh_responses={},
+        gql_responses={
+            repr({"repo_owner": "{owner}", "repo_name": "{repo}"}): [
+                {
+                    "data": {
+                        "repository": {"id": repo_id.value},
+                        "viewer": {
+                            "login": login.value,
+                            "repository": {
+                                "pullRequests": {
+                                    "nodes": [],
+                                },
+                            },
+                        },
+                    }
+                },
+                {
+                    "data": {
+                        "repository": {"id": repo_id.value},
+                        "viewer": {
+                            "login": login.value,
+                            "repository": {
+                                "pullRequests": {
+                                    "nodes": [],
+                                },
+                            },
+                        },
+                    }
+                },
+            ]
+        },
+    )
     console_env = console.RealEnv()
     commits = repo.get_commit_stack(
         console.RealEnv(),
@@ -205,36 +265,31 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
         GitBranchName("master"),
     )
     assert len(commits) == 2
-    stack: List[CommitPr] = [CommitPr(commit, None) for commit in commits]
-    author = om.gen_gh_username()
-    update_patches(console_env, file_env, root_dir, commits)
-    update_pr_branches(console_env, git_env, stack, author, cfg)
-    # when
-    update_pr_branches(console_env, git_env, stack, author, cfg)
-    # then
-    expected_branch1 = (
-        "gitzen/pr"
-        f"/{author.value}"
-        f"/{cfg.default_remote_branch.value}"
-        f"/{commits[0].zen_token.value}"
+    token1 = commits[0].zen_token
+    token2 = commits[1].zen_token
+    (_, stack) = prepare_pr_branches(
+        console_env,
+        file_env,
+        git_env,
+        github_env,
+        cfg,
     )
+    # when
+    update_pr_branches(console_env, git_env, stack)
+    # then
     assert (
         git.branch_exists(
             git_env,
-            GitBranchName(expected_branch1),
+            GitBranchName(f"gitzen/pr/{login.value}/master/{token1.value}"),
         )
         is True
     ), "first branch"
-    expected_branch2 = (
-        "gitzen/pr"
-        f"/{author.value}"
-        f"/{commits[0].zen_token.value}"
-        f"/{commits[1].zen_token.value}"
-    )
     assert (
         git.branch_exists(
             git_env,
-            GitBranchName(expected_branch2),
+            GitBranchName(
+                f"gitzen/pr/{login.value}/{token1.value}/{token2.value}",
+            ),
         )
         is True
     ), "second branch"
