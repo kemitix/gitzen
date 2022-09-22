@@ -33,7 +33,7 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     assert len(commits) == 2
     stack: List[CommitPr] = [CommitPr(commit, None) for commit in commits]
     author = om.gen_gh_username()
-    update_patches(file_env, cfg.root_dir, commits)
+    update_patches(console_env, file_env, cfg.root_dir, commits)
     update_pr_branches(console_env, git_env, stack, author, cfg)
     # when
     publish_pr_branches(console_env, git_env, stack, author, cfg)

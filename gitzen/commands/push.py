@@ -4,7 +4,6 @@ from typing import Dict, List, Optional, Tuple
 # trunk-ignore(flake8/E501)
 from gitzen import branches, config, console, exit_code, file, git, github, repo
 from gitzen.config import Config
-from gitzen.console import info
 from gitzen.models.commit_pr import CommitPr
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.git_patch import GitPatch
@@ -70,14 +69,12 @@ def prepare_patches(
 ) -> Tuple[GithubInfo, List[CommitPr]]:
     status = github.fetch_info(console_env, git_env, github_env)
     local_branch = status.local_branch
-    info(console_env, f"local branch: {local_branch.value}")
     remote_branch = branches.get_required_remote_branch(
         console_env,
         local_branch,
         cfg,
     )
     remote_target = GitBranchName(f"{cfg.remote.value}/{remote_branch.value}")
-    info(console_env, remote_target.value)
     git.fetch(git_env, cfg.remote)
     git.rebase(git_env, remote_target)
     branches.validate_not_remote_pr(console_env, local_branch)
@@ -87,6 +84,7 @@ def prepare_patches(
         cfg.remote,
         remote_branch,
     )
+    update_patches(console_env, file_env, cfg.root_dir, commits)
     commit_stack = clean_up_deleted_commits(
         github_env,
         status.pull_requests,
@@ -96,8 +94,40 @@ def prepare_patches(
     pr_count = len(commit_stack)
     new_commits = [CommitPr(commit, None) for commit in commits[pr_count:]]
     commit_stack.extend(new_commits)
-    update_patches(file_env, cfg.root_dir, commits)
-    return status, commit_stack
+    return status, rethread_stack(
+        status.username, commit_stack, cfg.default_remote_branch
+    )
+
+
+def rethread_stack(
+    author: GithubUsername,
+    commit_stack: List[CommitPr],
+    prev_head: Optional[GitBranchName],
+    prev_token: Optional[ZenToken] = None,
+) -> List[CommitPr]:
+    if len(commit_stack) == 0:
+        return []
+    hd = commit_stack[0]
+    if prev_token is None:
+        if prev_head is not None:
+            head = branches.pr_branch_planned(
+                author, prev_head, hd.git_commit.zen_token
+            )
+        else:
+            head = branches.pr_branch_planned(
+                author, GitBranchName("XXXXXXXXXXXX"), hd.git_commit.zen_token
+            )
+    else:
+        head = branches.pr_branch_planned(
+            author, GitBranchName(prev_token.value), hd.git_commit.zen_token
+        )
+    result: List[CommitPr] = [
+        CommitPr(hd.git_commit, hd.pull_request, prev_head, head),
+    ]
+    result.extend(
+        rethread_stack(author, commit_stack[1:], head, hd.git_commit.zen_token)
+    )
+    return result
 
 
 def clean_up_deleted_commits(
@@ -130,6 +160,7 @@ def clean_up_deleted_commits(
 
 
 def update_patches(
+    console_env: console.Env,
     file_env: file.Env,
     root_dir: GitRootDir,
     commits: List[GitCommit],
@@ -137,6 +168,7 @@ def update_patches(
     for commit in commits:
         patch = GitPatch(commit.zen_token, commit.hash)
         git.write_patch(file_env, patch, root_dir)
+        console.info(console_env, f"Wrote patch: {patch.zen_token.value}")
 
 
 def update_pr_branches(
@@ -155,7 +187,6 @@ def update_pr_branches(
     if pr is None:
         branch = create_pr_branch(
             git_env,
-            console_env,
             last_pr,
             cfg,
             author,
@@ -188,26 +219,30 @@ def pr_source(
 
 def create_pr_branch(
     git_env: git.Env,
-    console_env: console.Env,
-    last_pr: Optional[PullRequest],
+    base_pr: Optional[PullRequest],
     cfg: config.Config,
     author: GithubUsername,
     zen_token: ZenToken,
 ) -> GitBranchName:
-    source = pr_source(last_pr, cfg)
-    branch = branches.pr_branch_planned(
+    print("DEBUG: create_pr_branch:")
+    print(f"      [base_pr:{base_pr}])")
+    print(f"      [{zen_token}]")
+    pr_branch = branches.pr_branch_planned(
         author,
-        source,
+        pr_source(base_pr, cfg),
         zen_token,
     )
-    if last_pr is None:
-        source_branch = GitBranchName(
+    print(f"   [pr_branch:{pr_branch}]")
+    if base_pr is None:
+        base_branch = GitBranchName(
             f"{cfg.remote.value}/{cfg.default_remote_branch.value}"
         )
+        print(f"   (master)[base_branch:{base_branch}]")
     else:
-        source_branch = branches.pr_branch(last_pr)
-    git.branch_create(git_env, branch, source_branch)
-    return branch
+        base_branch = branches.pr_branch(base_pr)
+        print(f"   (basepr)[base_branch:{base_branch}]")
+    git.branch_create(git_env, pr_branch, base_branch)
+    return pr_branch
 
 
 def update_pr_branch(
@@ -223,7 +258,6 @@ def update_pr_branch(
     else:
         branch = create_pr_branch(
             git_env,
-            console_env,
             last_pr,
             cfg,
             pr.author,

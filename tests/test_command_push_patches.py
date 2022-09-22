@@ -23,7 +23,7 @@ def test_update_patches_creates_patches(tmp_path: PosixPath) -> None:
     console_env = FakeConsoleEnv()
     cfg = config.load(console_env, file_env, root_dir)
     # when
-    update_patches(file_env, cfg.root_dir, commits)
+    update_patches(console_env, file_env, cfg.root_dir, commits)
     # then
     commit1_patch_file = git.gitzen_patch_file(commits[0].zen_token, root_dir)
     commit2_patch_file = git.gitzen_patch_file(commits[1].zen_token, root_dir)
