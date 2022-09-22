@@ -38,7 +38,7 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     commit1 = commits[0]
     commit2 = commits[1]
     stack: List[CommitPr] = [CommitPr(commit1, None), CommitPr(commit2, None)]
-    update_patches(file_env, root_dir, [commit1, commit2])
+    update_patches(console_env, file_env, root_dir, [commit1, commit2])
     # when
     update_pr_branches(console_env, git_env, stack, author, cfg)
     # then
@@ -207,7 +207,7 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     assert len(commits) == 2
     stack: List[CommitPr] = [CommitPr(commit, None) for commit in commits]
     author = om.gen_gh_username()
-    update_patches(file_env, root_dir, commits)
+    update_patches(console_env, file_env, root_dir, commits)
     update_pr_branches(console_env, git_env, stack, author, cfg)
     # when
     update_pr_branches(console_env, git_env, stack, author, cfg)
