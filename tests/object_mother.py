@@ -2,6 +2,7 @@ from typing import Optional
 
 from faker import Faker
 
+from gitzen.models.commit_pr import CommitPr
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_pull_request import PullRequest
@@ -144,3 +145,8 @@ def gen_pr(
         gen_gh_repo_id(),
         commits=[commit],
     )
+
+
+def gen_commit_pr() -> CommitPr:
+    token = gen_zen_token()
+    return CommitPr(gen_commit(token), gen_pr(token))
