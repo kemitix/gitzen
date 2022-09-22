@@ -20,20 +20,22 @@ jobs:
         run: python -m pip install --upgrade pip
       - name: Install dependencies
         run: pip install -r requirements.txt -r requirements_dev.txt
+
+      - name: Pyre Check
+        run: pyre --sequential check
+      - name: Pytest
+        run: pytest -vv
+
       - name: Install Trunk
         run: |
           mkdir .github/bin/
           curl -fsSL https://trunk.io/releases/trunk -o .github/bin/trunk
           chmod u+x .github/bin/trunk
+      - name: Fetch Git History for Trunk
+        run: git fetch origin HEAD
       - name: Install Trunk linters
         run: ./.github/bin/trunk install --ci
-      - name: Fetch Git History
-        run: git fetch origin HEAD
       - name: Trunk Verify Formatting
         run: ./.github/bin/trunk fmt --ci --all
       - name: Trunk Check
         run: ./.github/bin/trunk check --ci --all
-      - name: Pyre Check
-        run: pyre --sequential check
-      - name: Pytest
-        run: pytest -vv
