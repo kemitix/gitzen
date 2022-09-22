@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 from gitzen import github
 
 
-class MuteFakeGuthubEnv(github.Env):
+class MuteFakeGithubEnv(github.Env):
     requests: List[str]
 
     def __init__(self) -> None:

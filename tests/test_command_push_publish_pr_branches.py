@@ -1,16 +1,13 @@
 import re
 from pathlib import PosixPath
-from typing import List
 
 from gitzen import config, console, file, git, logger, repo
-
-# trunk-ignore(flake8/E501)
-from gitzen.commands.push import publish_pr_branches, update_patches, update_pr_branches
-from gitzen.models.commit_pr import CommitPr
+from gitzen.commands.push import prepare_pr_branches, publish_pr_branches
 from gitzen.patterns import short_hash
 from gitzen.types import GitBranchName
 
 from . import object_mother as om
+from .fakes.github_env import FakeGithubEnv
 from .fakes.repo_files import given_repo
 
 
@@ -30,11 +27,36 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
         cfg.remote,
         GitBranchName("master"),
     )
+    repo_id = om.gen_gh_repo_id()
     assert len(commits) == 2
-    stack: List[CommitPr] = [CommitPr(commit, None) for commit in commits]
     author = om.gen_gh_username()
-    update_patches(console_env, file_env, cfg.root_dir, commits)
-    update_pr_branches(console_env, git_env, stack, author, cfg)
+    github_env = FakeGithubEnv(
+        {},
+        {
+            repr({"repo_owner": "{owner}", "repo_name": "{repo}"}): [
+                {
+                    "data": {
+                        "repository": {"id": repo_id.value},
+                        "viewer": {
+                            "login": author.value,
+                            "repository": {
+                                "pullRequests": {
+                                    "nodes": [],
+                                },
+                            },
+                        },
+                    }
+                },
+            ]
+        },
+    )
+    _, stack = prepare_pr_branches(
+        console_env,
+        file_env,
+        git_env,
+        github_env,
+        cfg,
+    )
     # when
     publish_pr_branches(console_env, git_env, stack, author, cfg)
     # then
@@ -46,6 +68,7 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     assert git.branch_exists(git_env, GitBranchName(pr_alpha))
     assert git.branch_exists(git_env, GitBranchName(pr_beta))
     log = git.log_graph(git_env)
+    [print(f"LOG> {line}") for line in log]
     assert len(log) == 6
     if "HEAD" in log[0]:
         patch_beta = 0
