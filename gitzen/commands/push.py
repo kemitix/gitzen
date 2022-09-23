@@ -229,12 +229,12 @@ def update_pr_branch(
     commit_branches: CommitBranches,
 ) -> None:
     head = commit_branches.head
-    base = commit_branches.base
     if not git.branch_exists(git_env, head):
-        if commit_branches.remote_target is not None:
-            git.branch_create(git_env, head, commit_branches.remote_target)
+        if commit_branches.remote_target is None:
+            base = commit_branches.base
         else:
-            git.branch_create(git_env, head, base)
+            base = commit_branches.remote_target
+        git.branch_create(git_env, head, base)
     zen_token = commit_branches.git_commit.zen_token
     cherry_pick_branch(console_env, git_env, zen_token, head)
 
