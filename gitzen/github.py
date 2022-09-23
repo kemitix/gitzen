@@ -167,10 +167,14 @@ def fetch_info(
                 "unknown head_ref: " + head_ref.value,
             )
             continue
-        if match.group("target_branch") != base_ref.value:
+        target_branch = match.group("target_branch")
+        if not base_ref.value.endswith(target_branch):
             console.info(
                 console_env,
-                "ignore prs that don't target expected base branch",
+                (
+                    f"ignore prs ({target_branch}) "
+                    f"that don't target expected base branch {base_ref.value}"
+                ),
             )
             continue
         review_node = pr_node["reviewDecision"]
