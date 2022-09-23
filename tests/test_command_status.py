@@ -157,6 +157,7 @@ def test_command_status_fetches_info_with_no_pr() -> None:
         "Contacting Github for existing Pull Requests",
         "Found 1 Pull Requests",
         f" - {base_ref_name.value} <- {head_ref_name.value}",
+        f"Ignoring Pull Request not created by us: {head_ref_name.value}",
         "Kept 0 Pull Requests",
         "Stack is empty - no Pull Requests found",
     ]
