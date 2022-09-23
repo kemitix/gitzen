@@ -29,6 +29,10 @@ def info(console_env: Env, message: str) -> None:
     console_env._print(message)
 
 
+def warn(console_env: Env, message: str) -> None:
+    console_env._print(f"WARNING: {message}")
+
+
 def error(console_env: Env, message: str) -> None:
     console_env._print(f"ERROR: {message}")
 

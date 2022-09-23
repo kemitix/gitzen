@@ -78,10 +78,10 @@ def test_command_status_fetches_info_with_pr() -> None:
         filter(lambda line: not line.startswith("Fake"), console_env.std_out),
     )
     assert stdout == [
-        "Querying Github...",
-        "Found 1 prs",
-        f"{base_ref_name.value} <- {head_ref_name.value}",
-        "Kept 1 prs",
+        "Contacting Github for existing Pull Requests",
+        "Found 1 Pull Requests",
+        f" - {base_ref_name.value} <- {head_ref_name.value}",
+        "Kept 1 Pull Requests",
         "PR-123 - MERGEABLE - pr-title",
     ]
 
@@ -154,9 +154,9 @@ def test_command_status_fetches_info_with_no_pr() -> None:
         filter(lambda line: not line.startswith("Fake"), console_env.std_out),
     )
     assert stdout == [
-        "Querying Github...",
-        "Found 1 prs",
-        f"{base_ref_name.value} <- {head_ref_name.value}",
-        "Kept 0 prs",
-        "Stack is empty - no PRs found",
+        "Contacting Github for existing Pull Requests",
+        "Found 1 Pull Requests",
+        f" - {base_ref_name.value} <- {head_ref_name.value}",
+        "Kept 0 Pull Requests",
+        "Stack is empty - no Pull Requests found",
     ]

@@ -140,6 +140,7 @@ def fetch_info(
     git_env: git.Env,
     github_env: Env,
 ) -> GithubInfo:
+    console.info(console_env, "Contacting Github for existing Pull Requests")
     data = github_env._graphql(
         {
             "repo_owner": "{owner}",
@@ -151,30 +152,22 @@ def fetch_info(
     viewer = data["viewer"]
     pr_nodes = viewer["repository"]["pullRequests"]["nodes"]
     prs: List[PullRequest] = []
-    console.info(console_env, f"Found {len(pr_nodes)} prs")
+    console.info(console_env, f"Found {len(pr_nodes)} Pull Requests")
     for pr_node in pr_nodes:
         pr_repo_id = GithubRepoId(pr_node["repository"]["id"])
         if repo_id != pr_repo_id:
             continue
         base_ref = GitBranchName(pr_node["baseRefName"])
         head_ref = GitBranchName(pr_node["headRefName"])
-        console.info(console_env, f"{base_ref.value} <- {head_ref.value}")
+        console.info(console_env, f" - {base_ref.value} <- {head_ref.value}")
         match = re.search(patterns.remote_pr_branch, head_ref.value)
         if match is None:
-            console.log(
-                console_env,
-                "github.fetch_info",
-                "unknown head_ref: " + head_ref.value,
-            )
             continue
         target_branch = match.group("target_branch")
         if not base_ref.value.endswith(target_branch):
             console.info(
                 console_env,
-                (
-                    f"ignore prs ({target_branch}) "
-                    f"that don't target expected base branch {base_ref.value}"
-                ),
+                "Ignoring Pull Request not created by us: {head_ref.value}",
             )
             continue
         review_node = pr_node["reviewDecision"]
@@ -183,9 +176,19 @@ def fetch_info(
         )
         body = PullRequestBody(pr_node["body"])
         token = zen_token.find_in_body(body)
-        if token is None:
-            continue
         commits = get_commits(pr_node)
+        if token is None:
+            # look in commits
+            for commit in commits:
+                token = zen_token.find_in_body(commit.messageBody)
+                if token is not None:
+                    break
+            if token is None:  # after checking all commits
+                console.info(
+                    console_env,
+                    "Ignoring Pull Request that doesn't have a zen-token",
+                )
+                continue
         prs.append(
             PullRequest(
                 PullRequestId(pr_node["id"]),
@@ -203,7 +206,7 @@ def fetch_info(
                 commits,
             )
         )
-    console.info(console_env, f"Kept {len(prs)} prs")
+    console.info(console_env, f"Kept {len(prs)} Pull Requests")
     return GithubInfo(
         GithubUsername(viewer["login"]),
         repo_id,

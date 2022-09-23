@@ -1,5 +1,4 @@
 from gitzen import console, git, github
-from gitzen.console import info
 
 
 def status(
@@ -7,13 +6,12 @@ def status(
     git_env: git.Env,
     github_env: github.Env,
 ) -> None:
-    info(console_env, "Querying Github...")
     prs = github.fetch_info(console_env, git_env, github_env).pull_requests
     if len(prs) == 0:
-        info(console_env, "Stack is empty - no PRs found")
+        console.info(console_env, "Stack is empty - no Pull Requests found")
         exit
     for pr in prs:
         n = pr.number.value
         m = pr.mergeable.value
         t = pr.title.value
-        info(console_env, f"PR-{n} - {m} - {t}")
+        console.info(console_env, f"PR-{n} - {m} - {t}")
