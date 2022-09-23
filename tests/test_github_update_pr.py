@@ -33,7 +33,11 @@ def test_invokes_command(mock_subproc_run) -> None:
             "--title",
             commit.messageHeadline.value,
             "--body",
-            commit.messageBody.value,
+            (
+                f"{commit.messageBody.value}"
+                "\n\n"
+                f"zen-token:{commit.zen_token.value}"
+            ),
         ],
         stdout=PIPE,
         stderr=STDOUT,

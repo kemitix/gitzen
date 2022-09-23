@@ -269,7 +269,8 @@ def create_pull_request(
         f"--head {head.value} "
         f"--base {base.value} "
         f"--title '{commit.messageHeadline.value}' "
-        f"--body '{commit.messageBody.value}'",
+        f"--body '{commit.messageBody.value}"
+        f"\n\nzen-token:{commit.zen_token.value}'",
     )
 
 
@@ -283,5 +284,6 @@ def update_pull_request(
         f"pr edit {pr_branch.value} "
         f"--base {base.value} "
         f"--title '{commit.messageHeadline.value}' "
-        f"--body '{commit.messageBody.value}'",
+        f"--body '{commit.messageBody.value}"
+        f"\n\nzen-token:{commit.zen_token.value}'",
     )
