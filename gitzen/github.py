@@ -162,12 +162,9 @@ def fetch_info(
         console.info(console_env, f" - {base_ref.value} <- {head_ref.value}")
         match = re.search(patterns.remote_pr_branch, head_ref.value)
         if match is None:
-            continue
-        target_branch = match.group("target_branch")
-        if not base_ref.value.endswith(target_branch):
             console.info(
                 console_env,
-                "Ignoring Pull Request not created by us: {head_ref.value}",
+                f"Ignoring Pull Request not created by us: {head_ref.value}",
             )
             continue
         review_node = pr_node["reviewDecision"]
