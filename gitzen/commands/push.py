@@ -44,7 +44,6 @@ def prepare_pr_branches(
     github_env: github.Env,
     cfg: Config,
 ) -> Tuple[GithubInfo, List[CommitBranches]]:
-    print("::: push.prepare_pr_branches")
     status, commit_stack = prepare_patches(
         console_env,
         file_env,
@@ -67,7 +66,7 @@ def prepare_patches(
     github_env: github.Env,
     cfg: Config,
 ) -> Tuple[GithubInfo, List[CommitBranches]]:
-    print("::: prepare_patches")
+    console.info(console_env, "Preparing patches")
     status = github.fetch_info(console_env, git_env, github_env)
     local_branch = status.local_branch
     remote_branch = branches.get_required_remote_branch(
@@ -87,6 +86,7 @@ def prepare_patches(
     )
     update_patches(console_env, file_env, cfg.root_dir, commits)
     commit_stack = clean_up_deleted_commits(
+        console_env,
         github_env,
         status.pull_requests,
         commits,
@@ -148,6 +148,7 @@ def rethread_stack(
 
 
 def clean_up_deleted_commits(
+    console_env: console.Env,
     github_env: github.Env,
     pull_requests: List[PullRequest],
     commits: List[GitCommit],
@@ -164,6 +165,10 @@ def clean_up_deleted_commits(
     kept: List[CommitPr] = []
     for pr in pull_requests:
         if pr.zen_token not in zen_tokens:
+            console.warn(
+                console_env,
+                f"No commit for Pull Request {pr.number} closing: {pr.title}",
+            )
             github.close_pull_request_with_comment(
                 github_env,
                 pr,
@@ -182,10 +187,14 @@ def update_patches(
     root_dir: GitRootDir,
     commits: List[GitCommit],
 ) -> None:
+    console.info(console_env, "Updating patches")
     for commit in commits:
         patch = GitPatch(commit.zen_token, commit.hash)
         git.write_patch(file_env, patch, root_dir)
-        console.info(console_env, f"Wrote patch: {patch.zen_token.value}")
+        console.info(
+            console_env,
+            f" - {patch.zen_token.value} - {commit.messageHeadline.value}",
+        )
 
 
 def update_pr_branches(
@@ -195,7 +204,6 @@ def update_pr_branches(
 ) -> None:
     if len(commit_stack) == 0:
         return
-    print(f"::: push.update_pr_branches: {len(commit_stack)}")
     update_pr_branch(console_env, git_env, commit_stack[0])
     update_pr_branches(
         console_env,
@@ -222,7 +230,6 @@ def update_pr_branch(
 ) -> None:
     head = commit_branches.head
     base = commit_branches.base
-    print(f"::: push.update_pr_branch: {base} <- {head}")
     if not git.branch_exists(git_env, head):
         if commit_branches.remote_target is not None:
             git.branch_create(git_env, head, commit_branches.remote_target)
@@ -240,7 +247,6 @@ def cherry_pick_branch(
 ) -> None:
     patch_ref = git.gitzen_patch_ref(zen_token)
     original_branch = repo.get_local_branch_name(console_env, git_env)
-    print(f"::: push.cherry_pick_branch: {branch} <- {patch_ref}")
     git.switch(git_env, branch)
     git.status(git_env)
     status = git.cherry_pick(git_env, patch_ref)
@@ -251,7 +257,6 @@ def cherry_pick_branch(
     )
     if empty_cherry_pick_message in status:
         git.cherry_pick_skip(git_env)
-        git.status(git_env)
     for line in status:
         conflict_match = re.search(
             r"^CONFLICT \(content\): Merge conflict in (?P<filename>.*)\s*$",
@@ -264,7 +269,6 @@ def cherry_pick_branch(
             )
             exit(exit_code.CONFLICT_PREPARING_PR_BRANCH)
     git.switch(git_env, original_branch)
-    git.log_graph(git_env)
 
 
 def publish_pr_branches(
@@ -277,7 +281,10 @@ def publish_pr_branches(
     if len(commit_stack) == 0:
         return
     pr_branch = commit_stack[0].head
-    print(f"::: push.publish_pr_branches: {pr_branch}")
+    console.info(
+        console_env,
+        f"Updating remote branch: {cfg.remote.value}/{pr_branch.value}",
+    )
     git.push(git_env, cfg.remote, pr_branch)
     publish_pr_branches(
         console_env,
@@ -306,10 +313,21 @@ def regenerate_prs(
     commit = commit_branches.git_commit
     pr = commit_branches.pull_request
     pr_branch = commit_branches.head
-    print(f"::: push.regenerate_prs: {base_branch} <- {pr_branch}")
     if pr is None:
+        console.info(
+            console_env,
+            f"Creating Pull Request: {base_branch.value} <- {pr_branch.value}",
+        )
         github.create_pull_request(github_env, pr_branch, base_branch, commit)
     else:
+        console.info(
+            console_env,
+            (
+                f"Updating Pull Request {pr.number.value}"
+                f": {base_branch.value}"
+                f" <- {pr_branch.value}"
+            ),
+        )
         github.update_pull_request(github_env, pr_branch, base_branch, commit)
     regenerate_prs(
         console_env,
