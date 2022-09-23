@@ -245,10 +245,9 @@ def cherry_pick_branch(
     zen_token: ZenToken,
     branch: GitBranchName,
 ) -> None:
-    patch_ref = git.gitzen_patch_ref(zen_token)
     original_branch = repo.get_local_branch_name(console_env, git_env)
+    patch_ref = git.gitzen_patch_ref(zen_token)
     git.switch(git_env, branch)
-    git.status(git_env)
     status = git.cherry_pick(git_env, patch_ref)
     git.status(git_env)
     empty_cherry_pick_message = (
