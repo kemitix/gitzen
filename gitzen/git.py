@@ -124,7 +124,9 @@ def cherry_pick(
     git_env: Env,
     ref: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"cherry-pick -x {ref.value}")
+    return git_env._git(
+        f"cherry-pick --allow-empty --allow-empty-message -x {ref.value}"
+    )
 
 
 def cherry_pick_skip(
