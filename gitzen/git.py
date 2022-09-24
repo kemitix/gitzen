@@ -9,7 +9,9 @@ from genericpath import exists
 
 from gitzen import exit_code, file, logger
 from gitzen.models.git_patch import GitPatch
-from gitzen.types import GitBranchName, GitRemoteName, GitRootDir, ZenToken
+
+# trunk-ignore(flake8/E501)
+from gitzen.types import CommitHash, GitBranchName, GitRemoteName, GitRootDir, ZenToken
 
 
 class Env:
@@ -73,6 +75,19 @@ def root_dir(
     if output == "":
         exit(exit_code.NOT_IN_GIT_REPO)
     return GitRootDir(output[0])
+
+
+def outdated_patch(
+    file_env: file.Env,
+    patch: GitPatch,
+    root_dir: GitRootDir,
+) -> bool:
+    filename = gitzen_patch_file(patch.zen_token, root_dir)
+    if os.path.exists(filename):
+        hashes = file.read(file_env, filename)
+        hash = CommitHash(hashes[0])
+        return hash != patch.hash
+    return True
 
 
 def write_patch(
