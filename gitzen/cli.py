@@ -1,7 +1,7 @@
 from typing import List, Tuple
 
 from gitzen import config, console, file, git, github, logger
-from gitzen.commands import hook, init, push, status
+from gitzen.commands import hook, init, merge, push, status
 
 
 def main(args: List[str]) -> None:

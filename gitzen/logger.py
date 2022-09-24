@@ -25,3 +25,10 @@ def log(logger_env: Env, section: str, message: str) -> None:
 
 def error(logger_env: Env, section: str, message: str) -> None:
     logger_env.log(section, f"ERROR: {message}")
+
+
+def line_contains(needle: str, log: List[str]) -> bool:
+    for line in log:
+        if needle in line:
+            return True
+    return False
