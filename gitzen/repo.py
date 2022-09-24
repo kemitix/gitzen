@@ -1,17 +1,10 @@
 import re
 from typing import List, Tuple
 
-from gitzen import console, exit_code, git, patterns, zen_token
+from gitzen import console, exit_code, git, repo_commit_stack
 from gitzen.console import info
 from gitzen.models.git_commit import GitCommit
-from gitzen.types import (
-    CommitBody,
-    CommitHash,
-    CommitTitle,
-    CommitWipStatus,
-    GitBranchName,
-    GitRemoteName,
-)
+from gitzen.types import GitBranchName, GitRemoteName
 
 
 def get_local_branch_name(
@@ -63,48 +56,9 @@ def get_commit_stack(
     remote: GitRemoteName,
     remote_branch: GitBranchName,
 ) -> List[GitCommit]:
-    log = git.log(git_env, f"{remote.value}/{remote_branch.value}..HEAD")
-    have_hash = False
-    commits: List[GitCommit] = []
-    hash = CommitHash("")
-    headline = ""
-    body: str = ""
-    line_number = 0
-    subject_index = 0
-    for line in log:
-        line_number += 1
-        commit_matches = re.search(patterns.commit_log_hash, line)
-        if commit_matches:
-            if have_hash:
-                info(
-                    console_env,
-                    "No zen-token found - is pre-commit hook installed?",
-                )
-                exit(exit_code.ZEN_TOKENS_MISSING)
-            hash = CommitHash(commit_matches.group(1))
-            have_hash = True
-            subject_index = line_number + 4
-            continue
-        token = zen_token.find_in_line(line[4:])
-        if token is not None:
-            commits.append(
-                GitCommit(
-                    zen_token=token,
-                    hash=hash,
-                    headline=CommitTitle(headline),
-                    body=CommitBody(body.strip()),
-                    wip=CommitWipStatus(headline.startswith("WIP ")),
-                )
-            )
-            body = ""
-            have_hash = False
-            continue
-        if have_hash:
-            if line_number == subject_index:
-                headline = line.strip()
-            elif line_number == (subject_index + 1) and line != "\n":
-                body += line.strip() + "\n"
-            elif line_number > (subject_index + 1):
-                body += line.strip() + "\n"
-    commits.reverse()
-    return commits
+    return repo_commit_stack.get_commit_stack(
+        console_env,
+        git_env,
+        remote,
+        remote_branch,
+    )
