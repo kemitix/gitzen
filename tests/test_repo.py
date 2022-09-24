@@ -215,6 +215,8 @@ Date:   Sat Sep 3 19:12:34 2022 +0100
 
     zen-token:97123f3a
 
+    mystery box text
+
 commit b7bcf5ebdb8b277e267e47ee87fb568e53a8df06
 Author: Paul Campbell <pcampbell@kemitix.net>
 Date:   Sat Sep 3 19:10:18 2022 +0100
@@ -271,7 +273,7 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
             headline=CommitTitle(
                 "Rename as branches.validate_not_remote_pr()",
             ),
-            body=CommitBody(""),
+            body=CommitBody("zen-token:d6cdc6ed"),
             wip=CommitWipStatus(False),
         ),
         GitCommit(  # 2
@@ -280,7 +282,7 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
             headline=CommitTitle(
                 "Extract barnches.get_required_remote_branch()",
             ),
-            body=CommitBody(""),
+            body=CommitBody("zen-token:d21feb41"),
             wip=CommitWipStatus(False),
         ),
         GitCommit(  # 3
@@ -289,28 +291,34 @@ Date:   Sat Sep 3 15:11:46 2022 +0100
             headline=CommitTitle(
                 "WIP Create stub repo.get_local_commit_stack()",
             ),
-            body=CommitBody(""),
+            body=CommitBody("zen-token:e0b93f99"),
             wip=CommitWipStatus(True),
         ),
         GitCommit(  # 4
             zen_token=ZenToken("d0d9c392"),
             hash=CommitHash("55b1cc72019cad0d9c392eef10b817d86378ea61"),
             headline=CommitTitle("Add git.log()"),
-            body=CommitBody(""),
+            body=CommitBody("zen-token:d0d9c392"),
             wip=CommitWipStatus(False),
         ),
         GitCommit(  # 5
             zen_token=ZenToken("db8b277e"),
             hash=CommitHash("b7bcf5ebdb8b277e267e47ee87fb568e53a8df06"),
             headline=CommitTitle("gitzen.branches: whitespace cleanup"),
-            body=CommitBody(""),
+            body=CommitBody("zen-token:db8b277e"),
             wip=CommitWipStatus(False),
         ),
         GitCommit(  # 6
             zen_token=ZenToken("97123f3a"),
             hash=CommitHash("d9c3765ee8c6a1dee34d623b78c50a38bc57201c"),
             headline=CommitTitle("models.Commit: rename field oid as hash_id"),
-            body=CommitBody("oid is used by Github."),
+            body=CommitBody(
+                (
+                    "oid is used by Github.\n\n"
+                    "zen-token:97123f3a\n\n"
+                    "mystery box text"
+                )
+            ),
             wip=CommitWipStatus(False),
         ),
     ]
