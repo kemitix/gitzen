@@ -126,6 +126,13 @@ def branch_create(
     )
 
 
+def branch_delete(
+    git_env: Env,
+    branch: GitBranchName,
+) -> List[str]:
+    return git_env._git(f"branch -d {branch.value}")
+
+
 def branch_exists(
     git_env: Env,
     branch_name: GitBranchName,
@@ -230,7 +237,7 @@ def pull(
     remote: GitRemoteName,
     branch: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"pull {remote.value} {branch.value}:{branch.value}")
+    return git_env._git(f"pull {remote.value} {branch.value}")
 
 
 def push(
