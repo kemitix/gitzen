@@ -36,7 +36,14 @@ def push(
         pr_head_hashes,
         cfg,
     )
-    regenerate_prs(console_env, github_env, commit_stack, status.username, cfg)
+    regenerate_prs(
+        console_env,
+        github_env,
+        commit_stack,
+        pr_head_hashes,
+        status.username,
+        cfg,
+    )
 
 
 def prepare_pr_branches(
@@ -340,6 +347,7 @@ def regenerate_prs(
     console_env: console.Env,
     github_env: github.Env,
     commit_stack: List[CommitBranches],
+    pr_head_hashes: List[CommitHash],
     author: GithubUsername,
     cfg: config.Config,
     last_pr_branch: Optional[GitBranchName] = None,
@@ -361,19 +369,28 @@ def regenerate_prs(
         )
         github.create_pull_request(github_env, pr_branch, base_branch, commit)
     else:
-        console.info(
-            console_env,
-            (
-                f"Updating Pull Request {pr.number.value}"
-                f": {base_branch.value}"
-                f" <- {pr_branch.value}"
-            ),
-        )
-        github.update_pull_request(github_env, pr_branch, base_branch, commit)
+        pr_branch = commit_branches.head
+        existing_pr = commit_branches.pull_request
+        if not existing_pr or existing_pr.headHash != pr_head_hashes[0]:
+            console.info(
+                console_env,
+                (
+                    f"Updating Pull Request {pr.number.value}"
+                    f": {base_branch.value}"
+                    f" <- {pr_branch.value}"
+                ),
+            )
+            github.update_pull_request(
+                github_env,
+                pr_branch,
+                base_branch,
+                commit,
+            )
     regenerate_prs(
         console_env,
         github_env,
         commit_stack[1:],
+        pr_head_hashes[1:],
         author,
         cfg,
         pr_branch,
