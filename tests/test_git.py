@@ -111,7 +111,14 @@ def test_cherry_pick(mock_subproc_run) -> None:
     git.cherry_pick(git.RealEnv(logger.RealEnv()), ref)
     # then
     mock_subproc_run.assert_called_with(
-        ["git", "cherry-pick", "-x", ref.value],
+        [
+            "git",
+            "cherry-pick",
+            "--allow-empty",
+            "--allow-empty-message",
+            "-x",
+            ref.value,
+        ],
         stdout=PIPE,
         stderr=STDOUT,
     )
