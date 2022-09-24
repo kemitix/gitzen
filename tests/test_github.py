@@ -438,3 +438,32 @@ def test_close_pull_request_with_comment(mock_subproc_run) -> None:
         stdout=PIPE,
         stderr=STDOUT,
     )
+
+
+@mock.patch("subprocess.run")
+def test_merge_squash_invocation(mock_subproc_run) -> None:
+    """
+    Test that the correct command is invoked
+    """
+    # given
+    pull_request = om.gen_pr(token=None)
+    logger_env = logger.RealEnv()
+    github_env = github.RealEnv(logger_env)
+    # when
+    github.merge_squash(github_env, pull_request)
+    # then
+    mock_subproc_run.assert_called_with(
+        [
+            "gh",
+            "pr",
+            "merge",
+            f"{pull_request.number.value}",
+            "--squash",
+            "--auto",
+            "--delete-branch",
+            "--match-head-commit-sha",
+            f"{pull_request.headHash.value}",
+        ],
+        stdout=PIPE,
+        stderr=STDOUT,
+    )
