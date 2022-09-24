@@ -41,3 +41,7 @@ class GitCommit:
             f"messageBody={self.messageBody}, "
             f"wip={repr(self.wip)})"
         )
+
+    @property
+    def short_hash(self) -> str:
+        return self.hash.value[:7]
