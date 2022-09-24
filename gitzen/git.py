@@ -248,6 +248,15 @@ def reset_hard(
     return git_env._git(f"reset --hard {base.value}")
 
 
+def restore_staged_worktree(
+    git_env: Env,
+    source: GitBranchName,
+) -> List[str]:
+    return git_env._git(
+        f"restore --staged --worktree --source {source.value} .",
+    )
+
+
 def rev_parse(
     git_env: Env,
     args: str = "",
