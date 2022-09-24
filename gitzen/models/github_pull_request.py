@@ -121,3 +121,7 @@ class PullRequest:
             GithubRepoId(""),
             commits=[GithubCommit.from_git_commit(commit)],
         )
+
+    @property
+    def short_head_hash(self) -> str:
+        return self.headHash.value[:7]
