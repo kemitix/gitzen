@@ -241,6 +241,13 @@ def remote_add(
     )
 
 
+def reset_hard(
+    git_env: Env,
+    base: GitBranchName,
+) -> List[str]:
+    return git_env._git(f"reset --hard {base.value}")
+
+
 def rev_parse(
     git_env: Env,
     args: str = "",
