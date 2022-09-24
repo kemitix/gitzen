@@ -225,6 +225,14 @@ def status(
     return git_env._git("status")
 
 
+def pull(
+    git_env: Env,
+    remote: GitRemoteName,
+    branch: GitBranchName,
+) -> List[str]:
+    return git_env._git(f"pull {remote.value} {branch.value}:{branch.value}")
+
+
 def push(
     git_env: Env,
     remote: GitRemoteName,
