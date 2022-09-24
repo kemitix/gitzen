@@ -287,3 +287,16 @@ def update_pull_request(
         f"--body '{commit.messageBody.value}"
         f"\n\nzen-token:{commit.zen_token.value}'",
     )
+
+
+def merge_squash(
+    github_env: Env,
+    pull_request: PullRequest,
+) -> List[str]:
+    return github_env._gh(
+        (
+            f"pr merge {pull_request.number.value} "
+            "--squash --auto --delete-branch "
+            f"--match-head-commit-sha {pull_request.headHash.value} "
+        )
+    )
