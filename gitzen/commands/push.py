@@ -187,14 +187,17 @@ def update_patches(
     root_dir: GitRootDir,
     commits: List[GitCommit],
 ) -> None:
-    console.info(console_env, "Updating patches")
     for commit in commits:
         patch = GitPatch(commit.zen_token, commit.hash)
-        git.write_patch(file_env, patch, root_dir)
-        console.info(
-            console_env,
-            f" - {patch.zen_token.value} - {commit.messageHeadline.value}",
-        )
+        if git.outdated_patch(file_env, patch, root_dir):
+            git.write_patch(file_env, patch, root_dir)
+            console.info(
+                console_env,
+                (
+                    f"Updating patch {patch.zen_token.value}"
+                    f" - {commit.messageHeadline.value}"
+                ),
+            )
 
 
 def update_pr_branches(
