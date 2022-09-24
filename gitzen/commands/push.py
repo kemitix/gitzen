@@ -10,7 +10,9 @@ from gitzen.models.git_commit import GitCommit
 from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
-from gitzen.types import GitBranchName, GithubUsername, GitRootDir, ZenToken
+
+# trunk-ignore(flake8/E501)
+from gitzen.types import CommitHash, GitBranchName, GithubUsername, GitRootDir, ZenToken
 
 
 def push(
@@ -20,7 +22,7 @@ def push(
     github_env: github.Env,
     cfg: config.Config,
 ) -> None:
-    status, commit_stack = prepare_pr_branches(
+    status, commit_stack, pr_head_hashes = prepare_pr_branches(
         console_env,
         file_env,
         git_env,
@@ -31,7 +33,7 @@ def push(
         console_env,
         git_env,
         commit_stack,
-        status.username,
+        pr_head_hashes,
         cfg,
     )
     regenerate_prs(console_env, github_env, commit_stack, status.username, cfg)
@@ -43,7 +45,7 @@ def prepare_pr_branches(
     git_env: git.Env,
     github_env: github.Env,
     cfg: Config,
-) -> Tuple[GithubInfo, List[CommitBranches]]:
+) -> Tuple[GithubInfo, List[CommitBranches], List[CommitHash]]:
     status, commit_stack = prepare_patches(
         console_env,
         file_env,
@@ -51,12 +53,12 @@ def prepare_pr_branches(
         github_env,
         cfg,
     )
-    update_pr_branches(
+    pr_head_hashes = update_pr_branches(
         console_env,
         git_env,
         commit_stack,
     )
-    return status, commit_stack
+    return status, commit_stack, pr_head_hashes
 
 
 def prepare_patches(
@@ -204,15 +206,19 @@ def update_pr_branches(
     console_env: console.Env,
     git_env: git.Env,
     commit_stack: List[CommitBranches],
-) -> None:
+) -> List[CommitHash]:
     if len(commit_stack) == 0:
-        return
-    update_pr_branch(console_env, git_env, commit_stack[0])
-    update_pr_branches(
-        console_env,
-        git_env,
-        commit_stack[1:],
+        return []
+    hashes: List[CommitHash] = []
+    hashes.append(update_pr_branch(console_env, git_env, commit_stack[0]))
+    hashes.extend(
+        update_pr_branches(
+            console_env,
+            git_env,
+            commit_stack[1:],
+        )
     )
+    return hashes
 
 
 def pr_source(
@@ -230,7 +236,10 @@ def update_pr_branch(
     console_env: console.Env,
     git_env: git.Env,
     commit_branches: CommitBranches,
-) -> None:
+) -> CommitHash:
+    """
+    Returns the hash of the updated pr branch.
+    """
     if commit_branches.remote_target is None:
         base = commit_branches.base
     else:
@@ -240,6 +249,7 @@ def update_pr_branch(
     if not git.branch_exists(git_env, head):
         git.branch_create(git_env, head, base)
         cherry_pick_branch(console_env, git_env, zen_token, head)
+        hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
     else:
         original_branch = repo.get_local_branch_name(console_env, git_env)
         git.switch(git_env, head)
@@ -261,9 +271,11 @@ def update_pr_branch(
                 f"(updated from commit {commit.hash.value})",
             ],
         )
+        hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
         git.status(git_env)
         git.log_graph(git_env)
         git.switch(git_env, original_branch)
+    return hash
 
 
 def cherry_pick_branch(
@@ -301,22 +313,25 @@ def publish_pr_branches(
     console_env: console.Env,
     git_env: git.Env,
     commit_stack: List[CommitBranches],
-    author: GithubUsername,
+    pr_head_hashes: List[CommitHash],
     cfg: config.Config,
 ) -> None:
     if len(commit_stack) == 0:
         return
-    pr_branch = commit_stack[0].head
-    console.info(
-        console_env,
-        f"Updating remote branch: {cfg.remote.value}/{pr_branch.value}",
-    )
-    git.push(git_env, cfg.remote, pr_branch)
+    cb = commit_stack[0]
+    pr_branch = cb.head
+    existing_pr = cb.pull_request
+    if not existing_pr or existing_pr.headHash != pr_head_hashes[0]:
+        console.info(
+            console_env,
+            f"Updating remote branch: {cfg.remote.value}/{pr_branch.value}",
+        )
+        git.push(git_env, cfg.remote, pr_branch)
     publish_pr_branches(
         console_env,
         git_env,
         commit_stack[1:],
-        author,
+        pr_head_hashes[1:],
         cfg,
     )
 

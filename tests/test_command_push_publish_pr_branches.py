@@ -50,7 +50,7 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
             ]
         },
     )
-    _, stack = prepare_pr_branches(
+    _, stack, pr_head_hashes = prepare_pr_branches(
         console_env,
         file_env,
         git_env,
@@ -58,7 +58,7 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
         cfg,
     )
     # when
-    publish_pr_branches(console_env, git_env, stack, author, cfg)
+    publish_pr_branches(console_env, git_env, stack, pr_head_hashes, cfg)
     # then
     token_alpha = commits[0].zen_token
     token_beta = commits[1].zen_token

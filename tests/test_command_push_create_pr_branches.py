@@ -67,7 +67,7 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     assert len(commits) == 2
     token1 = commits[0].zen_token
     token2 = commits[1].zen_token
-    (_, stack) = prepare_pr_branches(
+    _, stack, _ = prepare_pr_branches(
         console_env,
         file_env,
         git_env,
@@ -164,7 +164,7 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     assert expected_hash is not None
     # when
     console.info(console_env, "prepare new pr branches")
-    status, stack = prepare_pr_branches(
+    status, stack, _ = prepare_pr_branches(
         console_env,
         file_env,
         git_env,
@@ -267,7 +267,7 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     assert len(commits) == 2
     token1 = commits[0].zen_token
     token2 = commits[1].zen_token
-    (_, stack) = prepare_pr_branches(
+    _, stack, _ = prepare_pr_branches(
         console_env,
         file_env,
         git_env,
