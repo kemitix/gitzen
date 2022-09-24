@@ -228,15 +228,39 @@ def update_pr_branch(
     git_env: git.Env,
     commit_branches: CommitBranches,
 ) -> None:
+    if commit_branches.remote_target is None:
+        base = commit_branches.base
+    else:
+        base = commit_branches.remote_target
     head = commit_branches.head
-    if not git.branch_exists(git_env, head):
-        if commit_branches.remote_target is None:
-            base = commit_branches.base
-        else:
-            base = commit_branches.remote_target
-        git.branch_create(git_env, head, base)
     zen_token = commit_branches.git_commit.zen_token
-    cherry_pick_branch(console_env, git_env, zen_token, head)
+    if not git.branch_exists(git_env, head):
+        git.branch_create(git_env, head, base)
+        cherry_pick_branch(console_env, git_env, zen_token, head)
+    else:
+        original_branch = repo.get_local_branch_name(console_env, git_env)
+        git.switch(git_env, head)
+        git.status(git_env)
+        git.log_graph(git_env)
+        git.rebase(git_env, base)  # FIXME: detect CONFLICT
+        commit = commit_branches.git_commit
+        git.restore_staged_worktree(
+            git_env,
+            GitBranchName(commit.hash.value),
+        )
+        git.status(git_env)
+        git.commit(
+            git_env,
+            [
+                f"{commit.messageHeadline.value}",
+                "",
+                f"{commit.messageBody.value}",
+                f"(updated from commit {commit.hash.value})",
+            ],
+        )
+        git.status(git_env)
+        git.log_graph(git_env)
+        git.switch(git_env, original_branch)
 
 
 def cherry_pick_branch(
