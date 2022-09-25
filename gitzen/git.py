@@ -263,7 +263,10 @@ def rebase(
     git_env: Env,
     target: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"rebase {target.value} --autostash")[1]
+    rc, log = git_env._git(f"rebase {target.value} --autostash")
+    if rc:
+        raise GitZenError(rc, f"Unable to rebase on {target.value}")
+    return log
 
 
 def remote(
