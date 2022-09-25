@@ -10,6 +10,7 @@ from gitzen.models.git_commit import GitCommit
 from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
+from gitzen.models.gitzen_error import GitZenError
 
 # trunk-ignore(flake8/E501)
 from gitzen.types import CommitHash, GitBranchName, GithubUsername, GitRootDir, ZenToken
@@ -22,28 +23,42 @@ def push(
     github_env: github.Env,
     cfg: config.Config,
 ) -> None:
-    status, commit_stack, pr_head_hashes = prepare_pr_branches(
-        console_env,
-        file_env,
-        git_env,
-        github_env,
-        cfg,
-    )
-    publish_pr_branches(
-        console_env,
-        git_env,
-        commit_stack,
-        pr_head_hashes,
-        cfg,
-    )
-    regenerate_prs(
-        console_env,
-        github_env,
-        commit_stack,
-        pr_head_hashes,
-        status.username,
-        cfg,
-    )
+    initial_branch = repo.get_local_branch_name(console_env, git_env)
+    try:
+        if initial_branch != cfg.default_remote_branch:
+            raise GitZenError(
+                exit_code.UNSUPPORTED_BRANCH_FOR_PUSH,
+                "git zen currently only supports working "
+                "from the default branch "
+                f"(i.e. '{cfg.default_remote_branch.value}')",
+            )
+        status, commit_stack, pr_head_hashes = prepare_pr_branches(
+            console_env,
+            file_env,
+            git_env,
+            github_env,
+            cfg,
+        )
+        publish_pr_branches(
+            console_env,
+            git_env,
+            commit_stack,
+            pr_head_hashes,
+            cfg,
+        )
+        regenerate_prs(
+            console_env,
+            github_env,
+            commit_stack,
+            pr_head_hashes,
+            status.username,
+            cfg,
+        )
+    except GitZenError as error:
+        console.error(console_env, error.message)
+        exit(error.exit_code)
+    finally:
+        git.switch(git_env, initial_branch)
 
 
 def prepare_pr_branches(
