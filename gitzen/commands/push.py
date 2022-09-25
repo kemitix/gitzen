@@ -112,6 +112,7 @@ def prepare_patches(
     update_patches(console_env, file_env, cfg.root_dir, commits)
     commit_stack = clean_up_deleted_commits(
         console_env,
+        git_env,
         github_env,
         status.pull_requests,
         commits,
@@ -174,6 +175,7 @@ def rethread_stack(
 
 def clean_up_deleted_commits(
     console_env: console.Env,
+    git_env: git.Env,
     github_env: github.Env,
     pull_requests: List[PullRequest],
     commits: List[GitCommit],
@@ -199,6 +201,7 @@ def clean_up_deleted_commits(
                 pr,
                 "Closing pull request: commit has gone away",
             )
+            git.delete_patch(git_env, pr.headRefName)
             git.delete_patch(pr.zen_token, root_dir)
         else:
             commit = zen_tokens[pr.zen_token]

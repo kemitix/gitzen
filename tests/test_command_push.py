@@ -36,6 +36,7 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
     # when
     push.clean_up_deleted_commits(
         console_env,
+        git_env,
         github_env,
         prs,
         git_commits,
@@ -73,6 +74,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
     # when
     result = push.clean_up_deleted_commits(
         console_env,
+        git_env,
         github_env,
         prs,
         git_commits,
@@ -115,6 +117,7 @@ def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     # when
     push.clean_up_deleted_commits(
         console_env,
+        git_env,
         github_env,
         prs,
         git_commits,
