@@ -14,8 +14,6 @@ def test_branch(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
-    # given
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.branch(git.RealEnv(logger.RealEnv()))
     # then
@@ -25,7 +23,6 @@ def test_branch(mock_subproc_run) -> None:
             "branch",
             "--no-color",
         ],
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -83,7 +80,6 @@ def test_branch_create(mock_subproc_run) -> None:
     fake = Faker()
     new_branch_name = GitBranchName(fake.word())
     source_branch_name = GitBranchName(fake.word())
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.branch_create(
         git.RealEnv(logger.RealEnv()),
@@ -98,7 +94,6 @@ def test_branch_create(mock_subproc_run) -> None:
             new_branch_name.value,
             source_branch_name.value,
         ],
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -112,7 +107,6 @@ def test_cherry_pick(mock_subproc_run) -> None:
     # given
     fake = Faker()
     ref = GitBranchName(fake.hexify("^^^^^^^"))
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.cherry_pick(git.RealEnv(logger.RealEnv()), ref)
     # then
@@ -125,7 +119,6 @@ def test_cherry_pick(mock_subproc_run) -> None:
             "-x",
             ref.value,
         ],
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -136,14 +129,11 @@ def test_cherry_pick_skip(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
-    # given
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.cherry_pick_skip(git.RealEnv(logger.RealEnv()))
     # then
     mock_subproc_run.assert_called_with(
         ["git", "cherry-pick", "--skip"],
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -156,14 +146,12 @@ def test_fetch(mock_subproc_run) -> None:
     """
     # given
     remote = GitRemoteName(Faker().word())
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.fetch(git.RealEnv(logger.RealEnv()), remote)
     # then
     gitFetch = ["git", "fetch", remote.value]
     mock_subproc_run.assert_called_with(
         gitFetch,
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -174,15 +162,12 @@ def test_log(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
-    # given
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.log(git.RealEnv(logger.RealEnv()), "master..HEAD")
     # then
     gitFetch = ["git", "log", "--no-color", "master..HEAD"]
     mock_subproc_run.assert_called_with(
         gitFetch,
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -196,13 +181,11 @@ def test_push(mock_subproc_run) -> None:
     # given
     remote = om.gen_remote_name()
     branch = om.gen_git_branch_name()
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.push(git.RealEnv(logger.RealEnv()), remote, branch)
     # then
     mock_subproc_run.assert_called_with(
         ["git", "push", remote.value, f"{branch.value}:{branch.value}"],
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -213,8 +196,6 @@ def test_remote(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
-    # given
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.remote(git.RealEnv(logger.RealEnv()))
     # then
@@ -224,7 +205,6 @@ def test_remote(mock_subproc_run) -> None:
             "remote",
             "--verbose",
         ],
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -235,8 +215,6 @@ def test_rebase(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
-    # given
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.rebase(
         git.RealEnv(logger.RealEnv()),
@@ -250,7 +228,6 @@ def test_rebase(mock_subproc_run) -> None:
             "target/branch",
             "--autostash",
         ],
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -261,14 +238,11 @@ def test_revParse(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
-    # given
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.rev_parse(git.RealEnv(logger.RealEnv()), "--verify HEAD")
     # then
     mock_subproc_run.assert_called_with(
         ["git", "rev-parse", "--verify", "HEAD"],
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -296,7 +270,6 @@ def test_switch(mock_subproc_run) -> None:
     """
     # given
     branch = GitBranchName(Faker().word())
-    mock_subproc_run.return_value = CompletedProcess("", 0)
     # when
     git.switch(git.RealEnv(logger.RealEnv()), branch)
     # then
@@ -306,7 +279,6 @@ def test_switch(mock_subproc_run) -> None:
             "switch",
             branch.value,
         ],
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
@@ -317,19 +289,12 @@ def test_root_dir(mock_subproc_run) -> None:
     """
     Test that the correct command is invoked
     """
-    # given
-    mock_subproc_run.return_value = CompletedProcess(
-        "",
-        0,
-        stdout="root_dir".encode(),
-    )
     # when
     git.root_dir(git.RealEnv(logger.RealEnv()))
     # then
     gitRevParse = ["git", "rev-parse", "--show-toplevel"]
     mock_subproc_run.assert_called_with(
         gitRevParse,
-        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )

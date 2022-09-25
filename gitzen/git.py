@@ -15,7 +15,7 @@ from gitzen.types import CommitHash, GitBranchName, GitRemoteName, GitRootDir, Z
 
 
 class Env:
-    def _git(self, args: str, survive_error: bool = False) -> List[str]:
+    def _git(self, args: str) -> List[str]:
         pass
 
     def write_patch(self, patch: GitPatch) -> None:
@@ -32,30 +32,15 @@ class RealEnv(Env):
     def _log(self, message: str) -> None:
         logger.log(self.logger_env, "git", message)
 
-    def _error(self, message: str) -> None:
-        logger.error(self.logger_env, "git", message)
-
-    def _git(self, args: str, survive_error: bool = False) -> List[str]:
+    def _git(self, args: str) -> List[str]:
         git_command = f"git {args}"
         self._log(f"{git_command}")
-        stdout = None
-        try:
-            result: subprocess.CompletedProcess[bytes] = subprocess.run(
-                shlex.split(git_command),
-                check=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-            )
-            stdout = result.stdout
-        except subprocess.CalledProcessError as error:
-            stderr = error.stderr
-            self._error(f"{error.returncode}: {git_command}")
-            self._error(f"{error}")
-            if stderr:
-                lines = stderr.decode().splitlines()
-                [self._error(f"| {line}") for line in lines]
-            if not survive_error:
-                exit(exit_code.GIT_ERROR)
+        result: subprocess.CompletedProcess[bytes] = subprocess.run(
+            shlex.split(git_command),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        stdout = result.stdout
         if stdout:
             lines = stdout.decode().splitlines()
             [self._log(f"| {line}") for line in lines]
@@ -218,7 +203,7 @@ def commit(
     message: List[str],
 ) -> List[str]:
     log = "\n".join(message)
-    return git_env._git(f"commit -m'{log}'", survive_error=True)
+    return git_env._git(f"commit -m'{log}'")
 
 
 def commit_amend_noedit(

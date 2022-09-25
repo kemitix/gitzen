@@ -19,7 +19,7 @@ class FakeGitEnv(git.Env):
         for args in responses:
             self.request_counters[args] = 0
 
-    def _git(self, args: str, survive_error: bool = False) -> List[str]:
+    def _git(self, args: str) -> List[str]:
         logger.log(self.logger_env, "FakeGit", args)
         self.requests.append(args)
         if args in self.responses:
