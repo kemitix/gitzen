@@ -80,6 +80,7 @@ def prepare_pr_branches(
         git_env,
         commit_stack,
     )
+    git.switch(git_env, cfg.default_remote_branch)
     return status, commit_stack, pr_head_hashes
 
 
