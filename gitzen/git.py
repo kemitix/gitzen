@@ -305,9 +305,15 @@ def restore_staged_worktree(
     git_env: Env,
     source: GitBranchName,
 ) -> List[str]:
-    return git_env._git(
+    rc, log = git_env._git(
         f"restore --staged --worktree --source {source.value} .",
-    )[1]
+    )
+    if rc:
+        raise GitZenError(
+            rc,
+            f"Unable to add changes from {source.value} to current branch",
+        )
+    return log
 
 
 def rev_parse(
