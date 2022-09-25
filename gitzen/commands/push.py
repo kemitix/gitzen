@@ -201,8 +201,7 @@ def clean_up_deleted_commits(
                 pr,
                 "Closing pull request: commit has gone away",
             )
-            if git.branch_exists(git_env, pr.headRefName):
-                git.branch_delete(git_env, pr.headRefName)
+            git.delete_patch(git_env, pr.headRefName)
             git.delete_patch(pr.zen_token, root_dir)
         else:
             commit = zen_tokens[pr.zen_token]
