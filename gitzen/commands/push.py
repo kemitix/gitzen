@@ -78,6 +78,7 @@ def prepare_patches(
     console.info(console_env, "Preparing patches")
     status = github.fetch_info(console_env, git_env, github_env)
     local_branch = status.local_branch
+    branches.validate_not_remote_pr(console_env, local_branch)
     remote_branch = branches.get_required_remote_branch(
         console_env,
         local_branch,
@@ -86,7 +87,6 @@ def prepare_patches(
     remote_target = GitBranchName(f"{cfg.remote.value}/{remote_branch.value}")
     git.fetch(git_env, cfg.remote)
     git.rebase(git_env, remote_target)
-    branches.validate_not_remote_pr(console_env, local_branch)
     commits = repo.get_commit_stack(
         console_env,
         git_env,
