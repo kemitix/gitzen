@@ -3,7 +3,7 @@ import shlex
 import subprocess
 from os import mkdir
 from os.path import isdir
-from typing import List
+from typing import List, Tuple
 
 from genericpath import exists
 
@@ -15,7 +15,7 @@ from gitzen.types import CommitHash, GitBranchName, GitRemoteName, GitRootDir, Z
 
 
 class Env:
-    def _git(self, args: str) -> List[str]:
+    def _git(self, args: str) -> Tuple[int, List[str]]:
         pass
 
     def write_patch(self, patch: GitPatch) -> None:
@@ -32,7 +32,10 @@ class RealEnv(Env):
     def _log(self, message: str) -> None:
         logger.log(self.logger_env, "git", message)
 
-    def _git(self, args: str) -> List[str]:
+    def _error(self, message: str) -> None:
+        logger.error(self.logger_env, "git", message)
+
+    def _git(self, args: str) -> Tuple[int, List[str]]:
         git_command = f"git {args}"
         self._log(f"{git_command}")
         result: subprocess.CompletedProcess[bytes] = subprocess.run(
@@ -45,10 +48,10 @@ class RealEnv(Env):
             lines = stdout.decode().splitlines()
             [self._log(f"| {line}") for line in lines]
             self._log("\\------------------")
-            return lines
+            return result.returncode, lines
         else:
             self._log("\\------------------")
-            return []
+            return result.returncode, []
 
 
 def gitzen_refs(root_dir: GitRootDir) -> str:
@@ -112,7 +115,7 @@ def delete_patch(zen_token: ZenToken, root_dir: GitRootDir) -> None:
         os.remove(patch_file)
 
 
-def branch(git_env: Env) -> List[str]:
+def branch(git_env: Env) -> Tuple[int, List[str]]:
     return git_env._git("branch --no-color")
 
 
@@ -123,21 +126,22 @@ def branch_create(
 ) -> List[str]:
     return git_env._git(
         f"branch {new_branch_name.value} {source_branch_name.value}",
-    )
+    )[1]
 
 
 def branch_delete(
     git_env: Env,
     branch: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"branch -d {branch.value}")
+    return git_env._git(f"branch -d {branch.value}")[1]
 
 
 def branch_exists(
     git_env: Env,
     branch_name: GitBranchName,
 ) -> bool:
-    lines = [line[2:] for line in branch(git_env)]
+    _, log = branch(git_env)
+    lines = [line[2:] for line in log]
     branches = [GitBranchName(name) for name in lines]
     return branch_name in branches
 
@@ -148,19 +152,19 @@ def cherry_pick(
 ) -> List[str]:
     return git_env._git(
         f"cherry-pick --allow-empty --allow-empty-message -x {ref.value}"
-    )
+    )[1]
 
 
 def cherry_pick_skip(
     git_env: Env,
 ) -> List[str]:
-    return git_env._git("cherry-pick --skip")
+    return git_env._git("cherry-pick --skip")[1]
 
 
 def cherry_pick_continue(
     git_env: Env,
 ) -> List[str]:
-    return git_env._git("cherry-pick --continue")
+    return git_env._git("cherry-pick --continue")[1]
 
 
 def config_set(
@@ -168,26 +172,26 @@ def config_set(
     key: str,
     value: str,
 ) -> List[str]:
-    return git_env._git(f"config {key} '{value}'")
+    return git_env._git(f"config {key} '{value}'")[1]
 
 
 def fetch(
     git_env: Env,
     remote: GitRemoteName,
 ) -> List[str]:
-    return git_env._git(f"fetch {remote.value}")
+    return git_env._git(f"fetch {remote.value}")[1]
 
 
 def init(
     git_env: Env,
 ) -> List[str]:
-    return git_env._git("init")
+    return git_env._git("init")[1]
 
 
 def init_bare(
     git_env: Env,
 ) -> List[str]:
-    return git_env._git("init --bare")
+    return git_env._git("init --bare")[1]
 
 
 def clone(
@@ -195,14 +199,14 @@ def clone(
     remote_repo: str,
     local_dir: str,
 ) -> List[str]:
-    return git_env._git(f"clone {remote_repo} {local_dir}")
+    return git_env._git(f"clone {remote_repo} {local_dir}")[1]
 
 
 def add(
     git_env: Env,
     files: List[str],
 ) -> List[str]:
-    return git_env._git(f"add {' '.join(files)}")
+    return git_env._git(f"add {' '.join(files)}")[1]
 
 
 def commit(
@@ -210,26 +214,26 @@ def commit(
     message: List[str],
 ) -> List[str]:
     log = "\n".join(message)
-    return git_env._git(f"commit -m'{log}'")
+    return git_env._git(f"commit -m'{log}'")[1]
 
 
 def commit_amend_noedit(
     git_env: Env,
 ) -> List[str]:
-    return git_env._git("commit --amend --no-edit")
+    return git_env._git("commit --amend --no-edit")[1]
 
 
 def log(
     git_env: Env,
     args: str = "",
 ) -> List[str]:
-    return git_env._git(f"log --no-color {args}")
+    return git_env._git(f"log --no-color {args}")[1]
 
 
 def status(
     git_env: Env,
 ) -> List[str]:
-    return git_env._git("status")
+    return git_env._git("status")[1]
 
 
 def pull(
@@ -237,7 +241,7 @@ def pull(
     remote: GitRemoteName,
     branch: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"pull {remote.value} {branch.value}")
+    return git_env._git(f"pull {remote.value} {branch.value}")[1]
 
 
 def push(
@@ -245,20 +249,22 @@ def push(
     remote: GitRemoteName,
     branch: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"push {remote.value} {branch.value}:{branch.value}")
+    return git_env._git(
+        f"push {remote.value} {branch.value}:{branch.value}",
+    )[1]
 
 
 def rebase(
     git_env: Env,
     target: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"rebase {target.value} --autostash")
+    return git_env._git(f"rebase {target.value} --autostash")[1]
 
 
 def remote(
     git_env: Env,
 ) -> List[str]:
-    return git_env._git("remote --verbose")
+    return git_env._git("remote --verbose")[1]
 
 
 def remote_add(
@@ -268,14 +274,14 @@ def remote_add(
 ) -> List[str]:
     return git_env._git(
         f"remote add {remote_name.value} {root_dir.value}",
-    )
+    )[1]
 
 
 def reset_hard(
     git_env: Env,
     base: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"reset --hard {base.value}")
+    return git_env._git(f"reset --hard {base.value}")[1]
 
 
 def restore_staged_worktree(
@@ -284,24 +290,24 @@ def restore_staged_worktree(
 ) -> List[str]:
     return git_env._git(
         f"restore --staged --worktree --source {source.value} .",
-    )
+    )[1]
 
 
 def rev_parse(
     git_env: Env,
     args: str = "",
 ) -> List[str]:
-    return git_env._git(f"rev-parse {args}")
+    return git_env._git(f"rev-parse {args}")[1]
 
 
 def switch(
     git_env: Env,
     branch: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"switch {branch.value}")
+    return git_env._git(f"switch {branch.value}")[1]
 
 
 def log_graph(
     git_env: Env,
 ) -> List[str]:
-    return git_env._git("log --oneline --graph --decorate --all")
+    return git_env._git("log --oneline --graph --decorate --all")[1]

@@ -11,7 +11,7 @@ def get_local_branch_name(
     console_env: console.Env,
     git_env: git.Env,
 ) -> GitBranchName:
-    branches = git.branch(git_env)
+    branches = git.branch(git_env)[1]
     for branch in branches:
         # TODO detect detached HEAD
         if branch.startswith("* "):

@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from gitzen import git, logger
 
@@ -19,7 +19,7 @@ class FakeGitEnv(git.Env):
         for args in responses:
             self.request_counters[args] = 0
 
-    def _git(self, args: str) -> List[str]:
+    def _git(self, args: str) -> Tuple[int, List[str]]:
         logger.log(self.logger_env, "FakeGit", args)
         self.requests.append(args)
         if args in self.responses:
@@ -28,7 +28,7 @@ class FakeGitEnv(git.Env):
                 response = self.responses[args][counter]
                 self.request_counters[args] += 1
                 logger.log(self.logger_env, "FakeGit", f"{response}")
-                return response
+                return 0, response
             logger.error(
                 self.logger_env,
                 "FakeGit",
