@@ -291,6 +291,28 @@ def push(
     return log
 
 
+def push_force_with_lease(
+    git_env: Env,
+    remote: GitRemoteName,
+    branch: GitBranchName,
+) -> List[str]:
+    rc, log = git_env._git(
+        (
+            f"push --force-with-lease {remote.value} "
+            f"{branch.value}:{branch.value}"
+        ),
+    )
+    if rc:
+        raise GitZenError(
+            rc,
+            (
+                f"Unable to force push changes to remote {remote.value} "
+                f"from local branch {branch.value}"
+            ),
+        )
+    return log
+
+
 def rebase(
     git_env: Env,
     target: GitBranchName,

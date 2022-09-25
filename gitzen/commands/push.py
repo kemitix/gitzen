@@ -337,6 +337,7 @@ def publish_pr_branches(
     commit_stack: List[CommitBranches],
     pr_head_hashes: List[CommitHash],
     cfg: config.Config,
+    parent_pr_branch_updated: bool = False,
 ) -> None:
     if len(commit_stack) == 0:
         return
@@ -348,13 +349,18 @@ def publish_pr_branches(
             console_env,
             f"Updating remote branch: {cfg.remote.value}/{pr_branch.value}",
         )
-        git.push(git_env, cfg.remote, pr_branch)
+        if parent_pr_branch_updated:
+            git.push_force_with_lease(git_env, cfg.remote, pr_branch)
+        else:
+            git.push(git_env, cfg.remote, pr_branch)
+        parent_pr_branch_updated = True
     publish_pr_branches(
         console_env,
         git_env,
         commit_stack[1:],
         pr_head_hashes[1:],
         cfg,
+        parent_pr_branch_updated
     )
 
 
