@@ -16,17 +16,22 @@ def main(args: List[str]) -> None:
             (console_env, file_env, git_env, _) = environments(logs)
             root_dir = git.root_dir(git_env)
             init.install_hook(console_env, file_env, root_dir)
+            return
         if arg == "hook":
             (_, file_env, _, _) = environments(logs)
             hook.main(file_env, args[0])
+            return
         if arg == "status":
             (console_env, _, git_env, github_env) = environments(logs)
             status.status(console_env, git_env, github_env)
+            return
         if arg == "push":
             (console_env, file_env, git_env, github_env) = environments(logs)
             root_dir = git.root_dir(git_env)
             cfg = config.load(console_env, file_env, root_dir)
             push.push(console_env, file_env, git_env, github_env, cfg)
+            return
+    print("ERROR: no recognised command found")
 
 
 def environments(
