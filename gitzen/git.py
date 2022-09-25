@@ -225,7 +225,10 @@ def commit(
     message: List[str],
 ) -> List[str]:
     log = "\n".join(message)
-    return git_env._git(f"commit -m'{log}'")[1]
+    rc, log = git_env._git(f"commit -m'{log}'")
+    if rc:
+        raise GitZenError(rc, "Unable to commit local changes")
+    return log
 
 
 def commit_amend_noedit(
