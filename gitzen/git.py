@@ -45,6 +45,8 @@ class RealEnv(Env):
             stderr=subprocess.STDOUT,
         )
         code = None if result.returncode == 0 else result.returncode
+        if code:
+            self._log(f"< {code}")
         stdout = result.stdout
         if stdout:
             lines = stdout.decode().splitlines()
@@ -285,6 +287,29 @@ def push(
             rc,
             (
                 f"Unable to push changes to remote {remote.value} "
+                f"from local branch {branch.value}"
+            ),
+        )
+    return log
+
+
+def push_force_with_lease(
+    git_env: Env,
+    remote: GitRemoteName,
+    branch: GitBranchName,
+) -> List[str]:
+    rc, log = git_env._git(
+        (
+            "push "
+            f"--force-with-lease {remote.value} "
+            f"{branch.value}:{branch.value}"
+        ),
+    )
+    if rc:
+        raise GitZenError(
+            rc,
+            (
+                f"Unable to force push changes to remote {remote.value} "
                 f"from local branch {branch.value}"
             ),
         )
