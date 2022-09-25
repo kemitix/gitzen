@@ -80,6 +80,7 @@ def prepare_pr_branches(
         git_env,
         commit_stack,
     )
+    git.switch(git_env, cfg.default_remote_branch)
     return status, commit_stack, pr_head_hashes
 
 
@@ -273,11 +274,10 @@ def update_pr_branch(
         cherry_pick_branch(console_env, git_env, zen_token, head)
         hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
     else:
-        original_branch = repo.get_local_branch_name(console_env, git_env)
         git.switch(git_env, head)
         git.status(git_env)
         git.log_graph(git_env)
-        git.rebase(git_env, base)  # FIXME: detect CONFLICT
+        git.rebase(git_env, base)
         commit = commit_branches.git_commit
         git.restore_staged_worktree(
             git_env,
@@ -296,7 +296,6 @@ def update_pr_branch(
         hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
         git.status(git_env)
         git.log_graph(git_env)
-        git.switch(git_env, original_branch)
     return hash
 
 

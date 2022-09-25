@@ -318,7 +318,10 @@ def switch(
     git_env: Env,
     branch: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"switch {branch.value}")[1]
+    rc, log = git_env._git(f"switch {branch.value}")
+    if rc:
+        raise GitZenError(rc, f"Unable to switch to branch {branch.value}")
+    return log
 
 
 def log_graph(
