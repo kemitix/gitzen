@@ -297,6 +297,6 @@ def merge_squash(
         (
             f"pr merge {pull_request.number.value} "
             "--squash --auto --delete-branch "
-            f"--match-head-commit-sha {pull_request.headHash.value} "
+            f"--match-head-commit {pull_request.headHash.value} "
         )
     )
