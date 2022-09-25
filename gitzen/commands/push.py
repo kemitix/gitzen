@@ -282,16 +282,17 @@ def update_pr_branch(
             git_env,
             GitBranchName(commit.hash.value),
         )
-        git.status(git_env)
-        git.commit(
-            git_env,
-            [
-                f"{commit.messageHeadline.value}",
-                "",
-                f"{commit.messageBody.value}",
-                f"(updated from commit {commit.hash.value})",
-            ],
-        )
+        status = git.status(git_env)
+        if "nothing to commit, working tree clean" not in status:
+            git.commit(
+                git_env,
+                [
+                    f"{commit.messageHeadline.value}",
+                    "",
+                    f"{commit.messageBody.value}",
+                    f"(updated from commit {commit.hash.value})",
+                ],
+            )
         hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
         git.status(git_env)
         git.log_graph(git_env)
