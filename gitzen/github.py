@@ -186,6 +186,7 @@ def fetch_info(
                     "Ignoring Pull Request that doesn't have a zen-token",
                 )
                 continue
+        headHash = commits[-1].hash
         prs.append(
             PullRequest(
                 PullRequestId(pr_node["id"]),
@@ -196,7 +197,7 @@ def fetch_info(
                 body,
                 base_ref,
                 head_ref,
-                commits[0].hash,
+                headHash,
                 PullRequestMergeable(pr_node["mergeable"]),
                 review_decision,
                 pr_repo_id,
