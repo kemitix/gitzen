@@ -3,19 +3,20 @@ import shlex
 import subprocess
 from os import mkdir
 from os.path import isdir
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from genericpath import exists
 
 from gitzen import exit_code, file, logger
 from gitzen.models.git_patch import GitPatch
+from gitzen.models.gitzen_error import GitZenError
 
 # trunk-ignore(flake8/E501)
 from gitzen.types import CommitHash, GitBranchName, GitRemoteName, GitRootDir, ZenToken
 
 
 class Env:
-    def _git(self, args: str) -> Tuple[int, List[str]]:
+    def _git(self, args: str) -> Tuple[Optional[int], List[str]]:
         pass
 
     def write_patch(self, patch: GitPatch) -> None:
@@ -35,7 +36,7 @@ class RealEnv(Env):
     def _error(self, message: str) -> None:
         logger.error(self.logger_env, "git", message)
 
-    def _git(self, args: str) -> Tuple[int, List[str]]:
+    def _git(self, args: str) -> Tuple[Optional[int], List[str]]:
         git_command = f"git {args}"
         self._log(f"{git_command}")
         result: subprocess.CompletedProcess[bytes] = subprocess.run(
@@ -43,15 +44,16 @@ class RealEnv(Env):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
         )
+        code = None if result.returncode == 0 else result.returncode
         stdout = result.stdout
         if stdout:
             lines = stdout.decode().splitlines()
             [self._log(f"| {line}") for line in lines]
             self._log("\\------------------")
-            return result.returncode, lines
+            return code, lines
         else:
             self._log("\\------------------")
-            return result.returncode, []
+            return code, []
 
 
 def gitzen_refs(root_dir: GitRootDir) -> str:
@@ -115,7 +117,7 @@ def delete_patch(zen_token: ZenToken, root_dir: GitRootDir) -> None:
         os.remove(patch_file)
 
 
-def branch(git_env: Env) -> Tuple[int, List[str]]:
+def branch(git_env: Env) -> Tuple[Optional[int], List[str]]:
     return git_env._git("branch --no-color")
 
 
@@ -179,7 +181,10 @@ def fetch(
     git_env: Env,
     remote: GitRemoteName,
 ) -> List[str]:
-    return git_env._git(f"fetch {remote.value}")[1]
+    rc, log = git_env._git(f"fetch {remote.value}")
+    if rc:
+        raise GitZenError(rc, f"Unable to fetch from remote {remote.value}")
+    return log
 
 
 def init(
