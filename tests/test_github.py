@@ -461,7 +461,7 @@ def test_merge_squash_invocation(mock_subproc_run) -> None:
             "--squash",
             "--auto",
             "--delete-branch",
-            "--match-head-commit-sha",
+            "--match-head-commit",
             f"{pull_request.headHash.value}",
         ],
         stdout=PIPE,
