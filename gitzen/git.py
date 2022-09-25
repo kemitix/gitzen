@@ -126,9 +126,15 @@ def branch_create(
     new_branch_name: GitBranchName,
     source_branch_name: GitBranchName,
 ) -> List[str]:
-    return git_env._git(
+    rc, log = git_env._git(
         f"branch {new_branch_name.value} {source_branch_name.value}",
-    )[1]
+    )
+    if rc:
+        raise GitZenError(
+            rc,
+            f"Unable to create branch {new_branch_name.value}",
+        )
+    return log
 
 
 def branch_delete(
