@@ -31,12 +31,6 @@ def main(args: List[str]) -> None:
             cfg = config.load(console_env, file_env, root_dir)
             push.push(console_env, file_env, git_env, github_env, cfg)
             return
-        if arg == "merge":
-            (console_env, file_env, git_env, github_env) = environments(logs)
-            root_dir = git.root_dir(git_env)
-            cfg = config.load(console_env, file_env, root_dir)
-            merge.merge(console_env, file_env, git_env, github_env, cfg)
-            return
     print("ERROR: no recognised command found")
 
 

@@ -5,6 +5,9 @@ class Env:
     def log(self, section: str, message: str) -> None:
         pass
 
+    def error(self, section: str, message: str) -> None:
+        pass
+
 
 class RealEnv(Env):
     sections: List[str]
@@ -18,10 +21,21 @@ class RealEnv(Env):
             log_line = f"{section}> {message}"
             print(log_line)
 
+    def error(self, section: str, message: str) -> None:
+        log_line = f"ERROR:{section} > {message}"
+        print(log_line)
+
 
 def log(logger_env: Env, section: str, message: str) -> None:
     logger_env.log(section, message)
 
 
 def error(logger_env: Env, section: str, message: str) -> None:
-    logger_env.log(section, f"ERROR: {message}")
+    logger_env.error(section, message)
+
+
+def line_contains(needle: str, log: List[str]) -> bool:
+    for line in log:
+        if needle in line:
+            return True
+    return False

@@ -76,6 +76,7 @@ def test_fetch_info_invokes_command(mock_subproc_run) -> None:
             "branch",
             "--no-color",
         ],
+        check=True,
         stdout=PIPE,
         stderr=STDOUT,
     )
