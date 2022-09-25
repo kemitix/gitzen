@@ -234,7 +234,10 @@ def commit(
 def commit_amend_noedit(
     git_env: Env,
 ) -> List[str]:
-    return git_env._git("commit --amend --no-edit")[1]
+    rc, log = git_env._git("commit --amend --no-edit")
+    if rc:
+        raise GitZenError(rc, "Unable to commit amend local changes")
+    return log
 
 
 def log(
