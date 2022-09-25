@@ -143,7 +143,10 @@ def branch_delete(
     git_env: Env,
     branch: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"branch -d {branch.value}")[1]
+    rc, log = git_env._git(f"branch -d {branch.value}")
+    if rc:
+        raise GitZenError(rc, f"Unable to delete branch {branch}")
+    return log
 
 
 def branch_exists(
