@@ -45,6 +45,8 @@ class RealEnv(Env):
             stderr=subprocess.STDOUT,
         )
         code = None if result.returncode == 0 else result.returncode
+        if code:
+            self._log(f"< {code}")
         stdout = result.stdout
         if stdout:
             lines = stdout.decode().splitlines()
