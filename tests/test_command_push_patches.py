@@ -15,7 +15,7 @@ def test_update_patches_creates_patches(tmp_path: PosixPath) -> None:
     logger_env = logger.RealEnv()
     file_env = file.RealEnv(logger_env)
     git_env = git.RealEnv(logger_env)
-    root_dir, _ = given_repo(file_env, git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     commits: List[GitCommit] = [
         om.gen_commit(token=None),
         om.gen_commit(token=None),

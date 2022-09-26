@@ -19,7 +19,7 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
     console_env = console.RealEnv()
     file_env = file.RealEnv(logger_env)
     git_env = git.RealEnv(logger_env)
-    root_dir, _ = given_repo(file_env, git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
     pr_to_keep = om.gen_pr(zen_token)
@@ -36,7 +36,6 @@ def test_clean_up_deleted_commits_closes_with_comment(tmp_path: PosixPath) -> No
     # when
     push.clean_up_deleted_commits(
         console_env,
-        git_env,
         github_env,
         prs,
         git_commits,
@@ -57,7 +56,7 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
     console_env = console.RealEnv()
     file_env = file.RealEnv(logger_env)
     git_env = git.RealEnv(logger_env)
-    root_dir, _ = given_repo(file_env, git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     pr_to_close: PullRequest = om.gen_pr(token=None)
     zen_token = om.gen_zen_token()
     pr_to_keep = om.gen_pr(zen_token)
@@ -74,7 +73,6 @@ def test_clean_up_deleted_commits_returns_remaining_prs(tmp_path: PosixPath) -> 
     # when
     result = push.clean_up_deleted_commits(
         console_env,
-        git_env,
         github_env,
         prs,
         git_commits,
@@ -93,7 +91,7 @@ def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     console_env = console.RealEnv()
     file_env = file.RealEnv(logger_env)
     git_env = git.RealEnv(logger_env)
-    root_dir, _ = given_repo(file_env, git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
     deleted_zen_token = om.gen_zen_token()
     pr_to_close: PullRequest = om.gen_pr(deleted_zen_token)
     deleted_commit = pr_to_close.commits[0]
@@ -117,7 +115,6 @@ def test_clean_up_deleted_commits_deletes_patches(tmp_path: PosixPath) -> None:
     # when
     push.clean_up_deleted_commits(
         console_env,
-        git_env,
         github_env,
         prs,
         git_commits,

@@ -1,3 +1,4 @@
+import re
 from typing import Dict, List, Optional, Tuple
 
 # trunk-ignore(flake8/E501)
@@ -10,14 +11,9 @@ from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
 from gitzen.models.gitzen_error import GitZenError
-from gitzen.types import (
-    CommitHash,
-    CommitTitle,
-    GitBranchName,
-    GithubUsername,
-    GitRootDir,
-    ZenToken,
-)
+
+# trunk-ignore(flake8/E501)
+from gitzen.types import CommitHash, GitBranchName, GithubUsername, GitRootDir, ZenToken
 
 
 def push(
@@ -83,7 +79,6 @@ def prepare_pr_branches(
         console_env,
         git_env,
         commit_stack,
-        cfg,
     )
     git.switch(git_env, cfg.default_remote_branch)
     return status, commit_stack, pr_head_hashes
@@ -117,7 +112,6 @@ def prepare_patches(
     update_patches(console_env, file_env, cfg.root_dir, commits)
     commit_stack = clean_up_deleted_commits(
         console_env,
-        git_env,
         github_env,
         status.pull_requests,
         commits,
@@ -180,7 +174,6 @@ def rethread_stack(
 
 def clean_up_deleted_commits(
     console_env: console.Env,
-    git_env: git.Env,
     github_env: github.Env,
     pull_requests: List[PullRequest],
     commits: List[GitCommit],
@@ -206,8 +199,6 @@ def clean_up_deleted_commits(
                 pr,
                 "Closing pull request: commit has gone away",
             )
-            if git.branch_exists(git_env, pr.headRefName):
-                git.branch_delete(git_env, pr.headRefName)
             git.delete_patch(pr.zen_token, root_dir)
         else:
             commit = zen_tokens[pr.zen_token]
@@ -238,18 +229,16 @@ def update_pr_branches(
     console_env: console.Env,
     git_env: git.Env,
     commit_stack: List[CommitBranches],
-    cfg: config.Config,
 ) -> List[CommitHash]:
     if len(commit_stack) == 0:
         return []
     hashes: List[CommitHash] = []
-    hashes.append(update_pr_branch(console_env, git_env, commit_stack[0], cfg))
+    hashes.append(update_pr_branch(console_env, git_env, commit_stack[0]))
     hashes.extend(
         update_pr_branches(
             console_env,
             git_env,
             commit_stack[1:],
-            cfg,
         )
     )
     return hashes
@@ -270,7 +259,6 @@ def update_pr_branch(
     console_env: console.Env,
     git_env: git.Env,
     commit_branches: CommitBranches,
-    cfg: config.Config,
 ) -> CommitHash:
     """
     Returns the hash of the updated pr branch.
@@ -283,18 +271,12 @@ def update_pr_branch(
     zen_token = commit_branches.git_commit.zen_token
     if not git.branch_exists(git_env, head):
         git.branch_create(git_env, head, base)
-        cherry_pick_branch(
-            console_env,
-            git_env,
-            zen_token,
-            head,
-            commit_branches.git_commit.messageHeadline,
-        )
+        cherry_pick_branch(console_env, git_env, zen_token, head)
         hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
     else:
         git.switch(git_env, head)
         git.status(git_env)
-        git.log_graph(git_env, cfg)
+        git.log_graph(git_env)
         git.rebase(git_env, base)
         commit = commit_branches.git_commit
         git.restore_staged_worktree(
@@ -317,7 +299,7 @@ def update_pr_branch(
             )
         hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
         git.status(git_env)
-        git.log_graph(git_env, cfg)
+        git.log_graph(git_env)
     return hash
 
 
@@ -326,18 +308,29 @@ def cherry_pick_branch(
     git_env: git.Env,
     zen_token: ZenToken,
     branch: GitBranchName,
-    title: CommitTitle,
 ) -> None:
     original_branch = repo.get_local_branch_name(console_env, git_env)
     patch_ref = git.gitzen_patch_ref(zen_token)
     git.switch(git_env, branch)
-    git.restore_staged_worktree(git_env, patch_ref)
-    log = git.status(git_env)
-    if not logger.line_contains(
-        "nothing to commit, working tree clean",
-        log,
-    ):
-        git.commit(git_env, [title.value])
+    status = git.cherry_pick(git_env, patch_ref)
+    git.status(git_env)
+    empty_cherry_pick_message = (
+        "The previous cherry-pick is now empty, "
+        + "possibly due to conflict resolution."
+    )
+    if empty_cherry_pick_message in status:
+        git.cherry_pick_skip(git_env)
+    for line in status:
+        conflict_match = re.search(
+            r"^CONFLICT \(content\): Merge conflict in (?P<filename>.*)\s*$",
+            line,
+        )
+        if conflict_match:
+            console.error(
+                console_env,
+                "Error: merge conflict preparing PR branch",
+            )
+            exit(exit_code.CONFLICT_PREPARING_PR_BRANCH)
     git.switch(git_env, original_branch)
 
 

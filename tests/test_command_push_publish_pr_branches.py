@@ -1,7 +1,7 @@
 import re
 from pathlib import PosixPath
 
-from gitzen import console, file, git, logger, repo
+from gitzen import config, console, file, git, logger, repo
 from gitzen.commands.push import prepare_pr_branches, publish_pr_branches
 from gitzen.patterns import short_hash
 from gitzen.types import GitBranchName
@@ -18,7 +18,8 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     logger_env = logger.RealEnv()
     file_env = file.RealEnv(logger_env)
     git_env = git.RealEnv(logger_env)
-    _, cfg = given_repo(file_env, git_env, tmp_path)
+    root_dir = given_repo(file_env, git_env, tmp_path)
+    cfg = config.default_config(root_dir)
     console_env = console.RealEnv()
     commits = repo.get_commit_stack(
         console.RealEnv(),
@@ -66,7 +67,7 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     pr_beta = f"gitzen/pr/{username}/{token_alpha.value}/{token_beta.value}"
     assert git.branch_exists(git_env, GitBranchName(pr_alpha))
     assert git.branch_exists(git_env, GitBranchName(pr_beta))
-    log = git.log_graph(git_env, cfg)
+    log = git.log_graph(git_env)
     [print(f"LOG> {line}") for line in log]
     assert len(log) == 6
     if "HEAD" in log[0]:
