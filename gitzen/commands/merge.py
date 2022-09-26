@@ -25,7 +25,6 @@ def merge(
                 f"Merge Pull Request {gh_pr.number.value} {gh_pr.title.value}",
             )
             github.merge_squash(github_env, gh_pr)
-            git.branch_delete(git_env, my_pr.headRefName)
             remote_branch = cfg.default_remote_branch
             git.switch(git_env, remote_branch)
             pull_log = git.pull(git_env, cfg.remote, remote_branch)
