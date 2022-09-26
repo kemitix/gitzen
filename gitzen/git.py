@@ -234,7 +234,10 @@ def commit(
 def commit_amend_noedit(
     git_env: Env,
 ) -> List[str]:
-    return git_env._git("commit --amend --no-edit")[1]
+    rc, log = git_env._git("commit --amend --no-edit")
+    if rc:
+        raise GitZenError(rc, "Unable to commit amend local changes")
+    return log
 
 
 def log(
@@ -255,7 +258,16 @@ def pull(
     remote: GitRemoteName,
     branch: GitBranchName,
 ) -> List[str]:
-    return git_env._git(f"pull {remote.value} {branch.value}")[1]
+    rc, log = git_env._git(f"pull {remote.value} {branch.value}")
+    if rc:
+        raise GitZenError(
+            rc,
+            (
+                f"Unable to pull remote changes from {remote.value} "
+                f"into local branch {branch.value}"
+            ),
+        )
+    return log
 
 
 def push(
@@ -263,9 +275,18 @@ def push(
     remote: GitRemoteName,
     branch: GitBranchName,
 ) -> List[str]:
-    return git_env._git(
+    rc, log = git_env._git(
         f"push {remote.value} {branch.value}:{branch.value}",
-    )[1]
+    )
+    if rc:
+        raise GitZenError(
+            rc,
+            (
+                f"Unable to push changes to remote {remote.value} "
+                f"from local branch {branch.value}"
+            ),
+        )
+    return log
 
 
 def rebase(
