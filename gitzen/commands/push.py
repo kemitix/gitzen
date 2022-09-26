@@ -2,7 +2,7 @@ import re
 from typing import Dict, List, Optional, Tuple
 
 # trunk-ignore(flake8/E501)
-from gitzen import branches, config, console, exit_code, file, git, github, repo
+from gitzen import branches, config, console, exit_code, file, git, github, logger, repo
 from gitzen.config import Config
 from gitzen.models.commit_branches import CommitBranches
 from gitzen.models.commit_pr import CommitPr
@@ -283,16 +283,20 @@ def update_pr_branch(
             git_env,
             GitBranchName(commit.hash.value),
         )
-        git.status(git_env)
-        git.commit(
-            git_env,
-            [
-                f"{commit.messageHeadline.value}",
-                "",
-                f"{commit.messageBody.value}",
-                f"(updated from commit {commit.hash.value})",
-            ],
-        )
+        log = git.status(git_env)
+        if not logger.line_contains(
+            "nothing to commit, working tree clean",
+            log,
+        ):
+            git.commit(
+                git_env,
+                [
+                    f"{commit.messageHeadline.value}",
+                    "",
+                    f"{commit.messageBody.value}",
+                    f"(updated from commit {commit.hash.value})",
+                ],
+            )
         hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
         git.status(git_env)
         git.log_graph(git_env)
