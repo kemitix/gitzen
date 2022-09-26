@@ -1,7 +1,7 @@
 import re
 from pathlib import PosixPath
 
-from gitzen import config, console, file, git, logger, repo
+from gitzen import console, file, git, logger, repo
 from gitzen.commands.push import prepare_pr_branches, update_pr_branches
 from gitzen.patterns import short_hash
 from gitzen.types import GitBranchName
@@ -20,8 +20,7 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     logger_env = logger.RealEnv()
     file_env = file.RealEnv(logger_env)
     git_env = git.RealEnv(logger_env)
-    root_dir = given_repo(file_env, git_env, tmp_path)
-    cfg = config.default_config(root_dir)
+    root_dir, cfg = given_repo(file_env, git_env, tmp_path)
     repo_id = om.gen_gh_repo_id()
     login = om.gen_gh_username()
     github_env = FakeGithubEnv(
@@ -75,7 +74,7 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
         cfg,
     )
     # when
-    update_pr_branches(console_env, git_env, stack)
+    update_pr_branches(console_env, git_env, stack, cfg)
     # then
     assert (
         git.branch_exists(
@@ -104,7 +103,7 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     logger_env = logger.RealEnv()
     file_env = file.RealEnv(logger_env)
     git_env = git.RealEnv(logger_env)
-    root_dir = given_repo(file_env, git_env, tmp_path)
+    root_dir, cfg = given_repo(file_env, git_env, tmp_path)
     repo_id = om.gen_gh_repo_id()
     login = om.gen_gh_username()
     github_env = FakeGithubEnv(
@@ -141,7 +140,6 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
         },
     )
     console_env = console.RealEnv()
-    cfg = config.default_config(root_dir)
 
     console.info(console_env, "prepare initial pr branches")
     prepare_pr_branches(console_env, file_env, git_env, github_env, cfg)
@@ -173,7 +171,7 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     )
     # then
     console.info(console_env, "Review status")
-    log = git.log_graph(git_env)
+    log = git.log_graph(git_env, cfg)
     assert len(log) == 7
     if "HEAD" in log[0]:
         patch_beta = 0
@@ -220,8 +218,7 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     logger_env = logger.RealEnv()
     file_env = file.RealEnv(logger_env)
     git_env = git.RealEnv(logger_env)
-    root_dir = given_repo(file_env, git_env, tmp_path)
-    cfg = config.default_config(root_dir)
+    root_dir, cfg = given_repo(file_env, git_env, tmp_path)
     repo_id = om.gen_gh_repo_id()
     login = om.gen_gh_username()
     github_env = FakeGithubEnv(
@@ -275,7 +272,7 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
         cfg,
     )
     # when
-    update_pr_branches(console_env, git_env, stack)
+    update_pr_branches(console_env, git_env, stack, cfg)
     # then
     assert (
         git.branch_exists(
