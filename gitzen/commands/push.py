@@ -2,7 +2,7 @@ import re
 from typing import Dict, List, Optional, Tuple
 
 # trunk-ignore(flake8/E501)
-from gitzen import branches, config, console, exit_code, file, git, github, repo
+from gitzen import branches, config, console, exit_code, file, git, github, logger, repo
 from gitzen.config import Config
 from gitzen.models.commit_branches import CommitBranches
 from gitzen.models.commit_pr import CommitPr
@@ -112,6 +112,7 @@ def prepare_patches(
     update_patches(console_env, file_env, cfg.root_dir, commits)
     commit_stack = clean_up_deleted_commits(
         console_env,
+        git_env,
         github_env,
         status.pull_requests,
         commits,
@@ -174,6 +175,7 @@ def rethread_stack(
 
 def clean_up_deleted_commits(
     console_env: console.Env,
+    git_env: git.Env,
     github_env: github.Env,
     pull_requests: List[PullRequest],
     commits: List[GitCommit],
@@ -199,6 +201,8 @@ def clean_up_deleted_commits(
                 pr,
                 "Closing pull request: commit has gone away",
             )
+            if git.branch_exists(git_env, pr.headRefName):
+                git.branch_delete(git_env, pr.headRefName)
             git.delete_patch(pr.zen_token, root_dir)
         else:
             commit = zen_tokens[pr.zen_token]
@@ -283,16 +287,20 @@ def update_pr_branch(
             git_env,
             GitBranchName(commit.hash.value),
         )
-        git.status(git_env)
-        git.commit(
-            git_env,
-            [
-                f"{commit.messageHeadline.value}",
-                "",
-                f"{commit.messageBody.value}",
-                f"(updated from commit {commit.hash.value})",
-            ],
-        )
+        log = git.status(git_env)
+        if not logger.line_contains(
+            "nothing to commit, working tree clean",
+            log,
+        ):
+            git.commit(
+                git_env,
+                [
+                    f"{commit.messageHeadline.value}",
+                    "",
+                    f"{commit.messageBody.value}",
+                    f"(updated from commit {commit.hash.value})",
+                ],
+            )
         hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
         git.status(git_env)
         git.log_graph(git_env)
@@ -336,6 +344,7 @@ def publish_pr_branches(
     commit_stack: List[CommitBranches],
     pr_head_hashes: List[CommitHash],
     cfg: config.Config,
+    parent_pr_branch_updated: bool = False,
 ) -> None:
     if len(commit_stack) == 0:
         return
@@ -347,13 +356,18 @@ def publish_pr_branches(
             console_env,
             f"Updating remote branch: {cfg.remote.value}/{pr_branch.value}",
         )
-        git.push(git_env, cfg.remote, pr_branch)
+        if parent_pr_branch_updated:
+            git.push_force_with_lease(git_env, cfg.remote, pr_branch)
+        else:
+            git.push(git_env, cfg.remote, pr_branch)
+        parent_pr_branch_updated = True
     publish_pr_branches(
         console_env,
         git_env,
         commit_stack[1:],
         pr_head_hashes[1:],
         cfg,
+        parent_pr_branch_updated,
     )
 
 
