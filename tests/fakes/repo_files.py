@@ -23,15 +23,14 @@ def given_repo(
     console.log(console_env, "given_repo", f"BEGIN: {dir}")
     # create origin bare repo
     origin_dir = f"{dir}/origin"
-    os.mkdir(origin_dir)
-    chdir(origin_dir)
-    git.init_bare(git_env)
+    git.init_bare(git_env, origin_dir)
     # create main repo
     repo_dir = f"{dir}/repo"
-    chdir(dir)
-    git.clone(git_env, origin_dir, "repo")
+    git.clone(git_env, origin_dir, f"{dir}/repo")
     repo = GitRootDir(repo_dir)
     chdir(repo_dir)
+    assert repo_dir == git.root_dir(git_env).value
+    assert repo_dir == os.getcwd()
     origin = GitRemoteName("origin")
     master = GitBranchName("master")
     # set author identity
