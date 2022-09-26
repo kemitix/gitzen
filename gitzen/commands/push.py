@@ -1,4 +1,3 @@
-import re
 from typing import Dict, List, Optional, Tuple
 
 # trunk-ignore(flake8/E501)
@@ -11,8 +10,6 @@ from gitzen.models.git_patch import GitPatch
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
 from gitzen.models.gitzen_error import GitZenError
-
-# trunk-ignore(flake8/E501)
 from gitzen.types import (
     CommitHash,
     CommitTitle,
@@ -86,6 +83,7 @@ def prepare_pr_branches(
         console_env,
         git_env,
         commit_stack,
+        cfg,
     )
     git.switch(git_env, cfg.default_remote_branch)
     return status, commit_stack, pr_head_hashes
@@ -239,16 +237,18 @@ def update_pr_branches(
     console_env: console.Env,
     git_env: git.Env,
     commit_stack: List[CommitBranches],
+    cfg: config.Config,
 ) -> List[CommitHash]:
     if len(commit_stack) == 0:
         return []
     hashes: List[CommitHash] = []
-    hashes.append(update_pr_branch(console_env, git_env, commit_stack[0]))
+    hashes.append(update_pr_branch(console_env, git_env, commit_stack[0], cfg))
     hashes.extend(
         update_pr_branches(
             console_env,
             git_env,
             commit_stack[1:],
+            cfg,
         )
     )
     return hashes
@@ -269,6 +269,7 @@ def update_pr_branch(
     console_env: console.Env,
     git_env: git.Env,
     commit_branches: CommitBranches,
+    cfg: config.Config,
 ) -> CommitHash:
     """
     Returns the hash of the updated pr branch.
@@ -292,7 +293,7 @@ def update_pr_branch(
     else:
         git.switch(git_env, head)
         git.status(git_env)
-        git.log_graph(git_env)
+        git.log_graph(git_env, cfg)
         git.rebase(git_env, base)
         commit = commit_branches.git_commit
         git.restore_staged_worktree(
@@ -315,7 +316,7 @@ def update_pr_branch(
             )
         hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
         git.status(git_env)
-        git.log_graph(git_env)
+        git.log_graph(git_env, cfg)
     return hash
 
 

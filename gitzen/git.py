@@ -7,7 +7,7 @@ from typing import List, Optional, Tuple
 
 from genericpath import exists
 
-from gitzen import exit_code, file, logger
+from gitzen import config, exit_code, file, logger
 from gitzen.models.git_patch import GitPatch
 from gitzen.models.gitzen_error import GitZenError
 
@@ -321,7 +321,9 @@ def rebase(
     git_env: Env,
     target: GitBranchName,
 ) -> List[str]:
-    rc, log = git_env._git(f"rebase {target.value} --autostash")
+    rc, log = git_env._git(
+        f"rebase {target.value} --autostash --verbose --strategy-option=theirs"
+    )
     if rc:
         raise GitZenError(rc, f"Unable to rebase on {target.value}")
     return log
@@ -384,5 +386,12 @@ def switch(
 
 def log_graph(
     git_env: Env,
+    cfg: config.Config,
 ) -> List[str]:
-    return git_env._git("log --oneline --graph --decorate --all")[1]
+    return git_env._git(
+        (
+            "log --oneline --graph --decorate --remotes --branches "
+            f"{cfg.default_remote_branch.value}..."
+            f"{cfg.remote.value}/{cfg.default_remote_branch.value}"
+        )
+    )[1]
