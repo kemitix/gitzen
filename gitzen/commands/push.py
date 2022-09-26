@@ -13,7 +13,14 @@ from gitzen.models.github_pull_request import PullRequest
 from gitzen.models.gitzen_error import GitZenError
 
 # trunk-ignore(flake8/E501)
-from gitzen.types import CommitHash, GitBranchName, GithubUsername, GitRootDir, ZenToken
+from gitzen.types import (
+    CommitHash,
+    CommitTitle,
+    GitBranchName,
+    GithubUsername,
+    GitRootDir,
+    ZenToken,
+)
 
 
 def push(
@@ -275,7 +282,13 @@ def update_pr_branch(
     zen_token = commit_branches.git_commit.zen_token
     if not git.branch_exists(git_env, head):
         git.branch_create(git_env, head, base)
-        cherry_pick_branch(console_env, git_env, zen_token, head)
+        cherry_pick_branch(
+            console_env,
+            git_env,
+            zen_token,
+            head,
+            commit_branches.git_commit.messageHeadline,
+        )
         hash = CommitHash(git.rev_parse(git_env, "HEAD")[0])
     else:
         git.switch(git_env, head)
@@ -312,29 +325,18 @@ def cherry_pick_branch(
     git_env: git.Env,
     zen_token: ZenToken,
     branch: GitBranchName,
+    title: CommitTitle,
 ) -> None:
     original_branch = repo.get_local_branch_name(console_env, git_env)
     patch_ref = git.gitzen_patch_ref(zen_token)
     git.switch(git_env, branch)
-    status = git.cherry_pick(git_env, patch_ref)
-    git.status(git_env)
-    empty_cherry_pick_message = (
-        "The previous cherry-pick is now empty, "
-        + "possibly due to conflict resolution."
-    )
-    if empty_cherry_pick_message in status:
-        git.cherry_pick_skip(git_env)
-    for line in status:
-        conflict_match = re.search(
-            r"^CONFLICT \(content\): Merge conflict in (?P<filename>.*)\s*$",
-            line,
-        )
-        if conflict_match:
-            console.error(
-                console_env,
-                "Error: merge conflict preparing PR branch",
-            )
-            exit(exit_code.CONFLICT_PREPARING_PR_BRANCH)
+    git.restore_staged_worktree(git_env, patch_ref)
+    log = git.status(git_env)
+    if not logger.line_contains(
+        "nothing to commit, working tree clean",
+        log,
+    ):
+        git.commit(git_env, [title.value])
     git.switch(git_env, original_branch)
 
 
