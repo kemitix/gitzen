@@ -143,9 +143,9 @@ def branch_delete(
     git_env: Env,
     branch: GitBranchName,
 ) -> List[str]:
-    rc, log = git_env._git(f"branch -D {branch.value}")
+    rc, log = git_env._git(f"branch -d {branch.value}")
     if rc:
-        raise GitZenError(rc, f"Unable to delete branch {branch.value}")
+        raise GitZenError(rc, f"Unable to delete branch {branch}")
     return log
 
 
@@ -288,6 +288,29 @@ def push(
             rc,
             (
                 f"Unable to push changes to remote {remote.value} "
+                f"from local branch {branch.value}"
+            ),
+        )
+    return log
+
+
+def push_force_with_lease(
+    git_env: Env,
+    remote: GitRemoteName,
+    branch: GitBranchName,
+) -> List[str]:
+    rc, log = git_env._git(
+        (
+            "push "
+            f"--force-with-lease {remote.value} "
+            f"{branch.value}:{branch.value}"
+        ),
+    )
+    if rc:
+        raise GitZenError(
+            rc,
+            (
+                f"Unable to force push changes to remote {remote.value} "
                 f"from local branch {branch.value}"
             ),
         )
