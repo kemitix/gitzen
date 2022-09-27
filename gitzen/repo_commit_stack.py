@@ -1,8 +1,9 @@
 import re
 from typing import List, Optional
 
-from gitzen import console, git, patterns, zen_token
+from gitzen import console, exit_code, git, patterns, zen_token
 from gitzen.models.git_commit import GitCommit
+from gitzen.models.gitzen_error import GitZenError
 from gitzen.types import (
     CommitBody,
     CommitHash,
@@ -69,6 +70,17 @@ def parse_log_for_commits(
                 )
                 commits.append(commit)
                 return commits
+            if line_number > 2:
+                raise GitZenError(
+                    exit_code.ZEN_TOKENS_MISSING,
+                    (
+                        "zen-token not found in commit body. "
+                        "Is the Git Zen pre-commit hook installed? "
+                        "Run 'git zen init' to install the pre-commit hook, "
+                        "then run 'git rebase @{upstream} --force-rebase' "
+                        "to add the zen tokens."
+                    ),
+                )
             hash = CommitHash(commit_matches.group(1))
             subject_index = line_number + 4
             continue
