@@ -4,11 +4,13 @@ import shlex
 import subprocess
 from typing import Any, Dict, List
 
-from gitzen import console, git, github, logger, patterns, repo, zen_token
+# trunk-ignore(flake8/E501)
+from gitzen import console, exit_code, git, github, logger, patterns, repo, zen_token
 from gitzen.models.git_commit import GitCommit
 from gitzen.models.github_commit import GithubCommit
 from gitzen.models.github_info import GithubInfo
 from gitzen.models.github_pull_request import PullRequest
+from gitzen.models.gitzen_error import GitZenError
 from gitzen.types import (
     CommitBody,
     CommitHash,
@@ -265,13 +267,27 @@ def create_pull_request(
     base: GitBranchName,
     commit: GitCommit,
 ) -> None:
+    if zen_token.find_in_body(commit.messageBody):
+        body = commit.messageBody
+    else:
+        raise GitZenError(
+            exit_code.ZEN_TOKENS_MISSING,
+            (
+                "zen-token not found in commit body. "
+                "Is the Git Zen pre-commit hook installed? "
+                "Run 'git zen init' to install the pre-commit hook, then "
+                "run 'git rebase @{upstream} --force-rebase' "
+                "to add the zen tokens."
+            ),
+        )
     github_env._gh(
         "pr create "
         f"--head {head.value} "
         f"--base {base.value} "
+        # FIXME: escape title for single quotes
         f"--title '{commit.messageHeadline.value}' "
-        f"--body '{commit.messageBody.value}"
-        f"\n\nzen-token:{commit.zen_token.value}'",
+        # FIXME: escape body for single quotes
+        f"--body '{body.value}'",
     )
 
 
@@ -281,12 +297,19 @@ def update_pull_request(
     base: GitBranchName,
     commit: GitCommit,
 ) -> None:
+    if zen_token.find_in_body(commit.messageBody):
+        body = commit.messageBody
+    else:
+        body = CommitBody(
+            f"{commit.messageBody.value}\n\nzen-token:{commit.zen_token.value}"
+        )
     github_env._gh(
         f"pr edit {pr_branch.value} "
         f"--base {base.value} "
+        # FIXME: escape title for single quotes
         f"--title '{commit.messageHeadline.value}' "
-        f"--body '{commit.messageBody.value}"
-        f"\n\nzen-token:{commit.zen_token.value}'",
+        # FIXME: escape body for single quotes
+        f"--body '{body.value}'",
     )
 
 
