@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from faker import Faker
 
@@ -84,9 +84,10 @@ def gen_commit_title(wip: bool = False) -> CommitTitle:
 
 
 def gen_commit_body(token: Optional[ZenToken]) -> CommitBody:
-    body = "\n\n".join(fake.paragraphs())
-    if token is not None:
-        return CommitBody(body + f"\n\nzen-token:{token.value}")
+    paras: List[str] = fake.paragraphs()
+    if token:
+        paras.append(f"zen-token:{token.value}")
+    body = "\n\n".join(paras)
     return CommitBody(body)
 
 
@@ -94,12 +95,15 @@ def gen_gh_commit(
     token: Optional[ZenToken],
     wip: bool = False,
 ) -> GithubCommit:
-    zen_token = gen_zen_token() if token is not None else token
+    if token:
+        zen_token = token
+    else:
+        zen_token = gen_zen_token()
     return GithubCommit(
         zen_token,
         gen_commit_hash(),
         gen_commit_title(wip),
-        gen_commit_body(token),
+        gen_commit_body(zen_token),
         CommitWipStatus(wip),
     )
 
@@ -108,15 +112,15 @@ def gen_commit(
     token: Optional[ZenToken],
     wip: bool = False,
 ) -> GitCommit:
-    if token is None:
-        zen_token = gen_zen_token()
-    else:
+    if token:
         zen_token = token
+    else:
+        zen_token = gen_zen_token()
     return GitCommit(
         zen_token,
         gen_commit_hash(),
         gen_commit_title(wip),
-        gen_commit_body(token),
+        gen_commit_body(zen_token),
         CommitWipStatus(wip),
     )
 
@@ -125,11 +129,11 @@ def gen_pr(
     token: Optional[ZenToken],
     wip: bool = False,
 ) -> PullRequest:
-    if token is None:
-        zen_token = gen_zen_token()
-    else:
+    if token:
         zen_token = token
-    commit = gen_gh_commit(token, wip)
+    else:
+        zen_token = gen_zen_token()
+    commit = gen_gh_commit(zen_token, wip)
     return PullRequest(
         gen_pr_id(),
         zen_token,
