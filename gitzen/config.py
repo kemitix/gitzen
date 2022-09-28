@@ -67,7 +67,7 @@ def load(
     if exists(config_file):
         console.info(console_env, f"Reading config from {config_file}")
         gitzen_yml = yaml.read(file_env, config_file)
-        default_branch = GitBranchName(gitzen_yml["defaultRemoteBranch"])
+        default_branch = GitBranchName(gitzen_yml["defaultBranch"])
         remote_branches = [
             GitBranchName(branch) for branch in gitzen_yml["remoteBranches"]
         ]

@@ -32,8 +32,9 @@ def test_load_when_file_is_found(tmp_path: PosixPath) -> None:
         file_env,
         configFile,
         [
-            "defaultRemoteBranch: drb",
-            'remoteBranches: ["rbn"]',
+            "defaultBranch: drb",
+            "remoteBranches:",
+            "  - rbn",
             "remote: other",
         ],
     )

@@ -1,0 +1,4 @@
+remote: origin
+defaultBranch: master
+remoteBranches:
+  - one-commit-at-a-time
