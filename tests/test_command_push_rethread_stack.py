@@ -26,50 +26,25 @@ def test_rethread_three() -> None:
         CommitPr(om.gen_commit(token=None), pr=None),
     ]
     author = om.gen_gh_username()
+    token_1 = stack[0].git_commit.zen_token
+    token_2 = stack[1].git_commit.zen_token
+    token_3 = stack[2].git_commit.zen_token
     expected: List[CommitBranches] = [
         CommitBranches(
             stack[0].git_commit,
             GitBranchName("master"),
-            GitBranchName(
-                (
-                    f"gitzen/pr/{author.value}"
-                    f"/master/{stack[0].git_commit.zen_token.value}"
-                )
-            ),
+            GitBranchName(f"gitzen/pr/{author.value}/{token_1.value}"),
             remote_target=GitBranchName("origin/master"),
         ),
         CommitBranches(
             stack[1].git_commit,
-            GitBranchName(
-                (
-                    f"gitzen/pr/{author.value}"
-                    f"/master/{stack[0].git_commit.zen_token.value}"
-                )
-            ),
-            GitBranchName(
-                (
-                    f"gitzen/pr/{author.value}"
-                    f"/{stack[0].git_commit.zen_token.value}"
-                    f"/{stack[1].git_commit.zen_token.value}"
-                )
-            ),
+            GitBranchName(f"gitzen/pr/{author.value}/{token_1.value}"),
+            GitBranchName(f"gitzen/pr/{author.value}/{token_2.value}"),
         ),
         CommitBranches(
             stack[2].git_commit,
-            GitBranchName(
-                (
-                    f"gitzen/pr/{author.value}"
-                    f"/{stack[0].git_commit.zen_token.value}"
-                    f"/{stack[1].git_commit.zen_token.value}"
-                )
-            ),
-            GitBranchName(
-                (
-                    f"gitzen/pr/{author.value}"
-                    f"/{stack[1].git_commit.zen_token.value}"
-                    f"/{stack[2].git_commit.zen_token.value}"
-                )
-            ),
+            GitBranchName(f"gitzen/pr/{author.value}/{token_2.value}"),
+            GitBranchName(f"gitzen/pr/{author.value}/{token_3.value}"),
         ),
     ]
     # when

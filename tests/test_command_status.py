@@ -29,9 +29,7 @@ def test_command_status_fetches_info_with_pr() -> None:
     login = om.gen_gh_username()
     zen_token = om.gen_zen_token()
     base_ref_name = branch_name
-    head_ref_name = GitBranchName(
-        f"gitzen/pr/user/{base_ref_name.value}/{zen_token.value}"
-    )
+    head_ref_name = GitBranchName(f"gitzen/pr/{login.value}/{zen_token.value}")
     commit = {
         "commit": {
             "oid": "commit-hash",

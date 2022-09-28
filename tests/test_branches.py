@@ -60,7 +60,7 @@ def test_validate_not_remote_pr_when_is_remote_pr() -> None:
     # when
     with pytest.raises(SystemExit) as system_exit:
         branches.validate_not_remote_pr(
-            console_env, GitBranchName("gitzen/pr/kemitix/master/efd33424")
+            console_env, GitBranchName("gitzen/pr/kemitix/efd33424")
         )
     # then
     assert system_exit.type == SystemExit
