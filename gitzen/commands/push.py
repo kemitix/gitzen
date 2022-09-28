@@ -28,6 +28,7 @@ def push(
     cfg: config.Config,
 ) -> None:
     initial_branch = repo.get_local_branch_name(console_env, git_env)
+    return_code: int = 0
     try:
         if initial_branch != cfg.default_branch:
             raise GitZenError(
@@ -60,9 +61,10 @@ def push(
         )
     except GitZenError as error:
         console.error(console_env, error.message)
-        exit(error.exit_code)
+        return_code = error.exit_code
     finally:
         git.switch(git_env, initial_branch)
+    exit(return_code)
 
 
 def prepare_pr_branches(
