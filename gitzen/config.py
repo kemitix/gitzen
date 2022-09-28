@@ -43,7 +43,7 @@ class Config:
     def __eq__(self, __o: object) -> bool:
         return (
             self.root_dir == __o.root_dir
-            and self.default_branch == __o.default_remote_branch
+            and self.default_branch == __o.default_branch
             and self.remote_branches == __o.remote_branches
             and self.remote == __o.remote
         )
