@@ -30,13 +30,7 @@ def push(
     initial_branch = repo.get_local_branch_name(console_env, git_env)
     return_code: int = 0
     try:
-        if initial_branch != cfg.default_branch:
-            raise GitZenError(
-                exit_code.UNSUPPORTED_BRANCH_FOR_PUSH,
-                "git zen currently only supports working "
-                "from the default branch "
-                f"(i.e. '{cfg.default_branch.value}')",
-            )
+        verify_supported_branch(cfg, initial_branch)
         status, commit_stack, pr_head_hashes = prepare_pr_branches(
             console_env,
             file_env,
@@ -65,6 +59,16 @@ def push(
     finally:
         git.switch(git_env, initial_branch)
     exit(return_code)
+
+
+def verify_supported_branch(cfg: config.Config, branch: GitBranchName) -> None:
+    if branch == cfg.default_branch or branch in cfg.remote_branches:
+        return
+    raise GitZenError(
+        exit_code.UNSUPPORTED_BRANCH_FOR_PUSH,
+        "GitZen currently only supports working from the default branch "
+        f"(i.e. '{cfg.default_branch.value}')",
+    )
 
 
 def prepare_pr_branches(
