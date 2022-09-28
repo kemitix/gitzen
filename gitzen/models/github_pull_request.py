@@ -113,7 +113,7 @@ class PullRequest:
             author,
             PullRequestTitle(commit.messageHeadline.value),
             PullRequestBody(commit.messageBody.value),
-            cfg.default_remote_branch,
+            cfg.default_branch,
             branch,
             commit.hash,
             PullRequestMergeable(""),

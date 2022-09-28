@@ -8,19 +8,19 @@ from gitzen.wrappers import yaml
 
 class Config:
     _root_dir: GitRootDir
-    _default_remote_branch: GitBranchName
+    _default_branch: GitBranchName
     _remote_branches: List[GitBranchName]
     _remote: GitRemoteName
 
     def __init__(
         self,
         root_dir: GitRootDir,
-        default_remote_branch: GitBranchName,
+        default_branch: GitBranchName,
         remote_branches: List[GitBranchName],
         remote: GitRemoteName,
     ) -> None:
         self._root_dir = root_dir
-        self._default_remote_branch = default_remote_branch
+        self._default_branch = default_branch
         self._remote_branches = remote_branches
         self._remote = remote
 
@@ -29,8 +29,8 @@ class Config:
         return self._root_dir
 
     @property
-    def default_remote_branch(self) -> GitBranchName:
-        return self._default_remote_branch
+    def default_branch(self) -> GitBranchName:
+        return self._default_branch
 
     @property
     def remote_branches(self) -> List[GitBranchName]:
@@ -43,7 +43,7 @@ class Config:
     def __eq__(self, __o: object) -> bool:
         return (
             self.root_dir == __o.root_dir
-            and self.default_remote_branch == __o.default_remote_branch
+            and self.default_branch == __o.default_branch
             and self.remote_branches == __o.remote_branches
             and self.remote == __o.remote
         )
@@ -52,7 +52,7 @@ class Config:
 def default_config(root_dir: GitRootDir) -> Config:
     return Config(
         root_dir,
-        default_remote_branch=GitBranchName("master"),
+        default_branch=GitBranchName("master"),
         remote_branches=[],
         remote=GitRemoteName("origin"),
     )

@@ -29,12 +29,12 @@ def push(
 ) -> None:
     initial_branch = repo.get_local_branch_name(console_env, git_env)
     try:
-        if initial_branch != cfg.default_remote_branch:
+        if initial_branch != cfg.default_branch:
             raise GitZenError(
                 exit_code.UNSUPPORTED_BRANCH_FOR_PUSH,
                 "git zen currently only supports working "
                 "from the default branch "
-                f"(i.e. '{cfg.default_remote_branch.value}')",
+                f"(i.e. '{cfg.default_branch.value}')",
             )
         status, commit_stack, pr_head_hashes = prepare_pr_branches(
             console_env,
@@ -84,7 +84,7 @@ def prepare_pr_branches(
         git_env,
         commit_stack,
     )
-    git.switch(git_env, cfg.default_remote_branch)
+    git.switch(git_env, cfg.default_branch)
     return status, commit_stack, pr_head_hashes
 
 
@@ -236,7 +236,7 @@ def pr_source(
     cfg: config.Config,
 ) -> GitBranchName:
     if last_pr is None:
-        source = cfg.default_remote_branch
+        source = cfg.default_branch
     else:
         source = GitBranchName(last_pr.zen_token.value)
     return source
@@ -361,7 +361,7 @@ def regenerate_prs(
     if len(commit_stack) == 0:
         return
     if last_pr_branch is None:
-        base_branch = cfg.default_remote_branch
+        base_branch = cfg.default_branch
     else:
         base_branch = last_pr_branch
     commit_branches = commit_stack[0]
