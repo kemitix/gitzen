@@ -15,7 +15,7 @@ def get_remote_branch(
     for remote_branch in cfg.remote_branches:
         if remote_branch == local_branch:
             return remote_branch
-    return cfg.default_remote_branch
+    return cfg.default_branch
 
 
 def get_required_remote_branch(

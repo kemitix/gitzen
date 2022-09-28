@@ -15,7 +15,7 @@ def test_get_remote_branch_name_when_no_match() -> None:
     defaultBranch = GitBranchName("foo")
     cfg = config.Config(
         GitRootDir(""),
-        default_remote_branch=defaultBranch,
+        default_branch=defaultBranch,
         remote_branches=[GitBranchName("baz")],
         remote=GitRemoteName("origin"),
     )
@@ -35,7 +35,7 @@ def test_get_remote_branch_name_when_second_remote_matches() -> None:
     defaultBranch = GitBranchName("foo")
     cfg = config.Config(
         GitRootDir(""),
-        default_remote_branch=defaultBranch,
+        default_branch=defaultBranch,
         remote_branches=[GitBranchName("baz"), GitBranchName("other")],
         remote=GitRemoteName("origin"),
     )
@@ -72,7 +72,7 @@ def test_get_required_remote_branch_when_present_in_default_branch() -> None:
     local_branch = GitBranchName(Faker().word())
     cfg = config.Config(
         GitRootDir(""),
-        default_remote_branch=local_branch,
+        default_branch=local_branch,
         remote=GitRemoteName("origin"),
         remote_branches=[],
     )
@@ -92,7 +92,7 @@ def test_get_required_remote_branch_when_present_in_remote_branches() -> None:
     local_branch = GitBranchName(Faker().word())
     cfg = config.Config(
         GitRootDir(""),
-        default_remote_branch=GitBranchName("master"),
+        default_branch=GitBranchName("master"),
         remote=GitRemoteName("origin"),
         remote_branches=[local_branch],
     )
@@ -112,7 +112,7 @@ def test_get_required_remote_branch_when_not_present() -> None:
     local_branch = GitBranchName(Faker().word())
     cfg = config.Config(
         GitRootDir(""),
-        default_remote_branch=GitBranchName(""),
+        default_branch=GitBranchName(""),
         remote=GitRemoteName("origin"),
         remote_branches=[],
     )

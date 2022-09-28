@@ -26,7 +26,7 @@ def merge(
             )
             github.merge_squash(github_env, gh_pr)
             git.delete_patch(gh_pr.zen_token, cfg.root_dir)
-            remote_branch = cfg.default_remote_branch
+            remote_branch = cfg.default_branch
             git.switch(git_env, remote_branch)
             pull_log = git.pull(git_env, cfg.remote, remote_branch)
             if logger.line_contains("! [rejected]", pull_log):
