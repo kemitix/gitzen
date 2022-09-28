@@ -47,14 +47,11 @@ def validate_not_remote_pr(
 
 
 def pr_branch(pr: PullRequest) -> GitBranchName:
-    return pr_branch_planned(pr.author, pr.baseRefName, pr.zen_token)
+    return pr_branch_spec(pr.author, pr.zen_token)
 
 
-def pr_branch_planned(
+def pr_branch_spec(
     author: GithubUsername,
-    base_ref_name: GitBranchName,
     zen_token: ZenToken,
 ) -> GitBranchName:
-    return GitBranchName(
-        f"gitzen/pr/{author.value}/{base_ref_name.value}/{zen_token.value}"
-    )
+    return GitBranchName(f"gitzen/pr/{author.value}/{zen_token.value}")

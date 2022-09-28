@@ -80,7 +80,7 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
     assert (
         git.branch_exists(
             git_env,
-            GitBranchName(f"gitzen/pr/{login.value}/master/{token1.value}"),
+            GitBranchName(f"gitzen/pr/{login.value}/{token1.value}"),
         )
         is True
     ), "first branch"
@@ -88,7 +88,7 @@ def test_when_no_branch_then_create(tmp_path: PosixPath) -> None:
         git.branch_exists(
             git_env,
             GitBranchName(
-                f"gitzen/pr/{login.value}/{token1.value}/{token2.value}",
+                f"gitzen/pr/{login.value}/{token2.value}",
             ),
         )
         is True
@@ -190,8 +190,8 @@ def test_when_branch_and_change_then_update(tmp_path: PosixPath) -> None:
     token_beta = stack[1].git_commit.zen_token
     ref_patch_alpha = f"refs/gitzen/patches/{token_alpha.value}"
     ref_patch_beta = f"refs/gitzen/patches/{token_beta.value}"
-    pr_alpha = f"gitzen/pr/{author}/master/{token_alpha.value}"
-    pr_beta = f"gitzen/pr/{author}/{token_alpha.value}/{token_beta.value}"
+    pr_alpha = f"gitzen/pr/{author}/{token_alpha.value}"
+    pr_beta = f"gitzen/pr/{author}/{token_beta.value}"
 
     assert re.search(
         rf"\* {short_hash} \(HEAD -> master, {ref_patch_beta}\) Add BETA.md$",
@@ -280,7 +280,7 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
     assert (
         git.branch_exists(
             git_env,
-            GitBranchName(f"gitzen/pr/{login.value}/master/{token1.value}"),
+            GitBranchName(f"gitzen/pr/{login.value}/{token1.value}"),
         )
         is True
     ), "first branch"
@@ -288,7 +288,7 @@ def test_when_branch_and_no_change_then_ignore(tmp_path: PosixPath) -> None:
         git.branch_exists(
             git_env,
             GitBranchName(
-                f"gitzen/pr/{login.value}/{token1.value}/{token2.value}",
+                f"gitzen/pr/{login.value}/{token2.value}",
             ),
         )
         is True
