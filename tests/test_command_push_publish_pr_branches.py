@@ -63,8 +63,8 @@ def test_when_remote_exists_and_is_uptodate_then_do_nothing(
     token_alpha = commits[0].zen_token
     token_beta = commits[1].zen_token
     username = author.value
-    pr_alpha = f"gitzen/pr/{username}/master/{token_alpha.value}"
-    pr_beta = f"gitzen/pr/{username}/{token_alpha.value}/{token_beta.value}"
+    pr_alpha = f"gitzen/pr/{username}/{token_alpha.value}"
+    pr_beta = f"gitzen/pr/{username}/{token_beta.value}"
     assert git.branch_exists(git_env, GitBranchName(pr_alpha))
     assert git.branch_exists(git_env, GitBranchName(pr_beta))
     log = git.log_graph(git_env)

@@ -137,29 +137,12 @@ def rethread_stack(
     author: GithubUsername,
     commit_stack: List[CommitPr],
     prev_head: GitBranchName,
-    prev_token: Optional[ZenToken] = None,
     remote_target: Optional[GitBranchName] = None,
 ) -> List[CommitBranches]:
     if len(commit_stack) == 0:
         return []
     hd = commit_stack[0]
-    if remote_target is not None:
-        head = branches.pr_branch_planned(
-            author,
-            prev_head,
-            hd.git_commit.zen_token,
-        )
-    else:
-        if prev_token is None:
-            head = branches.pr_branch_planned(
-                author, prev_head, hd.git_commit.zen_token
-            )
-        else:
-            head = branches.pr_branch_planned(
-                author,
-                GitBranchName(prev_token.value),
-                hd.git_commit.zen_token,
-            )
+    head = branches.pr_branch_spec(author, hd.git_commit.zen_token)
     result: List[CommitBranches] = [
         CommitBranches(
             hd.git_commit,
@@ -169,11 +152,7 @@ def rethread_stack(
             remote_target,
         ),
     ]
-    result.extend(
-        rethread_stack(
-            author, commit_stack[1:], head, prev_token=hd.git_commit.zen_token
-        )
-    )
+    result.extend(rethread_stack(author, commit_stack[1:], head))
     return result
 
 
