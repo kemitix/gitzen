@@ -17,9 +17,10 @@ def given_repo(
     """
     Creates two git repos. One is bare and is included as the
     'origin' remote for the other.
+    Add two files in two commits on the master branch.
     Returns the GitRootDir for the non-bare repo.
     """
-    console_env = console.RealEnv(["file", "git", "given_repo"])
+    console_env = console.RealEnv()
     console.log(console_env, "given_repo", f"BEGIN: {dir}")
     # create origin bare repo
     origin_dir = f"{dir}/origin"
@@ -74,6 +75,36 @@ def given_repo(
     show_status(console_env, git_env, repo)
     console.log(console_env, "given_repo", f"END: {dir}")
     return repo
+
+
+def given_repo_advanced(
+    file_env: file.Env,
+    git_env: git.Env,
+    dir: PosixPath,
+    branches: int,
+) -> GitRootDir:
+    """
+    Creates two git repos. One is bare and is included as the
+    'origin' remote for the other.
+    Creates a master branch and 'branches' additional branches, adding two
+    files in two commits to each.
+    Returns the GitRootDir for the non-bare repo.
+    """
+    root_dir = given_repo(file_env, git_env, dir)
+    master = GitBranchName("master")
+    git.switch(git_env, master)
+    origin_master = GitBranchName("origin/master")
+    for i in range(branches):
+        branch = GitBranchName(f"branch-{i}")
+        git.branch_create(git_env, branch, origin_master)
+        git.switch(git_env, branch)
+        for j in range(2):
+            filename = f"branch-{i}-file-{j}.md"
+            file.write(file_env, filename, [f"content-{i}-{j}"])
+            git.add(git_env, [filename])
+            git.commit(git_env, [f"Add {filename}"])
+    git.switch(git_env, master)
+    return root_dir
 
 
 def show_status(
