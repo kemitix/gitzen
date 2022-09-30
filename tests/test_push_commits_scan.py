@@ -72,3 +72,69 @@ def test_scan_branches_default_and_remotes(tmp_path: PosixPath) -> None:
     assert second.messageHeadline == CommitTitle("Add branch-1-file-1.md")
 
     assert GitBranchName("branch-2") not in result
+
+
+def test_scan_tokens_default_branch(tmp_path: PosixPath) -> None:
+    """
+    Tests that for each commit on the default branch,
+    it can be found by it's ZenToken.
+    """
+    # given
+    console_env = console.RealEnv()
+    logger_env = logger.RealEnv()
+    file_env = file.RealEnv(logger_env)
+    git_env = git.RealEnv(logger_env)
+    root_dir = given_repo(file_env, git_env, tmp_path)
+    cfg = config.default_config(root_dir)
+    # when
+    result = scan(console_env, git_env, cfg)
+    # then
+    branch = result.branch(GitBranchName("master"))
+    alpha = branch[0]
+    beta = branch[1]
+    assert result.tokens == {alpha.zen_token: alpha, beta.zen_token: beta}
+    assert result.token(alpha.zen_token) == alpha
+    assert result.token(beta.zen_token) == beta
+
+
+def test_scan_tokens_default_and_remotes(tmp_path: PosixPath) -> None:
+    # given
+    console_env = console.RealEnv()
+    logger_env = logger.RealEnv()
+    file_env = file.RealEnv(logger_env)
+    git_env = git.RealEnv(logger_env)
+    root_dir = given_repo_advanced(file_env, git_env, tmp_path, 3)
+    file.write(
+        file_env,
+        ".gitzen.yml",
+        [
+            "remote: origin",
+            "defaultBranch: master",
+            "remoteBranches:",
+            "  - branch-1",
+        ],
+    )
+    git.log_graph(git_env)
+    cfg = config.load(console_env, file_env, root_dir)
+    # when
+    result = scan(console_env, git_env, cfg)
+    # then
+    master = result.branch(GitBranchName("master"))
+    alpha = master[0]
+    beta = master[1]
+    branch1 = result.branch(GitBranchName("branch-1"))
+    first = branch1[0]
+    second = branch1[1]
+
+    assert result.tokens == {
+        alpha.zen_token: alpha,
+        beta.zen_token: beta,
+        first.zen_token: first,
+        second.zen_token: second,
+    }
+
+    assert result.token(alpha.zen_token) == alpha
+    assert result.token(beta.zen_token) == beta
+
+    assert result.token(first.zen_token) == first
+    assert result.token(second.zen_token) == second
