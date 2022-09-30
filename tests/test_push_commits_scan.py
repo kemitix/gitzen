@@ -7,7 +7,7 @@ from gitzen.types import CommitTitle, GitBranchName
 from .fakes.repo_files import given_repo, given_repo_advanced
 
 
-def test_scans_default(tmp_path: PosixPath) -> None:
+def test_scan_branches_default_branch(tmp_path: PosixPath) -> None:
     # given
     console_env = console.RealEnv()
     logger_env = logger.RealEnv()
@@ -16,7 +16,7 @@ def test_scans_default(tmp_path: PosixPath) -> None:
     root_dir = given_repo(file_env, git_env, tmp_path)
     cfg = config.default_config(root_dir)
     # when
-    result = scan(console_env, git_env, cfg)
+    result = scan(console_env, git_env, cfg).branches
     # then
     master = GitBranchName("master")
     assert master in result
@@ -28,7 +28,7 @@ def test_scans_default(tmp_path: PosixPath) -> None:
     assert beta.messageHeadline == CommitTitle("Add BETA.md")
 
 
-def test_scans_default_and_remotes(tmp_path):
+def test_scan_branches_default_and_remotes(tmp_path: PosixPath) -> None:
     # given
     console_env = console.RealEnv()
     logger_env = logger.RealEnv()
@@ -48,7 +48,7 @@ def test_scans_default_and_remotes(tmp_path):
     git.log_graph(git_env)
     cfg = config.load(console_env, file_env, root_dir)
     # when
-    result = scan(console_env, git_env, cfg)
+    result = scan(console_env, git_env, cfg).branches
     # then
 
     master = GitBranchName("master")

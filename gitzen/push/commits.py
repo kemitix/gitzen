@@ -1,25 +1,22 @@
-from typing import Dict, List
-
 from gitzen import config, console, git, repo_commit_stack
-from gitzen.models.git_commit import GitCommit
-from gitzen.types import GitBranchName
+from gitzen.models.stack import Stack
 
 
 def scan(
     console_env: console.Env,
     git_env: git.Env,
     cfg: config.Config,
-) -> Dict[GitBranchName, List[GitCommit]]:
+) -> Stack:
     """
     Scans git log for commits for each branch in cfg, default and all remotes,
     back to their upstream origins.
     """
-    result = {}
-    branches = cfg.remote_branches
-    branches.append(cfg.default_branch)
+    branches = {}
+    heads = cfg.remote_branches
+    heads.append(cfg.default_branch)
     remote = cfg.remote
     remote_branch = cfg.default_branch
-    for branch in branches:
+    for branch in heads:
         git.switch(git_env, branch)
         stack = repo_commit_stack.get_commit_stack(
             console_env,
@@ -27,5 +24,5 @@ def scan(
             remote,
             remote_branch,
         )
-        result[branch] = stack
-    return result
+        branches[branch] = stack
+    return Stack(branches=branches)
